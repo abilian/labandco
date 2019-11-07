@@ -1,0 +1,61 @@
+{#- overrides base template from abilian-core -#}
+{%- set locale = get_locale() -%}
+<!DOCTYPE html>
+<html lang="{{ locale.language }}">
+
+{% include "_head.html" %}
+
+{% from "_macros.html" import flashed_messages %}
+
+{% macro login_btn(uid, label=None) %}
+  <a class="btn btn-default" href="/switch?uid={{ uid }}">{{ uid }}
+    {% if label %}({{ label }}){% endif %}</a>
+{% endmacro %}
+
+
+<body class="login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="/">Lab&amp;Co SU</a>
+  </div>
+
+  <div class="login-box-body">
+
+    {{ flashed_messages() }}
+
+    <p class="login-box-msg">Connectez-vous pour démarrer votre session</p>
+
+    <hr>
+
+    <p>En phase de test (les données saisies sont purement fantaisistes)
+      vous pouvez vous connecter en tant que:</p>
+
+    <h3>Gouvernance</h3>
+
+    {{ login_btn("chambaz", "Président de Sorbonne Université") }}
+
+    <h3>Laboratoires</h3>
+
+    {% for group in chercheurs|groupby('laboratoire') %}
+      <h4>{{ group.grouper.sigle }}</h4>
+
+      {% for user in group.list %}
+        {{ login_btn(user.uid, ", ".join(user.all_roles()[1:])) }}
+      {% endfor %}
+    {% endfor %}
+
+    {#    {% for user in all_users if user.has_role('recherche') %}#}
+    {#      {{ login_btn(user.uid, user.laboratoire.sigle + " : " + ", ".join(user.all_roles()[1:])) }}#}
+    {#    {% endfor %}#}
+
+    <h3>DR&amp;I</h3>
+    {% for user in all_users if user.has_role('dgrtt') %}
+      {{ login_btn(user.uid, ", ".join(user.all_roles()[1:])) }}
+    {% endfor %}
+
+  </div>
+</div>
+
+{% include "_foot.html" %}
+</body>
+</html>

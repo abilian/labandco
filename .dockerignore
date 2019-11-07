@@ -1,0 +1,4 @@
+.gitignore
+front/node_modules
+.pyre
+.vagrant

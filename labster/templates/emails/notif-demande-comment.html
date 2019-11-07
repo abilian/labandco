@@ -1,0 +1,39 @@
+<html lang="fr">
+<body>
+
+<p>
+  Le {{ now|datetime }},
+</p>
+
+<p>
+  {{ workflow.actor.full_name }} a posté le commentaire ou la question suivante:
+</p>
+
+{% if transition.note %}
+  <blockquote>
+    {{ transition.note }}
+  </blockquote>
+{% endif %}
+
+<p>
+  sur la demande:
+</p>
+
+<ul>
+  <li> {{ demande.nom }} </li>
+  <li> de type: {{ demande.type }} </li>
+
+  {% if demande.porteur is defined %}
+    <li> portée par: {{ demande.porteur.full_name }}</li>
+  {% endif %}
+</ul>
+
+<p>
+  Pour la voir, <a
+    href="{{ url_for(demande, _external=True) }}">cliquez ici</a>.
+</p>
+
+{% include "emails/_footer.html" %}
+
+</body>
+</html>

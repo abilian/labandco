@@ -1,0 +1,31 @@
+<html lang="fr">
+<body>
+
+<p>
+  Le {{ now|datetime }},
+</p>
+
+<p>
+  {{ workflow.actor.full_name }}, contact pour les demandes de
+  type {{ demande.type }}, a rejeté votre demande "{{ demande.nom }}"
+  du {{ demande.created_at|datetime }}.
+</p>
+
+<p>
+  La motivation pour ce refus est la suivante:
+</p>
+
+<blockquote>
+  {{ transition.note }}
+</blockquote>
+
+<p>
+  Si vous souhaitez donner votre avis sur le traitement de cette demande, <a
+    href="{{ url_for("demandes.questionnaire", demande_id=demande.id, _external=True) }}">cliquez
+  ici</a>.
+</p>
+
+{% include "emails/_footer.html" %}
+
+</body>
+</html>

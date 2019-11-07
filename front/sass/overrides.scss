@@ -1,0 +1,297 @@
+html {
+    font-size: 90%;
+}
+
+.w-20 {
+    width: 20% !important;
+}
+
+.w-40 {
+    width: 40% !important;
+}
+
+.w-60 {
+    width: 60% !important;
+}
+
+.w-80 {
+    width: 80% !important;
+}
+
+.w-10 {
+    width: 10% !important;
+}
+
+.w-30 {
+    width: 30% !important;
+}
+
+.w-70 {
+    width: 70% !important;
+}
+
+.w-90 {
+    width: 90% !important;
+}
+
+// Override using CSS specificity
+.labster {
+    .main-header {
+        .navbar {
+            background-color: rgb(19, 43, 110);
+        }
+
+        .logo {
+            background-color: rgba(19, 43, 110, 0.6);
+        }
+    }
+
+    .timeline > .time-label > span {
+        border-radius: 4px;
+        background-color: #dc3545;
+        display: inline-block;
+        font-weight: 600;
+        padding: 5px;
+    }
+}
+
+.tile-row {
+    height: 42px;
+    background: #f2f2f2;
+
+    .tile-header {
+        float: left;
+        color: white;
+        height: 42px;
+    }
+
+    .tile-content {
+        position: relative;
+        line-height: 42px;
+        height: 42px;
+        color: #333;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        .title {
+            height: 42px;
+        }
+    }
+}
+
+.todo-list > li {
+    border-left: 0;
+}
+
+.todo-list > li > input[type="checkbox"] {
+    margin: 0;
+}
+
+.todo-list > li .text {
+    font-weight: normal;
+}
+
+fieldset {
+    border: 1px solid #e5e5e5;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    legend {
+    }
+}
+
+fieldset legend {
+    font-size: 20px;
+    border: 0;
+    margin-bottom: 0.5em;
+    width: inherit;
+}
+
+fieldset fieldset legend {
+    font-size: 17px;
+}
+
+//fieldset fieldset {
+//  border: 1px solid black;
+//}
+
+// Cf. https://github.com/twbs/bootstrap/issues/16088
+button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+}
+
+.content-header > .breadcrumb {
+    float: none;
+    padding: 2px 13px;
+    position: inherit;
+    right: 10px;
+    border-radius: 2px;
+    top: 0;
+}
+
+blockquote {
+    font-size: 14px;
+    font-style: italic;
+}
+
+.info-box-icon.bg-gray {
+    color: white;
+}
+
+// Boxes & blocs home page
+
+.box-message-dgrtt {
+    font-size: 115%;
+    line-height: 1.2;
+}
+
+.bloc-chercheur {
+    margin-top: 10px;
+    margin-bottom: 20px;
+
+    .box-header {
+        background-color: #eff;
+    }
+}
+
+.bloc-directeur {
+    margin-top: 10px;
+    margin-bottom: 20px;
+
+    .box-header {
+        background-color: #fef;
+    }
+}
+
+.bloc-gestionnaire {
+    margin-top: 10px;
+    margin-bottom: 20px;
+
+    .box-header {
+        background-color: #ffe;
+    }
+}
+
+.bloc-contact-dgrtt {
+    margin-top: 10px;
+    margin-bottom: 20px;
+
+    .box-header {
+        background-color: #fee;
+    }
+}
+
+.bloc-direction-dgrtt {
+    margin-top: 10px;
+    margin-bottom: 20px;
+
+    .box-header {
+        background-color: #eef;
+    }
+}
+
+.bloc-chef-bureau {
+    margin-top: 10px;
+    margin-bottom: 20px;
+
+    .box-header {
+        background-color: #efe;
+    }
+}
+
+.bloc-referent {
+    margin-top: 10px;
+    margin-bottom: 20px;
+
+    .box-header {
+        background-color: #eee;
+    }
+}
+
+// Tables
+
+tr.late {
+    background-color: pink;
+}
+
+td.number,
+td.currency {
+    text-align: right;
+    font-family: monospace;
+}
+
+.timeline-body blockquote {
+    margin: 0;
+}
+
+scrollbar {
+    overflow-x: hidden;
+    overflow-y: auto;
+    // and give the available [max-]height with a vue binding.
+    max-height: 85vh;
+}
+
+//
+// Search
+//
+.search-results {
+}
+
+.search-result {
+    padding-bottom: 1em;
+}
+
+.search-title {
+    font-weight: bold;
+    font-size: 115%;
+}
+
+.search-result .metadata {
+    font-style: italic;
+
+    i {
+        color: grey;
+    }
+}
+
+//
+// BI
+//
+.bi-table {
+    thead {
+        background-color: rgb(221, 217, 197);
+        font-weight: bold;
+    }
+
+    .bi-subhead {
+        background-color: rgb(148, 137, 87) !important;
+        color: white !important;
+    }
+}
+
+//
+//
+//
+#vue-app-annuaire h3 {
+    font-weight: 600;
+}
+
+//
+//
+//
+ul.editable-list {
+    list-style: none;
+
+    li {
+        line-height: 2em;
+    }
+}
+
+.pagination-sm > li > a,
+.pagination-sm > li > span {
+    padding-bottom: 3px;
+}

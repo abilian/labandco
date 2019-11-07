@@ -1,0 +1,18 @@
+<html lang="fr">
+<body>
+
+<p>
+  Le {{ now|datetime }},
+</p>
+
+<p>
+  Une action a été réalisée sur la demande <a
+    href="{{ url_for(notification.demande, _external=True) }}">{{ notification.demande.nom }}</a>
+</p>
+
+<br><br>
+
+{{ notification.body | safe }}
+
+</body>
+</html>

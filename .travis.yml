@@ -1,0 +1,40 @@
+dist: xenial
+
+language: python
+python: "3.7"
+cache:
+  pip: true
+  directories:
+    - node_modules
+    - ".tox"
+    - ".cache"
+
+addons:
+  postgresql: "9.6"
+
+# Install Python dependencies
+install:
+  - pip install -U pip setuptools wheel tox tox-travis poetry
+
+# Create DB
+before_script:
+  - createdb -w -U postgres -E utf-8 test
+
+matrix:
+  include:
+    - env: SQLALCHEMY_DATABASE_URI=postgresql://postgres@localhost/test
+    - env: TOXENV=front
+    - env: TOXENV=lint
+    - env: SQLALCHEMY_DATABASE_URI=
+    # - env: TOXENV=e2e (we're not ready for this)
+
+# Run tests
+script:
+  - tox
+
+notifications:
+  slack:
+    rooms:
+      - abilian:dTtRD7DHS4Dw3jfRrqytQWU6#code
+    on_success: change
+    on_failure: always

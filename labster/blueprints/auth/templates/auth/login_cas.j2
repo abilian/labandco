@@ -1,0 +1,40 @@
+{#- overrides base template from abilian-core -#}
+{%- set locale = get_locale() -%}
+<!DOCTYPE html>
+<html lang="{{ locale.language }}">
+
+{% include "_head.html" %}
+
+{% from "_macros.html" import flashed_messages %}
+
+{% macro login_btn(uid, label=None) %}
+  <a class="btn btn-default" href="/login?uid={{ uid }}">{{ uid }}
+    {% if label %}({{ label }}){% endif %}</a>
+{% endmacro %}
+
+
+<body class="login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="/" style="font-size: 84px;">Lab&amp;Co</a>
+    <br>
+    <img style="width: 100%;" src="/static/img/logo-su.png">
+  </div>
+
+  <div class="login-box-body">
+
+    {{ flashed_messages() }}
+
+    <p class="login-box-msg">Connectez-vous pour démarrer votre session</p>
+
+    <a href="{{ url_for(".go") }}"
+        id="connexion"
+        class="btn btn-primary btn-block btn-flat">
+      Connexion
+    </a>
+  </div>
+</div>
+
+{% include "_foot.html" %}
+</body>
+</html>

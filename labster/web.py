@@ -1,0 +1,123 @@
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Callable, Dict
+
+import pkg_resources
+import structlog
+from abilian.services import audit_service
+from flask import Flask, current_app, g, request, session
+from toolz import first, memoize
+from werkzeug.utils import import_string
+
+from labster.di import injector
+from labster.persistence import Persistence
+
+from . import search
+from .bus import register_callback
+from .menu import inject_menu
+from .security import login_user
+from .util import url_for
+
+BLUEPRINTS = [
+    "labster.rpc",
+    "labster.blueprints.v3",
+    "labster.blueprints.main",
+    "labster.blueprints.auth",
+]
+
+
+def init_web(app: Flask) -> None:
+    app.context_processor(inject_polymorphic_url_for)
+
+    register_blueprints(app)
+
+    persistence = injector.get(Persistence)
+    app.before_request(persistence.load)
+
+    app.before_request(login_user)
+    app.before_request(stop_services)
+    app.before_request(inject_debug_info)
+    app.before_request(make_session_permanent)
+    app.before_request(inject_menu)
+    app.before_request(inject_assets)
+
+    app.jinja_env.filters.update(datetime=lambda x: x.strftime("%d/%m/%y %H:%M"))
+
+    search.register(app)
+
+    # api.init_app(app)
+    # register_api(app)
+
+    register_callback()
+
+
+def register_blueprints(app: Flask) -> None:
+    logger = structlog.get_logger()
+
+    for fqn in BLUEPRINTS:
+        module = import_string(fqn)
+        logger.info("Registering blueprint", name=module.__name__)
+        app.register_blueprint(module.blueprint)
+
+
+def make_session_permanent() -> None:
+    session.permanent = True
+
+
+def inject_debug_info() -> None:
+    debug_info = {}
+    if g.current_user.is_authenticated:
+        debug_info["user_uid"] = g.current_user.uid
+        if g.current_user.laboratoire:
+            debug_info["laboratoire"] = g.current_user.laboratoire.nom
+    debug_info["url"] = request.url
+
+    g.debug_info = debug_info
+
+    version = "???"
+    for distribution in pkg_resources.working_set:
+        if distribution.project_name != "labster":
+            continue
+        version = distribution.version
+    g.labster_version = version
+
+
+def inject_assets() -> None:
+    @memoize
+    def get_assets_from_filesystem():
+        root = Path(current_app.root_path)
+        static = root / "static"
+        css = static / "css"
+        js = static / "js"
+        start = len(str(root))
+        css_assets = [
+            str(first(css.glob("chunk*")))[start:],
+            str(first(css.glob("app*")))[start:],
+        ]
+        js_assets = [
+            str(first(js.glob("chunk*")))[start:],
+            str(first(js.glob("app*")))[start:],
+        ]
+        return {"css": css_assets, "js": js_assets}
+
+    if current_app.config.get("PRODUCTION"):
+        g.assets = get_assets_from_filesystem()
+    else:
+        g.assets = {"css": [], "js": ["http://labster.local:8080/app.js"]}
+
+
+#
+# Various temporary hacks
+#
+def stop_services() -> None:
+    # TODO later: audit service needs Users, not Profiles
+    if audit_service.running:
+        audit_service.stop()
+        # if index_service.running:
+        #     index_service.stop()
+
+
+def inject_polymorphic_url_for() -> Dict[str, Callable]:
+    # TODO: use real registry
+    return {"url_for": url_for, "id": id}

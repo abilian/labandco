@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <title></title>
+  {% for url in g.assets.css %}
+    <link href="{{ url }}" rel="stylesheet" type="text/css">
+  {% endfor %}
+  {# TODO #}
+
+  <link rel="stylesheet" type="text/css"
+      href="https://unpkg.com/vue-multiselect@2.1.6/dist/vue-multiselect.min.css">
+
+  <script>const DEBUG = true;</script>
+</head>
+
+<body class="labster sidebar-mini">
+
+<div id="app-v3"></div>
+
+{% for url in g.assets.js %}
+  <script src="{{ url }}"></script>
+{% endfor %}
+
+</body>
+</html>

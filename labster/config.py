@@ -1,0 +1,191 @@
+from __future__ import annotations
+
+import os
+from datetime import timedelta
+
+from abilian.web.action import Endpoint
+from celery.schedules import crontab
+from flask.cli import load_dotenv
+
+CONTENT_SECURITY_POLICY = {
+    "default-src": ["'self'"],
+    "script-src": [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        "https://sentry.io/",
+        "https://browser.sentry-cdn.com/",
+        "https://cdn.ckeditor.com/",
+        "https://unpkg.com",
+    ],
+    "style-src": [
+        "'self'",
+        "'unsafe-inline'",
+        "https://cdn.ckeditor.com/",
+        "https://unpkg.com",
+    ],
+    "img-src": ["'self'", "https://cdn.ckeditor.com/", "https://unpkg.com"],
+}
+
+DEV_CONTENT_SECURITY_POLICY = {"default-src": ["'*'"], "script-src": ["'*'"]}
+
+
+class DefaultConfig:
+    NAME = "DEFAULT"
+    PRODUCTION = False
+
+    # FIXME later
+    WTF_CSRF_ENABLED = False
+
+    CONTENT_SECURITY_POLICY = CONTENT_SECURITY_POLICY
+
+    # Flask config
+    PERMANENT_SESSION_LIFETIME = timedelta(days=1)
+    SECRET_KEY = "tototiti"
+
+    # abilian-core config
+    SITE_NAME = "Lab&Co Sorbonne Université"
+    PRIVATE_SITE = False
+    MAIL_ASCII_ATTACHMENTS = True
+    ANTIVIRUS_CHECK_REQUIRED = True
+    LOGO_URL = Endpoint("static", filename="img/logo_carre_32px.jpg")
+    FAVICO_URL = Endpoint("static", filename="img/upmc-favicon.png")
+    MAIL_SENDER = "noreply.labandco@upmc.fr"
+
+    CELERYBEAT_SCHEDULE = {
+        # Executes every day at 6 A.M
+        "add-every-monday-morning": {
+            "task": "tasks.add",
+            "schedule": crontab(hour=6, minute=0),
+        }
+    }
+
+    # Babel config
+    BABEL_ACCEPT_LANGUAGES = ("fr",)
+    BABEL_DEFAULT_TIMEZONE = "Europe/Paris"
+
+    # Celery config
+    REDIS_URI = "redis://localhost:6379/1"
+    BROKER_URL = "redis://localhost:6379/0"
+    CELERYD_PREFETCH_MULTIPLIER = 1
+    CELERY_ALWAYS_EAGER = True
+    CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+    CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+
+    # Persistence
+    SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://localhost/labster"
+
+    MAIL_SERVER = "localhost"
+
+    # APISPEC_SWAGGER_URL = "/labster-api"
+    # APISPEC_SWAGGER_UI_URL = "/labster-api-ui"
+    OPENAPI_VERSION = "3.0.2"
+
+    # Auth
+    CAS_SERVER = "https://auth.sorbonne-universite.fr/cas/"
+    ALLOW_BACKDOOR = False
+
+    RESTHEART_URL = "http://localhost:18080/db"
+    RESTHEART_AUTH = ("admin", "DfgV0UYgwdMM")
+
+    # Logs
+    LOG_DB = "var/log.db"
+
+
+class DevConfig(DefaultConfig):
+    NAME = "DEV"
+
+    # Relax security cookies settings (which are more stringent by default)
+    SESSION_COOKIE_SECURE = False
+    REMEMBER_COOKIE_SECURE = False
+    SESSION_COOKIE_HTTPONLY = False
+    REMEMBER_COOKIE_HTTPONLY = False
+    CONTENT_SECURITY_POLICY = DEV_CONTENT_SECURITY_POLICY
+
+    # Debug
+    DEBUG = True
+    DEBUG_TB_ENABLED = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
+    DEBUG_TB_PROFILER_ENABLED = False
+    MAIL_SUPPRESS_SEND = True
+    DEBUG_TB_PANELS = [
+        "flask_debugtoolbar.panels.versions.VersionDebugPanel",
+        "flask_debugtoolbar.panels.timer.TimerDebugPanel",
+        "flask_debugtoolbar.panels.headers.HeaderDebugPanel",
+        "flask_debugtoolbar.panels.request_vars.RequestVarsDebugPanel",
+        "flask_debugtoolbar.panels.template.TemplateDebugPanel",
+        # 'flask_debugtoolbar.panels.sqlalchemy.SQLAlchemyDebugPanel',
+        "flask_debugtoolbar.panels.logger.LoggingPanel",
+        "flask_debugtoolbar.panels.profiler.ProfilerDebugPanel",
+        "abilian.services.indexing.debug_toolbar.IndexedTermsDebugPanel",
+        # 'flask_debugtoolbar_lineprofilerpanel.panels.LineProfilerPanel',
+    ]
+    TEMPLATE_DEBUG = True
+    ALLOW_BACKDOOR = True
+
+    # SQLALCHEMY_ECHO = True
+
+
+class DemoConfig(DefaultConfig):
+    NAME = "DEMO"
+
+    PRODUCTION = True
+    PREFERRED_URL_SCHEME = "https"
+    TEST_EMAIL_ADRESS = "labster@abilian.com"
+    ALLOW_BACKDOOR = False
+
+
+class PreprodConfig(DefaultConfig):
+    NAME = "PREPROD"
+
+    PRODUCTION = True
+    PREFERRED_URL_SCHEME = "https"
+    TEST_EMAIL_ADRESS = "labster@abilian.com"
+
+
+class ProdConfig(DefaultConfig):
+    NAME = "PRODUCTION"
+
+    PRODUCTION = True
+    PREFERRED_URL_SCHEME = "https"
+    TEST_EMAIL_ADRESS = None
+
+    # Debug email
+    # EMAIL_CC = ['X']
+
+
+def get_config():
+    env = os.environ
+    name = env.get("APP_NAME", "DEV")
+
+    if name == "DEMO":
+        config = DemoConfig()
+    elif name in ("PREPROD", "TIRETDEV"):
+        config = PreprodConfig()
+    elif name == "PRODUCTION":
+        config = ProdConfig()
+    elif name == "DEV":
+        config = DevConfig()
+    else:
+        raise RuntimeError(f"Unknown application name: {name}")
+
+    for k, v in os.environ.items():
+        if k.startswith("APP_"):
+            config_key = k[len("APP_") :]
+            config_value = v
+            setattr(config, config_key, config_value)
+
+    # Override SQLALCHEMY_DATABASE_URI w/ env variables if needed
+    pg_password = env.get("PG_PASSWORD", "")
+    database_url = env.get("DATABASE_URL", "")
+    sqlalchemy_database_uri = env.get("SQLALCHEMY_DATABASE_URI", "")
+
+    if database_url:
+        config.SQLALCHEMY_DATABASE_URI = database_url
+    elif sqlalchemy_database_uri:
+        config.SQLALCHEMY_DATABASE_URI = sqlalchemy_database_uri
+    elif pg_password:
+        db_uri = f"postgresql+psycopg2://labster:{pg_password}@localhost/labster"
+        config.SQLALCHEMY_DATABASE_URI = db_uri
+
+    return config

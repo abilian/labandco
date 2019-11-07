@@ -1,0 +1,339 @@
+{
+  "version": 0.3,
+  "api_key": "secretkey",
+  "faq_categories":  [
+    "Conventions de recherche \u2013 g\u00e9n\u00e9ralit\u00e9s",
+    "Gestion financi\u00e8re d\u2019un contrat",
+    "Ressources humaines"
+  ],
+  "nom_bureaux_dgrtt": {
+    "MSAR": "Moyens et suivi des activit\u00e9s de recherche",
+    "PIJ": "Propri\u00e9t\u00e9 intellectuelle (juriste)",
+    "ETT": "Entreprises et transfert de technologie",
+    "AIPI": "Propri\u00e9t\u00e9 intellectuelle",
+    "CC": "Coordination et communication",
+    "CFE": "Contrats et financements europ\u00e9ens",
+    "GF": "Gestion financi\u00e8re des contrats",
+    "EU": "Contrats et financements europ\u00e9ens",
+    "PI2": "Propri\u00e9t\u00e9 intellectuelle 2",
+    "CP": "Contrats publics",
+    "REF": "R\u00e9f\u00e9rents",
+    "DIR": "Direction DR&I",
+    "CT": "Contrats de travail"
+  },
+  "recrutement": {
+    "provision_risque_charge_employeur": 8,
+    "salaire_min_doctorant": 2000,
+    "grades": [
+      "Chercheur",
+      "Post-doctorant",
+      "IGR",
+      "IGE",
+      "ASI",
+      "Technicien classe supérieure",
+      "Technicien classe normale",
+      "Adjoint technique"
+    ],
+    "salaire_brut_mensuel_indicatif": {
+      "Chercheur": "au cas par cas",
+      "Post-doctorant": [
+        [ "doctorat",
+          2514.25
+        ],
+        [ "doctorat-plus",
+          28884.67
+        ],
+        [ "doctorat-plus-3",
+          3468.08
+        ]
+      ],
+      "IGR": [
+        [ "0-6", 2372.18 ],
+        [ "7-12", 2747.06 ],
+        [ "13-18", 3018.85 ],
+        [ "19-24", 3342.19 ],
+        [ "25-30", 3524.94 ],
+        [ "31-36", 3782.67 ],
+        [ "37", 4111.22 ]
+      ],
+      "IGE": [
+        [ "0-6", 2119.49 ],
+        [ "7-12", 2349.10 ],
+        [ "13-18", 2555.29 ],
+        [ "19-24", 2761.48 ],
+        [ "25-30", 2995.78 ],
+        [ "31-36", 3150.42 ],
+        [ "37", 3302.71 ]
+      ],
+      "ASI": [
+        [ "0-6", 1961.15 ],
+        [ "7-12", 2200.13 ],
+        [ "13-18", 2368.83 ],
+        [ "19-24", 2528.16 ],
+        [ "25-30", 2673.42 ],
+        [ "31-36", 2828.06 ],
+        [ "37", 3088.14 ]
+      ],
+      "technicien-sup": [
+        [ "0-6", 1872.11 ],
+        [ "7-12", 1937.72 ],
+        [ "13-18", 2050.18 ],
+        [ "19-24", 2111.10 ],
+        [ "25-30", 2275.11 ],
+        [ "31-36", 2364.15 ],
+        [ "37", 2439.12 ]
+      ],
+      "technicien-normale": [
+        [ "0-6", 1768.78 ],
+        [ "7-12", 1838.81 ],
+        [ "13-18", 1918.48 ],
+        [ "19-24", 2045.24 ],
+        [ "25-30", 2204.56 ],
+        [ "31-36", 2279.54 ],
+        [ "37", 2361.54 ]
+      ],
+      "adjoint": [
+        [ "0-6", 1704.81 ],
+        [ "7-12", 1714.18 ],
+        [ "13-18", 1723.55 ],
+        [ "19-24", 1728.24 ],
+        [ "25-30", 1756.36 ],
+        [ "31-36", 1784.47 ],
+        [ "37", 1871.16 ]
+      ]
+    },
+    "ecoles_doctorales": [
+      "ED 127 : Astronomie et astrophysique d'\u00cele-de-France",
+      "ED 129 : Sciences de l'environnement d'\u00cele-de-France",
+      "ED 130 : Informatique, t\u00e9l\u00e9communications et \u00e9lectronique de Paris",
+      "ED 158 : Cerveau, cognition, comportement (3C)",
+      "ED 227 : Sciences de la Nature et de l'Homme : \u00e9cologie & \u00e9volution",
+      "ED 386 : Sciences math\u00e9matiques de Paris Centre",
+      "ED 388 : Chimie physique et chimie analytique de Paris Centre",
+      "ED 391 : Sciences m\u00e9caniques, acoustique, \u00e9lectronique et robotique de Paris (SMAER)",
+      "ED 393 : Sant\u00e9 publique : \u00e9pid\u00e9miologie et sciences de l'information biom\u00e9dicale",
+      "ED 394 : Physiologie, physiopathologie et th\u00e9rapeutique",
+      "ED 397 : Physique et chimie des mat\u00e9riaux",
+      "ED 398 : G\u00e9osciences, ressources naturelles et environnement",
+      "ED 406 : Chimie mol\u00e9culaire de Paris-Centre",
+      "ED 515 : Complexit\u00e9 du vivant",
+      "ED 560 : Sciences de la Terre et Physique de l'univers",
+      "ED 564 : Physique en \u00cele-de-France"
+    ],
+    "principes": "<h4>Les trois principes r\u00e9gissant les contrats de travail de Sorbonne Université</h4>\n\n<ul>\n<li>\nLa mobilit\u00e9 apr\u00e8s la th\u00e8se\n<br/>\nUne personne ayant effectu\u00e9 sa th\u00e8se dans un laboratoire ne peut pas\n\u00eatre accueillie en contrat post-doctoral dans le m\u00eame laboratoire. Le\nconseil scientifique de Sorbonne Université a adopt\u00e9 un code de conduite sur\nl\u2019accueil de chercheurs post-doctoraux en 2011.\n</li>\n<li>\nLe contrat doctoral de trois ans\n<br/>\nLe contrat doctoral, d\u00e9fini par le d\u00e9cret n\u00b02009-464 du 23 avril 2009\nrelatif aux doctorants contractuels, est un CDD de droit public de\ntrois ans. Il a \u00e9t\u00e9 mis en place \u00e0 Sorbonne Université en septembre 2009.\n</li>\n<li>\nPas plus de trois ans de CDD\n<br/>\nSorbonne Université n\u2019accepte pas de prolonger un CDD au-del\u00e0 de 3 ans. Ce principe\nvisant \u00e0 lutter contre la pr\u00e9carit\u00e9 de l\u2019emploi est inscrit dans le\nd\u00e9cret du Saic n\u00b02002-1347 du 7 novembre 2002. Il s\u2019appr\u00e9cie en\nincluant les autres employeurs publics partenaires du laboratoire.\n<br/>\nExceptionnellement, dans l\u2019int\u00e9r\u00eat de la personne recrut\u00e9e, une\nprolongation au-del\u00e0 des trois ans est possible (par exemple, pour\nattendre une mobilit\u00e9 programm\u00e9e). Une telle prolongation n\u00e9cessite un\narbitrage de la DR&amp;I et ne peut \u00eatre obtenue qu\u2019une seule fois.\n</li>\n</ul>\n\n<h4>Ce que l\u2019on ne peut pas ignorer quand on souhaite recruter sur\nconvention de recherche</h4>\n<ul>\n<li>\nIl est ill\u00e9gal de faire travailler une personne sans qu\u2019elle ait sign\u00e9\nun contrat de travail. Les risques encourus par le directeur d\u2019unit\u00e9\net le pr\u00e9sident de l\u2019universit\u00e9 sont civils et p\u00e9naux.\n</li>\n<li>Depuis d\u00e9cembre 2013, la recette g\u00e9n\u00e9rale des finances qui traite\nles paies pour le compte des universit\u00e9s impose 6 \u00e0 8 semaines entre la\nsignature d\u2019un contrat de travail et la premi\u00e8re paie ou le premier\nacompte. Par ailleurs, deux dates de recrutement sont possibles : le 1er\nou le 15 de chaque mois.\n</li>\n<li>\nLa DR&amp;I ne r\u00e9dige des contrats de travail que si le dossier est\ncomplet (cf. PROCEDURE). Ceci implique notamment l\u2019existence d\u2019un\ndevis valid\u00e9 par la DR&amp;I et la structure recruteuse. Pour rappel, la\nvalidation du devis d\u00e9pend de l\u2019existence d\u2019une convention de\nrecherche sign\u00e9e permettant de couvrir le salaire de la personne\nrecrut\u00e9e pendant la dur\u00e9e de son contrat. Des exceptions sont\npossibles, elles concernent essentiellement la dur\u00e9e de la couverture\nsalariale des contrats doctoraux et n\u00e9cessite un engagement financier\nde la structure recruteuse.\n</li>\n</ul>\n",
+    "charges_plus_12_mois": 36.18,
+    "charges_moins_12_mois": 37.88,
+    "couts_charges": {
+      "PU/DR C EX Confirmé": "1324 : 147567",
+      "PU/DR C EX": "1274 : 142043",
+      "PU/DR C1 Confirmé": "1168 : 130334",
+      "PU/DR C1": "1062 : 118624",
+      "PU/DR C2 Confirmé": "967 : 108130",
+      "PU/DR C2": "780 : 87472",
+      "MC/CR HC Confirmé": "967 : 108130",
+      "MC/CR HC": "785 : 88025",
+      "MC/CR CN Confirmé": "825 : 92443",
+      "MC/CR CN": "682 : 76647",
+      "IR HC Confirmé": "967 : 114047",
+      "IR HC": "825 : 98360",
+      "IR C1 Confirmé": "825 : 97768",
+      "IR C1": "743 : 88709",
+      "IR C2 Confirmé": "722 : 84965",
+      "IR C2": "559 : 66959",
+      "IE HC confirmé": "793 : 93420",
+      "IE HC": "736 : 87123",
+      "IE C1 Confirmé": "680 : 79385",
+      "IE C1": "619 : 72747",
+      "IE C2 Confirmé": "625 : 73309",
+      "IE C2": "499 : 59391",
+      "ASI Confirmé": "559 : 65323",
+      "ASI": "448 : 53061",
+      "TR CE Confirmé": "582 : 67685",
+      "TR CE": "460 : 54208",
+      "TR CS Confirmé": "529 : 61830",
+      "TR CS": "413 : 49015",
+      "TR CN Confirmé": "498 : 58406",
+      "TR CN": "366 : 42994"
+    },
+    "transport": 35
+  },
+  "message_dgrtt": {
+    "type": "richText",
+    "val": "Roses are red, Violets are blue, Sugar is sweet, And so are you."
+  },
+  "point_indice": 4.630291,
+  "convention": {
+    "TAUX_ENVIRONNEMENT_PERSONNEL_NON_PERMANENT": 0.8,
+    "TAUX_PROVISION_RISQUE": 0.08,
+    "COUT_HORAIRE_STAGE": 3.6,
+    "REMUNERATION": [
+      [
+        "PU/DR C EX Confirm\u00e9",
+        1320
+      ],
+      [
+        "PU/DR C EX",
+        1270
+      ],
+      [
+        "PU/DR C1 Confirm\u00e9",
+        1164
+      ],
+      [
+        "PU/DR C1",
+        1058
+      ],
+      [
+        "PU/DR C2 Confirm\u00e9",
+        963
+      ],
+      [
+        "PU/DR C2",
+        776
+      ],
+      [
+        "MC/CR HC Confirm\u00e9",
+        963
+      ],
+      [
+        "MC/CR HC",
+        776
+      ],
+      [
+        "MC/CR CN Confirm\u00e9",
+        821
+      ],
+      [
+        "MC/CR CN",
+        673
+      ],
+      [
+        "IR HC Confirm\u00e9",
+        963
+      ],
+      [
+        "IR HC",
+        821
+      ],
+      [
+        "IR C1 Confirm\u00e9",
+        821
+      ],
+      [
+        "IR C1",
+        734
+      ],
+      [
+        "IR C2 Confirm\u00e9",
+        713
+      ],
+      [
+        "IR C2",
+        550
+      ],
+      [
+        "IE HC confirm\u00e9",
+        783
+      ],
+      [
+        "IE HC",
+        729
+      ],
+      [
+        "IE C1 Confirm\u00e9",
+        673
+      ],
+      [
+        "IE C1",
+        612
+      ],
+      [
+        "IE C2 Confirm\u00e9",
+        619
+      ],
+      [
+        "IE C2",
+        492
+      ],
+      [
+        "ASI Confirm\u00e9",
+        551
+      ],
+      [
+        "ASI",
+        440
+      ],
+      [
+        "TR CE Confirm\u00e9",
+        514
+      ],
+      [
+        "TR CE",
+        445
+      ],
+      [
+        "TR CS Confirm\u00e9",
+        489
+      ],
+      [
+        "TR CS",
+        405
+      ],
+      [
+        "TR CN Confirm\u00e9",
+        463
+      ],
+      [
+        "TR CN",
+        362
+      ]
+    ],
+    "TAUX_ENVIRONNEMENT_PERSONNEL_PERMANENT": 0.8,
+    "COUT_ENVIRONNEMENT_PERSONNEL_HEBERGE": 3000,
+    "DUREE_AMORTISSEMENT": [
+      [
+        "Acquisition de logiciels",
+        1
+      ],
+      [
+        "Mat\u00e9riel informatique",
+        3
+      ],
+      [
+        "Mat\u00e9riel scientifique",
+        5
+      ],
+      [
+        "Mat\u00e9riel de bureau",
+        5
+      ],
+      [
+        "Mobilier",
+        10
+      ],
+      [
+        "Installations techniques",
+        10
+      ],
+      [
+        "Mat\u00e9riel divers",
+        10
+      ]
+    ],
+
+    "TAUX_PARTICIPATION_COUTS_INDUITS": 0.15,
+    "TAUX_CHARGE_PATRONALE": 0.375
+  },
+
+  "demande_recrutement": {
+    "pj": "<p>La demande <b>doit</b> être accompagnée des pièces-jointes suivantes:</p> <ul> <li>CV</li> <li>Notice individuelle</li> <li>Pièce d’identité</li> <li>Relevé d’identité bancaire</li> <li>Attestation d’affiliation à la sécurité sociale</li> <li>Carte vitale</li> <li>Diplôme le plus élevé</li> <li>Formulaire de demande de casier judiciaire</li> <li>Demande de remboursement de transport</li> <li>Visite médicale</li> </ul>",
+    "bareme": "<a href='http://www.upmc.fr/modules/resources/download/default/intranet_securise/DGRTT/BAREME_CONTRACTUELS_CONVENTION_RECHERCHE_SEPT_17.pdf'>Barème indicatif</a> de rémunération au recrutement des personnels contractuels sur convention de recherche."
+  },
+  "pi_invention": {
+    "pieces_a_joindre": "<p>Ce formulaire doit être accompagné de la « fiche individuelle de contributeur », remplie par chaque contributeur et de la « fiche de résumé de déclaration d'invention », chiffrée avec le logiciel Zed !.</p> <p><a href='http://www.upmc.fr/modules/resources/download/default/espace_personnels/DGRTT/TRANSFERER/FICHE_INDIVIDUELLE_CONTRIBUTEUR_DI_160915.docx'>Téléchargez la fiche</a>, remplissez-là et envoyez-là à chaque contributeur afin qu'il la remplisse aussi et la signe.</p> <p><a href='http://www.upmc.fr/modules/resources/download/default/espace_personnels/DGRTT/TRANSFERER/FICHE_RESUME_DECLARATION_INVENTION_160915.docx'>Téléchargez la fiche de résumé de déclaration d'invention</a>.</p> <p>Une fois que vous enregistré le formulaire, utilisez l'onglet Pièces à joindre pour accompagner votre demande des documents suivants :</p> <ul> <li>une fiche individuelle de contributeur par contributeur</li> <li>la fiche résumé de déclaration d’invention chiffrée avec le logiciel Zed !.</li> </ul> <p>et si nécessaire :</p> <ul> <li>la (les) publication(s) proche(s) de l'invention</li> <li>le(s) document(s) relatif(s) au(x) divulgation(s) antérieure(s) ou future(s)</li> <li>l'accord de transfert de matériel (MTA) utilisé pour les travaux</li> <li>l'accord de secret avec une entreprise</li> </ul>",
+    "conditions": "<h2>Vous allez soumettre une déclaration d'invention </h2><p><br></p><p>La déclaration d'invention vous permet de soumettre à Sorbonne Université des travaux valorisables (inventions, savoir-faire, marque, etc.) afin de vous accompagner dans le choix de la meilleure stratégie de protection et de valorisation. </p><p>Nous vous remercions de compléter le formulaire le plus rigoureusement possible. Tout document incomplet prendra plus de temps à être traité. </p><p>Ce formulaire doit être accompagné de la «&nbsp;fiche individuelle de contributeur&nbsp;», remplie par chaque contributeur et de la «&nbsp;fiche de résumé de déclaration d'invention&nbsp;» chiffrée avec le logiciel Zed !.</p><p> <a href='http://www.upmc.fr/modules/resources/download/default/espace_personnels/DGRTT/TRANSFERER/FICHE_INDIVIDUELLE_CONTRIBUTEUR_DI_160915.docx' target='_blank'><strong>Téléchargez la fiche</strong></a>, remplissez-la et envoyez-la à chaque contributeur afin qu'il la remplisse aussi et la signe.</p><p> <a href='http://www.upmc.fr/modules/resources/download/default/espace_personnels/DGRTT/TRANSFERER/FICHE_RESUME_DECLARATION_INVENTION_160915.docx' target='_blank'><strong>Téléchargez également</strong></a> la fiche de résumé de déclaration d'invention. </p><p>Une fois que vous avez enregistré le formulaire, utilisez l'onglet <strong>Pièces à joindre</strong> pour accompagner votre demande des documents suivants : </p><ul><li>une fiche individuelle de contributeur par contributeur </li><li>la fiche résumé de déclaration d’invention, chiffrée avec le logiciel Zed&nbsp;! </li></ul><p>et si nécessaire : </p><ul><li> la (les) publication(s) proche(s) de l'invention </li><li> le(s) document(s) relatif(s) au(x) divulgation(s) antérieure(s) ou future(s) </li><li>l'accord de transfert de matériel (MTA) utilisé pour les travaux </li><li>l'accord de secret avec une entreprise </li></ul><p><br></p><h2>Les contributeurs </h2><p><br></p><p><strong>Contributeur ne veut pas dire inventeur</strong>.</p><p><strong>La liste de contributeurs ainsi que leur part contributive indiquées dans ce document sont données à titre indicatif et ne présage pas de la qualité d’inventeur des personnes identifiées.</strong></p><p>Cette qualité sera déterminée lors de la procédure d’examen de la déclaration d’invention en cas de dépôt d’une demande de brevet. </p><p>Après examen de la déclaration d’invention, une liste définitive des inventeurs sera établie ainsi que leur part inventive. </p><p><br></p><p><strong>Qui est inventeur&nbsp;?</strong></p><p>Pour rappel, la désignation du ou des inventeurs est un acte juridique. Il est essentiel de désigner dans le brevet le ou les véritables inventeurs. Aux États-Unis en particulier, le fait d’omettre intentionnellement le nom d’une personne qui est inventeur ou le fait d’identifier sciemment comme inventeur une personne qui a simplement collaboré aux travaux de recherche ou le dirigeant opérationnel d'une entité peut entraîner l’invalidation d’un brevet. </p><p>Brièvement, seul peut prétendre à la qualité d’inventeur celui qui s’est personnellement impliqué dans la conception de l'invention. Il y a là une différence avec la pratique des publications scientifiques, dans lesquelles peuvent notamment figurer, parmi les auteurs, le responsable scientifique qui a donné des orientations d’ordre général. </p><p>Ainsi, ne peuvent être considérés comme inventeurs : </p><ul><li>un commanditaire qui fixe exclusivement des objectifs généraux de l'invention à réaliser, mais qui ne s'est pas personnellement impliqué dans la conception de l'invention, c’est-à-dire dans la résolution du problème technique&nbsp;; </li><li>un collègue ou un prestataire qui apporte des informations d'ordre général&nbsp;; </li><li>un collègue ou un prestataire qui réalise des modifications ou des mises au point sur des éléments n’apparaissant pas dans les revendications du brevet&nbsp;; </li><li>un exécutant qui suit simplement les instructions de l'inventeur, sans participer à la détermination d’éléments nécessaires à la mise en œuvre de l’invention, lesdits éléments apparaissant dans les revendications du brevet.</li></ul>"
+  },
+  "pi_logiciel": {
+    "conditions": "<h3 id='vous-allez-soumettre-une-declaration-de-logicielbase-de-donnees'>Vous allez soumettre une déclaration de logiciel/base de données</h3> <p>Nous vous remercions de compléter le formulaire le plus rigoureusement possible. Tout document incomplet prendra plus de temps à être traité.</p> <p>Ce formulaire doit être accompagné de la &quot;fiche individuelle de contributeur&quot;, remplie par chaque contributeur.</p> <p><a href='http://www.upmc.fr/modules/resources/download/default/espace_personnels/DGRTT/TRANSFERER/FICHE_INDIVIDUELLE_CONTRIBUTEUR_LOGICIEL_160915.docx'>Téléchargez la fiche</a>, remplissez-la et envoyez-la à chaque contributeur afin qu'il la remplisse aussi et la signe.</p> <p>Une fois que vous aurez enregistré le formulaire, utilisez l'onglet <strong>Pièces à joindre</strong> pour accompagner votre demande des documents suivants:</p> <ul> <li>une fiche individuelle de contributeur par contributeur</li> </ul> <p>et si nécessaire :</p> <ul> <li>un schéma de l'architecture du logiciel<br /></li> <li>une copie des publications<br /></li> <li>une copie du projet de communication</li> </ul> <h3 id='les-contributeurs'>Les contributeurs</h3> <p><strong>Contributeur ne veut pas dire auteur.</strong></p> <p><strong>La liste de contributeurs ainsi que leur part contributive indiquées<br />dans ce document sont données à titre indicatif et ne présagent pas de la<br />qualité d’auteur des personnes identifiées.</strong></p> <p>Cette qualité sera déterminée lors de la procédure d’examen de la<br />déclaration de logiciel/base de données en cas de dépôt de l’œuvre.</p> <p>Après examen de la déclaration de logiciel/base de données, une liste<br />définitive des auteurs sera établie ainsi que leur part<br />contributive.</p>"
+  }
+}

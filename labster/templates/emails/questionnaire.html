@@ -1,0 +1,47 @@
+<html lang="fr">
+<body>
+
+<p>
+  Réponse de <a
+    href="{{ url_for(g.current_user, _external=True) }}">{{ g.current_user.full_name }}</a>
+  ({{ g.current_user.email }}) au questionnaire de satisfaction concernant la
+  demande <a href="{{ url_for(demande, _external=True) }}">{{ demande.nom }}</a>.
+</p>
+
+{#<p>#} {#  Profil du répondant: {{ g.current_user.roles }}.#} {#</p>#}
+
+<p>
+  Laboratoire: {{ g.current_user.laboratoire.nom }}.
+</p>
+
+<hr>
+
+<p>
+  <b>Globalement, votre demande a été traitée de façon
+    :</b> {{ form.get('satisfaction', '') }}.
+</p>
+
+<p>
+  <b>Pourquoi ?</b> {{ form.get('satisfaction_details', '') }}
+</p>
+
+<p>
+  <b>Lab&amp;Co vous a permis de formuler votre
+    demande: </b> {{ form.get('besoins', '') }}.
+</p>
+
+<p>
+  <b>Pourquoi ?</b> {{ form.get('besoins_details', '') }}
+</p>
+
+
+<p>
+  <b>Vous avez utilisé lab&co :</b> {{ form.get('utilisation', '') }}.
+</p>
+
+<p>
+  <b>Commentaire:</b> {{ form.get('commentaire', '') }}
+</p>
+
+</body>
+</html>

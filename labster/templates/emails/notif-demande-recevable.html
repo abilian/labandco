@@ -1,0 +1,28 @@
+<html lang="fr">
+<body>
+
+<p>
+  Le {{ now|datetime }},
+</p>
+
+<p>
+  {{ workflow.actor.full_name }}, contact pour les demandes de
+  type {{ demande.type }}, vous confirme que votre demande "{{ demande.nom }}"
+  du {{ demande.created_at|datetime }} est recevable et la prend en charge sous
+  le numéro d’enregistrement DR&I n° {{ demande.no_infolab }}.
+</p>
+
+{% if transition.note %}
+  <p>
+    Merci de prendre connaissance du message suivant:
+  </p>
+
+  <blockquote>
+    {{ transition.note }}
+  </blockquote>
+{% endif %}
+
+{% include "emails/_footer.html" %}
+
+</body>
+</html>
