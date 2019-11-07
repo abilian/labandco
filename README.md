@@ -38,7 +38,7 @@ Contactez-nous à: [contact@abilian.com](mailto:contact@abilian.com) pour toute 
 4) Tapper:
 
         poetry install
-        ( cd front && yarn )
+        yarn --cwd front
 
 
 ### Comment développper
@@ -77,7 +77,7 @@ Doc: http://alembic.zzzcomputing.com/en/latest/tutorial.html
 1) Tests unitaires:
 
         pytest
-        ( cd front && yarn run test:unit )
+        yarn --cwd front run test:unit
 
 2) Tests e2e:
         

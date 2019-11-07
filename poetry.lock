@@ -1056,6 +1056,14 @@ python-versions = "*"
 version = "3.0.4"
 
 [[package]]
+category = "dev"
+description = "A spec-compliant gitignore parser for Python 3.5+"
+name = "gitignore-parser"
+optional = false
+python-versions = "*"
+version = "0.0.5"
+
+[[package]]
 category = "main"
 description = "A declarative object transformer and formatter, for conglomerating nested data."
 name = "glom"
@@ -2328,7 +2336,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "a442a8500f79ec489e987d3be33f51c5b44bd940c786e74c3ba584e3cc82024e"
+content-hash = "c18613b2f703b5fbc6e141282e07377ec0f900d8c1aabc7925e3fa4b74d05e91"
 python-versions = "^3.6"
 
 [metadata.hashes]
@@ -2420,6 +2428,7 @@ flask-wtf = ["99c5d75663d6bfcbf4dd0d71ffcb7313f64ae90e6f89e09ad99080107033e8b6",
 flatdict = ["a60aaa27de0dfac2098edaffc109ee3f8eeeb47dcab68aa9140f0d9e24a6aa25", "bcfb4ea75d7465346a6072f477e795bbbf1bbb6c3da9cf3749b0d3d31988dd28"]
 future = ["b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"]
 gitchangelog = ["3d8d6a730450fbd5b0a9bc58d0dd3e269c967d7eb4fece0c5cff4372a3f77421", "45f8b8e64cece0d9bb03a35ecd8ee62c1c7157f8dac0ef3cb68381bfcc1bde29"]
+gitignore-parser = ["039b1a02def9324d4ddf7c32f94c8264e34902cfe2f637f01ef2d941ff3e4b15"]
 glom = ["c8a50cb9fcf0c84807836c6a73cf61285557834b9050d7bde7732b936aceb7dd", "f92d3223b784f447185b68635f4d73cfb5e528933a47ada39061787d06ab886e"]
 gunicorn = ["aa8e0b40b4157b36a5df5e599f45c9c76d6af43845ba3b3b0efe2c70473c2471", "fa2662097c66f920f53f70621c6c58ca4a3c4d3434205e608e121b5b3b71f4f3"]
 honcho = ["af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576", "c189402ad2e337777283c6a12d0f4f61dc6dd20c254c9a3a4af5087fc66cea6e"]

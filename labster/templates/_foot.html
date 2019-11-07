@@ -1,0 +1,17 @@
+<script src="/static/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+
+<script src="/static/plugins/select2/select2.full.min.js"></script>
+<script>
+  $('.select2').select2();
+</script>
+
+<!-- AdminLTE App -->
+<script src="/static/adminlte/js/app.min.js"></script>
+
+<!-- ckeditor -->
+<script src="https://cdn.ckeditor.com/4.5.9/standard/ckeditor.js"></script>
+
+{% for url in g.assets.js %}
+  <script src="{{ url }}"></script>
+{% endfor %}

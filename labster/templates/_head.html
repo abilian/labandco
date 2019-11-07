@@ -1,0 +1,67 @@
+<head>
+  <meta charset="UTF-8">
+  <title>{% block page_title %}{{ config.SITE_NAME }}{% endblock page_title %}</title>
+
+  <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <link rel="shortcut icon" type="image/png" href="{{ app.config['FAVICO_URL'] | string }}"/>
+  <link rel="apple-touch-icon" type="image/png" href="{{ app.config['FAVICO_URL'] | string }}"/>
+
+  <meta name="description" content="">
+  <meta name="author" content="Abilian SAS for Sorbonne Université">
+
+  {% for url in g.assets.css %}
+    <link href="{{ url }}" rel="stylesheet" type="text/css">
+  {% endfor %}
+
+  {%- block css %}{%- endblock css %}
+
+  {# ####################################################################### #}
+  {%- set sentry_url = config.get("SENTRY_SDK_URL") %}
+  {%- set sentry_dsn = config.get("SENTRY_DSN") %}
+  {%- if sentry_url and sentry_dsn %}
+    <script src="{{ sentry_url }}" crossorigin="anonymous"></script>
+    <script>
+      var dsn = {{ sentry_dsn | tojson }};
+      var app_name = {{ (app.name+'_front') | tojson }};
+      var server_name = {{ config.get('SERVER_NAME', 'unknown') | tojson }};
+      {% if g.current_user %}
+        var user_email = {{ ((g.current_user.email or "") + "") | tojson }};
+        var user_id = {{ g.current_user.id or "" | tojson }};
+      {% else %}
+        var user_email = null;
+        var user_id = null;
+      {% endif %}
+
+      Sentry.init({dsn: dsn});
+      Sentry.configureScope(function(scope) {
+          scope.setTag("app_name", app_name);
+          scope.setTag("server_name", server_name);
+          scope.setUser("email", user_email);
+          scope.setUser("id", user_id);
+        }
+      );
+    </script>
+  {%- endif %}
+  {% if g.debug_info %}
+<!--
+DEBUG
+{{ g.debug_info|tojson }}
+/DEBUG
+-->
+  {% endif %}
+
+  <script>
+    // Warning: this is fragile. We must devise a safer way to pass data
+    // from Flask to Vue.
+    {% if form is defined and model is defined %}
+      var FORM = {{ form.to_json()|safe }};
+      var MODEL = {{ model|tojson|safe }};
+    {% else %}
+      var FORM = {};
+      var MODEL = {};
+    {% endif %}
+  </script>
+
+</head>

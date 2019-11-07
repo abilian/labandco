@@ -1,0 +1,63 @@
+{#<!-- Left side column. contains the logo and sidebar -->#}
+{##}
+{#{% set user = g.current_user %}#}
+{##}
+{#<aside class="main-sidebar">#}
+{#  <!-- sidebar: style can be found in sidebar.less -->#}
+{#  <section class="sidebar">#}
+{#    <!-- Sidebar user panel -->#}
+{#    <div class="user-panel">#}
+{#      <div class="pull-left" style="color: #fff;">#}
+{#        <i class="far fa-user fa-4x"></i>#}
+        {#        <img src="/static/img/anonymous-160x160.png" class="img-circle"#}
+        {#          alt="User Image"/>#}
+{#      </div>#}
+{#      <div class="pull-left info">#}
+{#        <p>{{ user.full_name }}</p>#}
+{##}
+{#        <a href="#"><i class="far fa-circle text-success"></i> Online</a>#}
+{#      </div>#}
+{#    </div>#}
+{##}
+{#    <!-- search form -->#}
+{#    <form action="/search" method="get" class="sidebar-form">#}
+{#      <div class="input-group">#}
+{#        <input type="text" name="q" class="form-control"#}
+{#            placeholder="Search..." value="{{ request.args.get('q', '') }}"/>#}
+{##}
+{#        <span class="input-group-btn"><button type="submit" name="search"#}
+{#            id="search-btn" class="btn btn-flat"><i#}
+{#            class="far fa-search"></i></button>#}
+{#        </span>#}
+{#      </div>#}
+{#    </form>#}
+{#    <!-- /.search form -->#}
+{##}
+{#    <!-- sidebar menu: : style can be found in sidebar.less -->#}
+{#    <ul class="sidebar-menu">#}
+{#      {% for level0 in g.menu %}#}
+{#        <li class="header">{{ level0.label }}</li>#}
+{#        {% for level1 in level0.active_entries %}#}
+{#          {% if level1.entries %}#}
+{#            <li class="treeview"><a href="#"><i#}
+{#                class="far fa-{{ level1.icon }}"></i><span>{{ level1.label }}</span></a>#}
+{#              <ul class="treeview-menu">#}
+{#                {% for level2 in level1.active_entries %}#}
+{#                  <li><a href="{{ level2.url }}"><i#}
+{#                      class="far fa-{{ level2.icon }}"></i> {{ level2.label }}#}
+{#                  </a>#}
+{#                  </li>#}
+{#                {% endfor %}#}
+{#              </ul>#}
+{#            </li>#}
+{#          {% else %}#}
+{#            <li><a href="{{ level1.url }}"><i#}
+{#                class="far fa-{{ level1.icon }}" style="width: 1.2em;"></i>#}
+{#              <span>{{ level1.label }}</span></a>#}
+{#            </li>#}
+{#          {% endif %}#}
+{#        {% endfor %}#}
+{#      {% endfor %}#}
+{#    </ul>#}
+{#  </section>#}
+{#</aside>#}

@@ -1,0 +1,82 @@
+{#<header class="main-header">#}
+{##}
+{#  <a href="{{ url_for("main.home") }}" class="logo">#}
+{#    <!-- mini logo for sidebar mini 50x50 pixels -->#}
+{#    <span class="logo-mini"><b>L</b>SU</span>#}
+{#    <!-- logo for regular state and mobile devices -->#}
+{#    <span class="logo-lg"><b>Lab&amp;Co</b> SU</span> </a>#}
+{##}
+{#  <!-- Header Navbar: style can be found in header.less -->#}
+{#  <nav class="navbar navbar-static-top" role="navigation">#}
+{#    <!-- Sidebar toggle button-->#}
+{#    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">#}
+{#      <span class="sr-only">Toggle navigation</span> </a>#}
+{##}
+{#    <!-- Navbar Right Menu -->#}
+{#    <div class="navbar-custom-menu">#}
+{#      <ul class="nav navbar-nav">#}
+{##}
+{#        <li>#}
+{#          <a href="{{ url_for("main.contacts") }}" title="Mes contacts"> <i#}
+{#              class="far fa-lg fa-heart"></i> </a>#}
+{#        </li>#}
+{##}
+{#        <li>#}
+{#          <a href="{{ url_for("demandes.late_tasks") }}"#}
+{#              title="Mes tâches en retard"> <i class="far fa-lg fa-exclamation-triangle"></i>#}
+{#            {% if g.current_user.nb_taches_retard() %}#}
+{#              <span#}
+{#                  class="label label-danger">{{ g.current_user.nb_taches_retard() }}</span>#}
+{#            {% endif %}#}
+{#          </a>#}
+{#        </li>#}
+{##}
+{#        <li>#}
+{#          <a href="{{ url_for("demandes.tasks") }}" title="Mes tâches"> <i#}
+{#              class="far fa-lg fa-check-square"></i>#}
+{#            {% if g.current_user.nb_taches() %}#}
+{#              <span#}
+{#                  class="label label-warning">{{ g.current_user.nb_taches() }}</span>#}
+{#            {% endif %}#}
+{#          </a>#}
+{#        </li>#}
+{##}
+{#        <li>#}
+{#          <a href="{{ url_for("main.timeline") }}" title="Mes notifications"> <i#}
+{#              class="far fa-lg fa-bullhorn"></i>#}
+{#            {% if g.current_user.nb_notifications_non_vues() %}#}
+{#              <span#}
+{#                  class="label label-success">{{ g.current_user.nb_notifications_non_vues() }}</span>#}
+{#            {% endif %}#}
+{#          </a>#}
+{#        </li>#}
+{##}
+{#        <!-- User Account: style can be found in dropdown.less -->#}
+{#        <li class="dropdown user user-menu">#}
+{#          <a href="#" class="dropdown-toggle" data-toggle="dropdown">#}
+{#            <i class="far fa-lg fa-user"></i>#}
+            {#           <img#}
+            {#            src="/static/img/anonymous-160x160.png" class="user-image"#}
+            {#            alt="User Image"/>#}
+{#            <span#}
+{#                class="hidden-xs">{{ g.current_user.full_name }}</span>#}
+{#          </a>#}
+{##}
+{#          <ul class="dropdown-menu">#}
+{#            <li style="height: 1em;"></li>#}
+{#            <li><a href="{{ url_for(g.current_user) }}">Mon profil#}
+{#              utilisateur</a></li>#}
+{#            <li><a href="{{ url_for("directory.preferences") }}">Préférences</a>#}
+{#            </li>#}
+{#            <li role="separator" class="divider"></li>#}
+{#            {% if g.current_user.has_role("alc") %}#}
+{#              <li><a href="/switch">Changer d'utilisateur</a></li>#}
+{#            {% endif %}#}
+{#            <li><a href="{{ url_for("auth.login") }}">Déconnexion</a></li>#}
+{#          </ul>#}
+{#        </li>#}
+{#      </ul>#}
+{#    </div>#}
+{##}
+{#  </nav>#}
+{#</header>#}

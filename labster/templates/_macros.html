@@ -1,0 +1,111 @@
+{% macro table_demandes(demandes) %}
+  <table class="table table-hover">
+    <tbody>
+    <tr>
+      <th width="10%">Date</th>
+      <th width="5%">Type</th>
+      <th width="50%">Intitulé</th>
+      <th width="35%">État</th>
+    </tr>
+
+    {% for demande in demandes %}
+      <tr>
+        <td>{{ demande.created_at.strftime("%d/%m/%Y") }}</td>
+        <td>{{ type(demande) }}</td>
+        <td><a href="{{ url_for(demande) }}">{{ demande.nom }}</a></td>
+        <td>{{ demande.get_workflow().state.label }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endmacro %}
+
+{% macro table_demandes_detaillees(demandes) %}
+  <table class="table table-hover">
+    <tbody>
+    <tr>
+      <th>Date&nbsp;création</th>
+      <th>Type</th>
+      <th>Intitulé</th>
+      <th>Porteur</th>
+      <th>Gestionnaire</th>
+      <th>Laboratoire</th>
+      <th>Contact&nbsp;DR&amp;I</th>
+      {% if not g.current_user.has_role("recherche") %}
+        <th>Etat</th>
+      {% endif %}
+      <th>Prochaine&nbsp;action</th>
+      <th>Par</th>
+      <th></th>
+    </tr>
+
+    {% for demande in demandes %}
+      {% set workflow = demande.get_workflow(g.current_user) %}
+      <tr>
+        <td>{{ demande.created_at.strftime("%d/%m/%Y") }}</td>
+        <td>{{ type(demande) }}</td>
+        <td><a href="{{ url_for(demande) }}">{{ demande.nom }}</a>
+        </td>
+        <td>{# FIXME #}
+          {% if demande.porteur %}
+            <a
+                href="{{ url_for(demande.porteur) }}">{{ demande.porteur.full_name }}</a>{% endif %}
+        </td>
+        <td>{# FIXME #}
+          {% if demande.gestionnaire %}
+            <a
+                href="{{ url_for(demande.gestionnaire) }}">{{ demande.gestionnaire.full_name }}</a>{% endif %}
+        </td>
+        <td><a
+            href="{{ url_for(demande.structure) }}">{{ demande.structure.sigle_ou_nom }}</a>
+        </td>
+        <td>{# FIXME #}
+          {% if demande.contact_dgrtt %}
+            <a
+                href="{{ url_for(demande.contact_dgrtt) }}">{{ demande.contact_dgrtt.full_name }}</a>{% endif %}
+        </td>
+        {% if not g.current_user.has_role("recherche") %}
+          <td>{{ demande.get_state().label_short }}</td>
+        {% endif %}
+        <td>{{ demande.get_state().next_action }}</td>
+        <td>
+          {% for owner in workflow.current_owners() %}<a
+              href="{{ url_for(owner) }}">{{ owner.full_name }}</a>
+            {%- if not loop.last -%}, {% endif %}
+          {% endfor %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endmacro %}
+
+{% macro timing(demande) %}
+  {% if demande.wf_retard >= 3 %}
+    <span class="label label-danger"><span class="far fa-clock"></span></span>
+  {% elif demande.wf_retard > 0 %}
+    <span class="label label-warning"><span class="far fa-clock"></span></span>
+  {% else %}
+    <span class="label label-success"><span class="far fa-clock"></span></span>
+  {% endif %}
+{% endmacro %}
+
+{% macro type(demande) %}
+  <i class="{{ demande.icon_class }}"></i>
+{% endmacro %}
+
+
+{% macro flashed_messages() %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        {% if category == 'message' %}
+          {% set category = 'success' %}
+        {% endif %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+{% endmacro %}
