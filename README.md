@@ -22,6 +22,8 @@ La version du code que vous consultez actuellement est la version "3.0" de l'app
 
 Lab&Co peut être déployé dans votre établissement, après connexion à son annuaire LDAP et adaptation des modèles et des workflows à vos processus métiers.
 
+Contactez-nous à: [contact@abilian.com](mailto:contact@abilian.com) pour toute demande d'information.
+
 
 ## Développement
 
@@ -31,12 +33,12 @@ Lab&Co peut être déployé dans votre établissement, après connexion à son a
 
 2) Installer Poetry <https://github.com/sdispater/poetry>
 
-2) Dans `/etc/hosts`, faire pointer `labster.local` sur `localhost`.
+3) Dans `/etc/hosts`, faire pointer `labster.local` sur `localhost`.
 
-3) Tapper:
+4) Tapper:
 
-    poetry install
-    ( cd front && yarn )
+        poetry install
+        ( cd front && yarn )
 
 
 ### Comment développper
