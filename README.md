@@ -27,6 +27,21 @@ Contactez-nous à: [contact@abilian.com](mailto:contact@abilian.com) pour toute 
 
 ## Développement
 
+### Installer en 1 ligne
+
+Si votre machine de développement est "raisonnablement" configurée, vous pouvez installer Lab&Co localement en une ligne avec la commande:
+
+    ./install.py
+
+De manière alternative, si vous avez [Poetry](https://poetry.eustace.io/) ou [Pipenv](https://github.com/pypa/pipenv) installés, vous pouvez tapper:
+    
+    poetry install
+    
+ou:
+
+    pipenv install
+
+
 ### Installer un environnement de développement
 
 1) Créer et activer un virtualenv (Python 3.7 pour l'instant)

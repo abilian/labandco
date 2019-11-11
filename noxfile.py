@@ -10,5 +10,5 @@ def tests(session):
 @nox.session
 def lint(session):
     session.run("poetry", "install", external=True)
-    session.run("flake8")
+    session.run("flake8", "labster")
     session.run("mypy", "labster")
