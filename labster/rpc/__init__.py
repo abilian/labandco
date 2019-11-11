@@ -21,6 +21,7 @@ from jsonschema.validators import validator_for
 from werkzeug.exceptions import Forbidden, Unauthorized
 
 from labster.auth import AuthContext
+from labster.rpc.registry import register_submodules
 from labster.types import JSON
 
 blueprint = Blueprint("rpc", __name__, url_prefix="/rpc")
@@ -33,23 +34,13 @@ validator = validator_class(schema)
 
 @blueprint.record
 def configure(state):
-    from . import (
-        roles,
-        structures,
-        contacts,
-        membres,
-        demande,
-        demandes,
-        users,
-        home,
-        forms,
-        home_boxes,
-    )
+    register_submodules()
 
 
 @route("/", methods=["POST"])
 def index(app: Flask, request: FlaskRequest, auth: AuthContext):
-    if not auth.current_user.is_authenticated:
+    user = auth.current_user
+    if user and not user.is_authenticated:
         raise Unauthorized()
 
     req = request.get_data(as_text=True)

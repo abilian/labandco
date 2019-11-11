@@ -5,17 +5,15 @@
 </template>
 
 <script>
-import axios from "axios";
+import Vue from "vue";
+import rpc from "./rpc";
 
 export default {
   created() {
-    const url = "/v3/api/ui-context";
-    axios.get(url).then(response => {
-      const data = response.data;
+    Vue.$storage.clear();
 
-      this.$storage.set("user", data.user);
-      this.$storage.set("menu", data.menu);
-
+    rpc("get_user_context", []).then(data => {
+      Vue.$storage.set("user_context", data);
       window.location.replace("/");
     });
   },

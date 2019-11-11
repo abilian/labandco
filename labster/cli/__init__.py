@@ -26,12 +26,12 @@ def cli():
 
 
 def register_module(namespace, module_name):
+    fqn = "labster.cli." + module_name
     try:
-        fqn = "labster.cli." + module_name
         module = import_string(fqn)
         namespace.update(vars(module))
     except ImportError:
-        pass
+        print(f"Failed to import module: {fqn}")
 
 
 def register_commands(app):

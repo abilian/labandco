@@ -9,7 +9,8 @@
         <box-demandes
           id="archives"
           :title="box.title"
-          :url="box.api_url"
+          :scope="box.scope"
+          :archives="box.archives"
           :key="index"
         >
         </box-demandes>
@@ -19,6 +20,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import MessageDgrtt from "../../components/visual/MessageDgrtt";
 import BoxDemandes from "../../components/grids/box-demandes";
 import BlocDeposerDemande from "./BlocDeposerDemande";
@@ -26,17 +28,10 @@ import BlocDeposerDemande from "./BlocDeposerDemande";
 export default {
   components: { MessageDgrtt, BoxDemandes, BlocDeposerDemande },
 
-  data() {
-    return {
-      boxes: [],
-    };
-  },
-
-  created() {
-    this.$root.rpc("get_boxes", [], result => {
-      this.boxes = result;
-      console.log(this.boxes);
-    });
+  computed: {
+    boxes() {
+      return Vue.$storage.get("user_context").home_boxes;
+    },
   },
 };
 </script>

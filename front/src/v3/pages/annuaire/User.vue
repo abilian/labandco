@@ -168,17 +168,18 @@
 </template>
 
 <script>
-import _ from "lodash";
 import RoleList from "./components/RoleList";
+import { ContextFetcher } from "../../mixins";
 
 export default {
   props: { id: String },
+
+  mixins: [ContextFetcher],
 
   components: { RoleList },
 
   data() {
     return {
-      ready: false,
       path: [["Utilisateurs", "/annuaire/users"]],
       user: { active: true },
       structure_affectation: null,
@@ -195,13 +196,11 @@ export default {
     },
   },
 
-  created() {
-    const args = [this.id];
-    this.$root.rpc("get_user", args, result => {
-      _.assign(this, result);
+  methods: {
+    whenReady() {
       this.title = this.user.prenom + " " + this.user.nom;
       this.ready = true;
-    });
+    },
   },
 };
 </script>

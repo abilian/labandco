@@ -6,6 +6,7 @@ import uuid
 from pprint import pprint
 
 import pytest
+from flask import url_for
 
 from labster.di import injector
 from labster.domain2.model.structure import Structure, StructureRepository
@@ -13,7 +14,6 @@ from labster.domain2.model.type_structure import UN
 from labster.domain.models.profiles import Profile
 from labster.domain.models.unites import LABORATOIRE, OrgUnit
 from labster.domain.services.roles import ROLES
-from labster.util import url_for
 
 IGNORED_ENDPOINTS = ["auth.callback", "auth.backdoor"]
 

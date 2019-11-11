@@ -5,7 +5,7 @@
         <h3 class="box-title">Déposer une nouvelle demande</h3>
       </div>
 
-      <div v-if="ready" class="box-body">
+      <div class="box-body">
         <div class="row">
           <div v-for="button in buttons" class="col-md-6 col-lg-4">
             <router-link
@@ -24,12 +24,12 @@
           </div>
         </div>
       </div>
-      <div v-else>Chargement en cours...</div>
     </div>
   </div>
 </template>
 
 <script>
+import Vue from "vue";
 import fp from "lodash/fp";
 
 const BUTTONS = [
@@ -70,24 +70,10 @@ const BUTTONS = [
 export default {
   name: "BlocDeposerDemande",
 
-  data() {
-    return {
-      ready: false,
-      buttons: [],
-    };
-  },
-
-  created() {
-    this.fetchData();
-  },
-
-  methods: {
-    fetchData() {
-      this.$root.rpc("get_home_data", [], result => {
-        const demande_types = result.demande_types;
-        this.buttons = fp.filter(b => demande_types.includes(b.type))(BUTTONS);
-        this.ready = true;
-      });
+  computed: {
+    buttons() {
+      const types_demandes = Vue.$storage.get("user_context").types_demandes;
+      return fp.filter(b => types_demandes.includes(b.type), BUTTONS);
     },
   },
 };

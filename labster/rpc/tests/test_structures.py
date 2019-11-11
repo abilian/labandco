@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from labster.domain2.model.structure import Structure
 from labster.domain2.model.type_structure import UN
-
-from ..structures import sg_get_structure
+from labster.rpc.queries.structures import sg_get_structure
 
 
 def test_structures(structure_repo):

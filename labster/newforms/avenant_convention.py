@@ -8,7 +8,7 @@ from labster.newforms.base import HTML, BooleanField, DateField, FieldSet, \
 #
 # Fieldsets
 #
-from labster.newforms.common import contributeurs, laboratoire, porteur, \
+from labster.newforms.common import contributeurs, laboratoire, \
     structures_concernees
 from labster.newforms.convention import CHOICES2
 

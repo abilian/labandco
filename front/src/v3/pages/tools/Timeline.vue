@@ -2,10 +2,10 @@
   <ul class="timeline">
     <template v-for="g in groups">
       <li class="time-label">
-        <span class="bg-red">{{ g[0] }}</span>
+        <span class="bg-red">{{ g[0].date }}</span>
       </li>
 
-      <li v-for="notification in g[1]">
+      <li v-for="notification in g">
         <i v-bind:class="[notification.demande.icon_class, 'bg-blue']"></i>
 
         <div class="timeline-item">
@@ -38,27 +38,26 @@
 </template>
 
 <script>
-import axios from "axios";
-import _ from "lodash";
-
-const URL = "/v3/api/user/timeline";
+import fp from "lodash/fp";
+import { ContextFetcher } from "../../mixins";
 
 export default {
-  name: "Timeline",
+  mixins: [ContextFetcher],
 
   data() {
     return {
+      notifications: [],
       groups: [],
     };
   },
-  created() {
-    axios.get(URL).then(response => {
-      const data = response.data;
-      const groups1 = _.groupBy(data.notifications, "date");
-      const groups2 = _.map(groups1, (value, key) => [key.slice(0, 16), value]);
-      const groups3 = _.sortBy(groups2);
-      this.groups = groups3;
-    });
+
+  methods: {
+    whenReady() {
+      this.groups = fp.flow(
+        fp.groupBy("date"),
+        fp.sortBy("date")
+      )(this.notifications);
+    },
   },
 };
 </script>

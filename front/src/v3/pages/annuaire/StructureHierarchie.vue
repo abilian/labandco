@@ -173,17 +173,19 @@ export default {
 
   methods: {
     fetchData() {
-      this.$root.rpc("sg_get_parents_options", [this.ou.id], result => {
+      this.$root.rpc("sg_get_parents_options", [this.ou.id]).then(result => {
         this.parentsOptions = result;
       });
 
-      this.$root.rpc("sg_get_children_options", [this.ou.id], result => {
+      this.$root.rpc("sg_get_children_options", [this.ou.id]).then(result => {
         this.childrenOptions = result;
       });
 
-      this.$root.rpc("sg_get_possible_child_types", [this.ou.id], result => {
-        this.typeOptions = result;
-      });
+      this.$root
+        .rpc("sg_get_possible_child_types", [this.ou.id])
+        .then(result => {
+          this.typeOptions = result;
+        });
     },
 
     submitModal(type) {
@@ -193,10 +195,9 @@ export default {
         args = [this.ou.id, this.createModel];
         const msg = "Sous-structure créée.";
         if (confirm(`Voulez-vous vraiment ajouter cette sous-structure?`)) {
-          const cb = result => {
+          this.$root.rpc("sg_create_child_structure", args, msg).then(() => {
             EventBus.$emit("refresh-structure");
-          };
-          this.$root.rpc("sg_create_child_structure", args, cb, msg);
+          });
         }
         this.$bvModal.hide(type);
         return;
@@ -209,10 +210,9 @@ export default {
       }
       if (confirm(`Voulez-vous vraiment ajouter ce lien hiérarchique?`)) {
         const msg = "Lien ajouté.";
-        const cb = result => {
+        this.$root.rpc("sg_add_edge", args, msg).then(() => {
           EventBus.$emit("refresh-structure");
-        };
-        this.$root.rpc("sg_add_edge", args, cb, msg);
+        });
       }
 
       this.$bvModal.hide(type);
@@ -222,10 +222,9 @@ export default {
       if (confirm(`Voulez-vous vraiment supprimer le lien hiérarchique?`)) {
         const args = [parentId, childId];
         const msg = "Lien supprimé.";
-        const cb = result => {
+        this.$root.rpc("sg_delete_edge", args, msg).then(() => {
           EventBus.$emit("refresh-structure");
-        };
-        this.$root.rpc("sg_delete_edge", args, cb, msg);
+        });
       }
     },
   },

@@ -16,7 +16,7 @@
           />
         </div>
         <div class="info">
-          <a class="d-block">{{ user.name }}</a>
+          <a class="d-block">{{ user.prenom }} {{ user.nom }}</a>
         </div>
       </div>
 
@@ -81,10 +81,10 @@
 export default {
   computed: {
     user() {
-      return this.$storage.get("user");
+      return this.$storage.get("user_context").user;
     },
     menu() {
-      return this.$storage.get("menu");
+      return this.$storage.get("user_context").menu;
     },
   },
 };

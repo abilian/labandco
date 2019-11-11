@@ -2,19 +2,27 @@ import axios from "axios";
 
 const DEBUG = true;
 
-export function call(methodName, args, cb = null, msg = null) {
-  this.id = this.id || 0;
-  if (DEBUG) {
-    console.log(`rpc call (${this.id}):`, methodName, args);
+export function call(methodName, args, msg = null) {
+  console.log("this (in rpc) = ", this);
+
+  let id;
+  if (this) {
+    id = this.id = (this.id || 0) + 1;
+    if (DEBUG) {
+      console.log(`rpc call (${this.id}):`, methodName, args);
+    }
+  } else {
+    id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
   }
 
-  axios
-    .post("/rpc/", {
-      jsonrpc: "2.0",
-      method: methodName,
-      params: args,
-      id: this.id++,
-    })
+  const data = {
+    jsonrpc: "2.0",
+    method: methodName,
+    params: args,
+    id: id,
+  };
+  return axios
+    .post("/rpc/", data)
     .then(response => {
       const data = response.data;
       if (DEBUG) {
@@ -24,26 +32,29 @@ export function call(methodName, args, cb = null, msg = null) {
           console.log(`rpc error (${response.data.id}):`, data.error);
         }
       }
-      if (cb) {
-        cb(data.result);
-      }
-      if (msg) {
+      return data.result;
+    })
+    .then(result => {
+      if (this && msg) {
         this.$root.$bvToast.toast(msg, {
           title: "OK",
           variant: "success",
           solid: true,
         });
       }
+      return result;
     })
     .catch(error => {
       console.log(error);
-      const msg = `Désolé, une erreur est survenue: ${error}`;
-      this.$root.$bvToast.toast(msg, {
-        title: "Oups",
-        variant: "danger",
-        solid: true,
-        noAutoHide: true,
-      });
+      if (this) {
+        const msg = `Désolé, une erreur est survenue: ${error}`;
+        this.$root.$bvToast.toast(msg, {
+          title: "Oups",
+          variant: "danger",
+          solid: true,
+          noAutoHide: true,
+        });
+      }
     });
 }
 

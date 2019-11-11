@@ -11,10 +11,11 @@ from abilian.core.celery import FlaskLoader as CeleryBaseLoader
 from flask import Flask
 from flask_injector import FlaskInjector
 from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from werkzeug.wsgi import ClosingIterator
 
 from .config import get_config
-from .di import injector, modules
+from .di import injector
 from .extensions import redis
 from .logging import init_logging
 
@@ -73,7 +74,7 @@ def init_sentry(app: Flask) -> None:
     if not dsn:
         return
 
-    sentry_sdk.init(dsn=dsn, integrations=[FlaskIntegration()])
+    sentry_sdk.init(dsn=dsn, integrations=[FlaskIntegration(), SqlalchemyIntegration()])
 
 
 # loader to be used by celery workers

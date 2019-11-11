@@ -8,40 +8,45 @@
       </div>
 
       <div class="card-body">
-        <div v-for="category in category_names" class="mb-5">
-          <h3 class="mt-3 mb-3">{{ category }}</h3>
+        <template v-if="ready">
+          <div v-for="category in category_names" class="mb-5">
+            <h3 class="mt-3 mb-3">{{ category }}</h3>
 
-          <div v-for="entry in entriesForCategory(category)">
-            <h4 class="mt-3" v-b-toggle="'accordion-' + entry.id">
-              <b-button variant="default">
-                <span class="when-closed"><i class="far fa-eye"></i></span>
-                <span class="when-opened"
-                  ><i class="far fa-eye-slash"></i
-                ></span>
-              </b-button>
+            <div v-for="entry in entriesForCategory(category)">
+              <h4 class="mt-3" v-b-toggle="'accordion-' + entry.id">
+                <b-button variant="default">
+                  <span class="when-closed"><i class="far fa-eye"></i></span>
+                  <span class="when-opened"
+                    ><i class="far fa-eye-slash"></i
+                  ></span>
+                </b-button>
 
-              {{ entry.title }}
-            </h4>
+                {{ entry.title }}
+              </h4>
 
-            <b-collapse
-              :id="'accordion-' + entry.id"
-              accordion="my-accordion"
-              role="tabpanel"
-            >
-              <div v-html="entry.body" class="faq-body"></div>
-            </b-collapse>
+              <b-collapse
+                :id="'accordion-' + entry.id"
+                accordion="my-accordion"
+                role="tabpanel"
+              >
+                <div v-html="entry.body" class="faq-body"></div>
+              </b-collapse>
+            </div>
           </div>
-        </div>
 
-        <hr />
+          <hr />
 
-        <h3>Vous n'avez pas trouvé la réponse à votre question ?</h3>
+          <h3>Vous n'avez pas trouvé la réponse à votre question ?</h3>
 
-        <p>
-          <router-link to="/faq/message" class="btn btn-primary">
-            <i class="far fa-question"></i> Poser votre question ou faire votre
-            suggestion à la DR&I.
-          </router-link>
+          <p>
+            <router-link to="/faq/message" class="btn btn-primary">
+              <i class="far fa-question"></i> Poser votre question ou faire
+              votre suggestion à la DR&I.
+            </router-link>
+          </p>
+        </template>
+        <p v-else>
+          Chargement en cours...
         </p>
       </div>
     </div>
@@ -49,12 +54,12 @@
 </template>
 
 <script>
-import axios from "axios";
-import _ from "lodash";
-
-const URL = "/v3/api/faq";
+import fp from "lodash/fp";
+import { ContextFetcher } from "../../mixins";
 
 export default {
+  mixins: [ContextFetcher],
+
   data() {
     return {
       categories: [],
@@ -64,18 +69,14 @@ export default {
   },
 
   methods: {
+    whenReady() {
+      this.categories = fp.groupBy("category", this.entries);
+      this.category_names = fp.keys(this.categories);
+    },
+
     entriesForCategory(category) {
       return this.categories[category];
     },
-  },
-
-  created() {
-    axios.get(URL).then(response => {
-      const data = response.data;
-      this.entries = data.entries;
-      this.categories = _.groupBy(data.entries, "category");
-      this.category_names = _.keys(this.categories);
-    });
   },
 };
 </script>

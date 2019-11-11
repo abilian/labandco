@@ -3,12 +3,12 @@ import nox
 
 @nox.session
 def tests(session):
-    session.install('pytest')
-    session.run('pytest')
+    session.run("poetry", "install", external=True)
+    session.run("pytest")
 
 
 @nox.session
 def lint(session):
-    session.install('flake8')
-    session.run('flake8')
-
+    session.run("poetry", "install", external=True)
+    session.run("flake8")
+    session.run("mypy", "labster")

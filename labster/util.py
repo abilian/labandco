@@ -1,16 +1,22 @@
 from __future__ import annotations
 
 import time
+import unicodedata
 from functools import singledispatch, wraps
+from typing import Iterable, List
 
 import flask
+from flask import g
 from flask_sqlalchemy import connection_stack
 
-from labster.domain2.model.profile import Profile
 from labster.domain2.model.structure import Structure
 from labster.domain.models.demandes import Demande
-from labster.domain.models.profiles import Profile as OldProfile
+from labster.domain.models.profiles import Profile
 from labster.domain.models.unites import OrgUnit
+
+
+def get_current_user() -> Profile:
+    return g.current_user
 
 
 @singledispatch
@@ -43,9 +49,9 @@ def url_for_demande(demande: Demande, **kw) -> str:
 #
 # Old stuff. Remove when ready.
 #
-@url_for.register(OldProfile)
-def url_for_old_profile(profile: OldProfile, **kw) -> str:
-    return flask.url_for("main.home", _anchor=f"/annuaire/users/{profile.id}", **kw)
+# @url_for.register(OldProfile)
+# def url_for_old_profile(profile: OldProfile, **kw) -> str:
+#     return flask.url_for("main.home", _anchor=f"/annuaire/users/{profile.id}", **kw)
 
 
 @url_for.register(OrgUnit)
@@ -53,6 +59,20 @@ def url_for_org_unit(org_unit: OrgUnit, **kw) -> str:
     return flask.url_for(
         "main.home", _anchor=f"/annuaire/structures/{org_unit.id}", **kw
     )
+
+
+def sort_by_name(iterable: Iterable) -> List:
+    result = list(iterable)
+    if not result:
+        return []
+    if hasattr(result[0], "prenom"):
+        return sorted(result, key=lambda x: (x.nom, x.prenom))
+    else:
+        return sorted(result, key=lambda x: x.name)
+
+
+def strip_accents(text: str) -> str:
+    return unicodedata.normalize("NFD", text).encode("ascii", "ignore").decode("utf-8")
 
 
 #

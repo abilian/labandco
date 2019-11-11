@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-import axios from "axios";
+import rpc from "../rpc";
 
 import Home from "../pages/home/Home";
 import Tasks from "../pages/home/Tasks";
@@ -84,7 +84,7 @@ const router = new Router({
 
     // Demandes
     {
-      name: "nouvelle_demande",
+      name: "demande.new",
       path: "/demandes/new/:type",
       component: NouvelleDemande,
       props: true,
@@ -103,6 +103,7 @@ const router = new Router({
 
     // Faq
     {
+      name: "faq",
       path: "/faq",
       component: Faq,
     },
@@ -113,6 +114,7 @@ const router = new Router({
 
     // Tools
     {
+      name: "timeline",
       path: "/timeline",
       component: Timeline,
     },
@@ -148,15 +150,9 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  const url = "/v3/api/ui-context";
-  let user = Vue.$storage.get("user");
-
-  if (!user) {
-    axios.get(url).then(response => {
-      const data = response.data;
-
-      Vue.$storage.set("user", data.user);
-      Vue.$storage.set("menu", data.menu);
+  if (!Vue.$storage.has("user_context")) {
+    rpc("get_user_context", []).then(data => {
+      Vue.$storage.set("user_context", data);
       next();
     });
   } else {

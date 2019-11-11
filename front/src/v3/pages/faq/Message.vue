@@ -34,8 +34,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   data() {
     return {
@@ -45,24 +43,15 @@ export default {
 
   methods: {
     submit() {
-      const payload = {
+      const args = {
         message: this.message,
       };
-      axios
-        .post("/v3/api/faq", payload)
-        .then(() => {
-          this.$bvToast.toast("Votre message a été transmis à la DR&I", {
-            title: "Succès",
-            variant: "success",
-          });
-          this.$router.push("/faq");
-        })
-        .catch(() => {
-          this.$bvToast.toast("Une erreur est survenue, désolé.", {
-            title: "Une erreur est survenue, désolé.",
-            variant: "danger",
-          });
-        });
+
+      // FIXME
+      const msg = "Votre message a été transmis à la DR&I";
+      this.$root
+        .rpc("send_message", args, msg)
+        .then(() => this.$router.push("/faq"));
     },
 
     cancel() {

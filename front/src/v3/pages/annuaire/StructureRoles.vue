@@ -86,11 +86,11 @@ export default {
       }
 
       const args = [this.ou.id];
-      this.$root.rpc("get_roles", args, result => {
+      this.$root.rpc("get_roles", args).then(result => {
         this.roles = result;
         this.ready = true;
       });
-      this.$root.rpc("get_role_selectors", args, result => {
+      this.$root.rpc("get_role_selectors", args).then(result => {
         this.selectors = result;
       });
     },
@@ -114,14 +114,9 @@ export default {
       }
       const args = [this.ou.id, values];
       const msg = "Rôles mis à jour";
-      this.$root.rpc(
-        "update_roles",
-        args,
-        result => {
-          EventBus.$emit("refresh-structure");
-        },
-        msg
-      );
+      this.$root.rpc("update_roles", args, msg).then(result => {
+        EventBus.$emit("refresh-structure");
+      });
     },
   },
 };

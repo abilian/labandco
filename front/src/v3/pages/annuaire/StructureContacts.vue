@@ -64,7 +64,7 @@ export default {
 
   methods: {
     fetchData() {
-      this.$root.rpc("get_contacts", [this.ou.id], result => {
+      this.$root.rpc("get_contacts", [this.ou.id]).then(result => {
         this.contacts = result;
 
         for (let contact of this.contacts) {
@@ -78,7 +78,7 @@ export default {
       if (!this.ou.editable) {
         return;
       }
-      this.$root.rpc("get_membres_dri", [], result => {
+      this.$root.rpc("get_membres_dri", []).then(result => {
         this.membresDgrtt = result;
         this.editing = true;
       });
@@ -91,14 +91,16 @@ export default {
     save() {
       const args = [this.ou.id, this.selected];
       const msg = "Contacts mis à jour";
-      this.$root.rpc(
-        "update_contacts",
-        args,
-        result => {
+      this.$root
+        .rpc(
+          "update_contacts",
+          args,
+
+          msg
+        )
+        .then(result => {
           EventBus.$emit("refresh-structure");
-        },
-        msg
-      );
+        });
     },
   },
 };

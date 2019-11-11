@@ -113,13 +113,15 @@ ADMIN = {
 }
 
 
-def inject_menu():
-    user = g.current_user
-
+def get_menu(user):
     if not user:
-        g.menu = []
-        return
+        return []
 
     menus = [Menu(MAIN), Menu(ANNUAIRES), Menu(ADMIN)]
 
-    g.menu = [m for m in menus if not m.is_empty()]
+    return [m for m in menus if not m.is_empty()]
+
+
+def inject_menu():
+    user = g.current_user
+    g.menu = get_menu(user)

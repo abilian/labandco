@@ -6,8 +6,8 @@ from labster.domain2.model.profile import Profile
 from labster.domain2.model.structure import Structure
 from labster.domain2.model.type_structure import UN
 from labster.domain2.services.roles import Role
-
-from ..roles import add_roles, delete_role, get_role_selectors, get_roles
+from labster.rpc.commands.roles import add_roles, delete_role
+from labster.rpc.queries.roles import get_role_selectors, get_roles
 
 
 def test_roles(structure_repo, profile_repo):

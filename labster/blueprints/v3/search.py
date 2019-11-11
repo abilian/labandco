@@ -12,11 +12,11 @@ from flask import current_app, request
 from marshmallow import Schema, fields
 from whoosh.qparser import DisMaxParser
 
-from labster.blueprints.util import get_current_user
-from labster.blueprints.v3.demandes.rbac import has_read_access
 from labster.domain.models.demandes import Demande
 from labster.domain.models.faq import FaqEntry
 from labster.domain.models.roles import RoleType
+from labster.rbac import has_read_access
+from labster.util import get_current_user
 
 from . import route
 

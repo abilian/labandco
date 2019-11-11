@@ -12,12 +12,12 @@ from werkzeug.utils import import_string
 
 from labster.di import injector
 from labster.persistence import Persistence
+from labster.util import url_for
 
 from . import search
 from .bus import register_callback
 from .menu import inject_menu
 from .security import login_user
-from .util import url_for
 
 BLUEPRINTS = [
     "labster.rpc",

@@ -137,10 +137,9 @@ export default {
         model: this.model,
       };
       const msg = "Structure mise à jour.";
-      const cb = result => {
+      this.$root.rpc("sg_update_structure", args, msg).then(result => {
         EventBus.$emit("refresh-structure");
-      };
-      this.$root.rpc("sg_update_structure", args, cb, msg);
+      });
 
       // this.editing = false;
     },

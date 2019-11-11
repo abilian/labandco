@@ -7,6 +7,8 @@ from abilian.web.action import Endpoint
 from celery.schedules import crontab
 from flask.cli import load_dotenv
 
+load_dotenv()
+
 CONTENT_SECURITY_POLICY = {
     "default-src": ["'self'"],
     "script-src": [
@@ -154,20 +156,23 @@ class ProdConfig(DefaultConfig):
     # EMAIL_CC = ['X']
 
 
+CONFIG_MAP = {
+    "DEMO": DemoConfig,
+    "PREPROD": PreprodConfig,
+    "TIRETDEV": PreprodConfig,
+    "PRODUCTION": ProdConfig,
+    "DEV": DevConfig,
+}
+
+
 def get_config():
     env = os.environ
     name = env.get("APP_NAME", "DEV")
 
-    if name == "DEMO":
-        config = DemoConfig()
-    elif name in ("PREPROD", "TIRETDEV"):
-        config = PreprodConfig()
-    elif name == "PRODUCTION":
-        config = ProdConfig()
-    elif name == "DEV":
-        config = DevConfig()
-    else:
+    config_class = CONFIG_MAP.get(name)
+    if not config_class:
         raise RuntimeError(f"Unknown application name: {name}")
+    config = config_class()
 
     for k, v in os.environ.items():
         if k.startswith("APP_"):

@@ -2,3 +2,6 @@
 front/node_modules
 .pyre
 .vagrant
+.tox
+.nox
+boot

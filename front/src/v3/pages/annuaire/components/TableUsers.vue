@@ -179,14 +179,13 @@ export default {
       // Why wait ? see table_orgs.vue
       await this.sleep(400);
       this.ready = false;
-      let url = this.url + "?page=" + (this.page - 1);
+
+      const args = { page: this.page - 1 };
       if (this.filterKey) {
-        url = url + "&q=" + this.filterKey;
+        args.q = this.filterKey;
       }
 
-      this.$root.rpc("get_users", [], result => {
-        // _.assign(this, result);
-
+      this.$root.rpc("get_users", args).then(result => {
         this.data = result["users"];
         this.total = result["total"];
         if (this.data) {
@@ -197,6 +196,7 @@ export default {
         this.pageCount = Math.ceil(this.total / PAGE_SIZE);
         this.first = (this.page - 1) * PAGE_SIZE + 1;
         this.last = _.min([this.page * PAGE_SIZE, this.total]);
+
         this.ready = true;
       });
     },

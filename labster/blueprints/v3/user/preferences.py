@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from pprint import pprint
-
 from flask import flash, g, request
 
-from labster.blueprints.util import get_current_user
 from labster.extensions import db
+from labster.util import get_current_user
 
 from .. import route
 

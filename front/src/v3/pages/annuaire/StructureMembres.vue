@@ -194,7 +194,7 @@ export default {
       }
 
       const args = [this.ou.id];
-      this.$root.rpc("get_membres", args, result => {
+      this.$root.rpc("get_membres", args).then(result => {
         this.totalRows = result.length;
         callback(result);
       });
@@ -223,7 +223,7 @@ export default {
         return;
       }
       const args = [this.ou.id];
-      this.$root.rpc("get_membres_rattaches_selector", args, result => {
+      this.$root.rpc("get_membres_rattaches_selector", args).then(result => {
         this.selector = result.selector;
         this.editing = true;
       });
@@ -236,14 +236,9 @@ export default {
     save() {
       const args = [this.ou.id, this.selector.value];
       const msg = "Rattachements mis à jour";
-      this.$root.rpc(
-        "update_membres_rattaches",
-        args,
-        result => {
-          EventBus.$emit("refresh-structure");
-        },
-        msg
-      );
+      this.$root.rpc("update_membres_rattaches", args, msg).then(() => {
+        EventBus.$emit("refresh-structure");
+      });
     },
   },
 };

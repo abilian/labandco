@@ -65,7 +65,7 @@
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
             <template slot="button-content"
-              ><i class="far far-user"></i> {{ user.name }}
+              ><i class="far far-user"></i> {{ user.prenom }} {{ user.nom }}
             </template>
 
             <b-dropdown-item :to="{ name: 'user', params: { id: user.id } }"
@@ -101,7 +101,7 @@ export default {
 
   computed: {
     user() {
-      return this.$storage.get("user");
+      return this.$storage.get("user_context").user;
     },
   },
 

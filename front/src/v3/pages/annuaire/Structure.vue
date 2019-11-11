@@ -113,7 +113,7 @@ export default {
       this.ou = null;
 
       const args = [this.id];
-      this.$root.rpc("sg_get_structure", args, result => {
+      this.$root.rpc("sg_get_structure", args).then(result => {
         this.ou = {};
         _.assign(this.ou, result);
         const ou = this.ou;
@@ -139,14 +139,16 @@ export default {
       if (confirm(message)) {
         const args = [this.ou.id];
         const msg = `La structure "${this.ou.nom}" a bien été supprimée.`;
-        this.$root.rpc(
-          "sg_delete_structure",
-          args,
-          result => {
+        this.$root
+          .rpc(
+            "sg_delete_structure",
+            args,
+
+            msg
+          )
+          .then(result => {
             this.$router.push("/annuaire/structures");
-          },
-          msg
-        );
+          });
       }
     },
   },

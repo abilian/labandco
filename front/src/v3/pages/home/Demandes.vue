@@ -3,7 +3,7 @@
     <breadcrumbs title="Mes demandes"></breadcrumbs>
 
     <div id="boxes-demandes">
-      <box-demandes title="Mes demandes" id="index" url="/v3/api/mes_demandes">
+      <box-demandes title="Mes demandes" id="index" scope="mes demandes">
       </box-demandes>
     </div>
   </div>

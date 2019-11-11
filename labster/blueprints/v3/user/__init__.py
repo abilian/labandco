@@ -1,3 +1,3 @@
 from __future__ import annotations
 
-from . import contacts, preferences, timeline
+from . import contacts, preferences

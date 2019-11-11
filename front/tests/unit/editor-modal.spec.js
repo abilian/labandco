@@ -96,7 +96,10 @@ describe("Editing a list of strings", () => {
 
 describe("Editing a list of lists with a str, a number", () => {
   const constants = {
-    REMUNERATION: [["PU/DR", 1320], ["TR CN", 362]],
+    REMUNERATION: [
+      ["PU/DR", 1320],
+      ["TR CN", 362],
+    ],
   };
 
   const wrapper = shallow(EditorModal, {

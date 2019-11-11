@@ -17,21 +17,16 @@
 </template>
 
 <script>
+import Vue from "vue";
 import BoxDemandes from "../../components/grids/box-demandes";
 
 export default {
   components: { BoxDemandes },
 
-  data() {
-    return {
-      boxes: [],
-    };
-  },
-
-  created() {
-    this.$root.rpc("get_boxes", { archives: true }, result => {
-      this.boxes = result;
-    });
+  computed: {
+    boxes() {
+      return Vue.$storage.get("user_context").archives_boxes;
+    },
   },
 };
 </script>

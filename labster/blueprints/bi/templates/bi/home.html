@@ -1,0 +1,190 @@
+{% extends "_container.html" %}
+
+{% macro render_field(field) %}
+
+  <div class="form-group">
+    <label for="" class="col-sm-4 control-label">{{ field.label }}</label>
+    <div class="col-sm-8">
+      {{ field(**kwargs)|safe }}
+      {% if field.errors %}
+        <ul class=errors>
+          {% for error in field.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+
+{% block content %}
+  <div class="box">
+    <div class="box-header with-border">
+      <h3 class="box-title">Statistiques</h3>
+    </div>
+
+    <div class="box-body">
+
+      <div class="row">
+        <div class="col-sm-6">
+          <form action="." class="form-horizontal">
+
+            {{ render_field(form.periode_debut) }}
+
+            {{ render_field(form.periode_fin) }}
+
+            {{ render_field(form.types_demande) }}
+
+            {{ render_field(form.structure) }}
+
+            {{ render_field(form.porteur) }}
+
+            {{ render_field(form.financeurs) }}
+
+            {{ render_field(form.types_recrutement) }}
+
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-8">
+                <button type="submit" class="btn btn-default">Actualiser
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+        <div class="col-sm-6">
+          <h3 style="margin-top: 0; font-weight: bold;">Chiffres clefs</h3>
+
+          <p>Total: {{ nb_total }}</p>
+
+          <p>&nbsp;&nbsp;Dont en cours: {{ nb_en_cours }}</p>
+
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;Dont en édition (après une demande de
+            modification): {{ nb_en_edition }}</p>
+
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;Dont en
+            validation: {{ nb_en_validation }}</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;Dont en vérification
+            DR&amp;I: {{ nb_en_verification }}</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;Dont en instruction
+            DR&amp;I: {{ nb_en_instruction }}</p>
+
+          <p>&nbsp;&nbsp;Dont archivées: {{ nb_archivee }}</p>
+
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;Dont traitement finalisé par la
+            DR&amp;I: {{ nb_traitee }}</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;Dont rejetées par la
+            DR&amp;I: {{ nb_rejetee }}</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;Dont abandonnés: {{ nb_abandonnee }}</p>
+        </div>
+      </div>
+
+      <table class="table table-striped table-bordered bi-table">
+        <thead>
+        <tr>
+          <td width="22%"></td>
+          <td width="13%">Moyenne</td>
+          <td width="13%">Médiane</td>
+          <td width="13%">Ecart-type</td>
+          <td width="13%">Min</td>
+          <td width="13%">Max</td>
+          <td width="13%">Cumul</td>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        {% if stats.conventions.count %}
+          <tr class="bi-subhead">
+            <td colspan="7">Demandes de conventions de recherche
+              ({{ stats.conventions.count }})
+            </td>
+          </tr>
+
+          <tr>
+            <td>Montant (€)</td>
+            {% for x in stats.conventions.montant %}
+              <td style="text-align: right;">{{ "{:,.2f}".format(x).replace(",", "\u00A0").replace('.', ',') }}</td>
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <td>Recrutements prévus</td>
+            {% for x in stats.conventions.recrutements_prev %}
+              <td style="text-align: right;">{{ "{:,.2f}".format(x).replace(",", "\u00A0").replace('.', ',') }}</td>
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <td>Durée prev. (mois)</td>
+            {% for x in stats.conventions.duree %}
+              <td style="text-align: right;">{{ "{:,.2f}".format(x).replace(",", "\u00A0").replace('.', ',') }}</td>
+            {% endfor %}
+          </tr>
+        {% endif %}
+
+        {% if stats.rh.count %}
+          <tr class="bi-subhead">
+            <td colspan="7">Demandes RH ({{ stats.rh.count }})</td>
+          </tr>
+
+          <tr>
+            <td>Durée (mois)</td>
+            {% for x in stats.rh.duree %}
+              <td style="text-align: right;">{{ "{:,.2f}".format(x).replace(",", "\u00A0").replace('.', ',') }}</td>
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <td>Salaire brut mensuel (€)</td>
+            {% for x in stats.rh.salaire_brut_mensuel %}
+              <td style="text-align: right;">{{ "{:,.2f}".format(x).replace(",", "\u00A0").replace('.', ',') }}</td>
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <td>Coût total mensuel (€)</td>
+            {% for x in stats.rh.cout_total_mensuel %}
+              <td style="text-align: right;">{{ "{:,.2f}".format(x).replace(",", "\u00A0").replace('.', ',') }}</td>
+            {% endfor %}
+          </tr>
+        {% endif %}
+
+
+        {% if stats.avenants.count %}
+          <tr class="bi-subhead">
+            <td colspan="7">Avenants convention ({{ stats.avenants.count }})</td>
+          </tr>
+        {% endif %}
+
+        {% if stats.pi_logiciel.count %}
+          <tr class="bi-subhead">
+            <td colspan="7">PI logiciel ({{ stats.pi_logiciel.count }})</td>
+          </tr>
+        {% endif %}
+
+        {% if stats.pi_invention.count %}
+          <tr class="bi-subhead">
+            <td colspan="7">PI invention ({{ stats.pi_invention.count }})</td>
+          </tr>
+        {% endif %}
+
+        <tr>
+          <td colspan="7"></td>
+        </tr>
+
+        <tr>
+          <td class="bi-subhead">Durée de traitement (jours)</td>
+          {% for x in stats.duree_traitement %}
+            <td style="text-align: right;">{{ "{:,.2f}".format(x).replace(",", "\u00A0").replace('.', ',') }}</td>
+          {% endfor %}
+        </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+{% endblock %}

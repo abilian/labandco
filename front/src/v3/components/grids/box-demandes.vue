@@ -175,7 +175,6 @@
 
 <script>
 import _ from "lodash";
-import axios from "axios";
 
 import { tableStorage } from "../tableStorage/tableStorage";
 
@@ -197,7 +196,8 @@ export default {
       required: true,
     },
     title: String,
-    url: String,
+    scope: String,
+    archives: Boolean,
     dgrtt: {
       type: Boolean,
       default: false,
@@ -207,6 +207,7 @@ export default {
   data: function() {
     return {
       ready: false,
+
       old: false, // warn: for table_dgrtt
       data: [],
       entries_length: 0,
@@ -355,17 +356,33 @@ export default {
         return 1;
       }
 
-      const max =
+      return (
         Math.floor(this.entries_length / this.pageCount.number) +
-        add_one_page(this.entries_length, this.pageCount.number);
-      return max;
+        add_one_page(this.entries_length, this.pageCount.number)
+      );
     },
   },
 
   mounted: function() {
-    const success = result => {
-      this.data = result.data.demandes;
+    // Don't run the Ajax call when scope is not defined, this
+    // makes it easier to test.
+    if (!this.scope) {
+      return;
+    }
 
+    const args = {
+      scope: this.scope,
+      archives: this.archives,
+    };
+    this.$root
+      .rpc("get_demandes", args)
+      .then(result => (this.data = result))
+      .then(this.update)
+      .then(() => (this.ready = true));
+  },
+
+  methods: {
+    update() {
       if (tableStorage.isDefined()) {
         // Check this script version. If mismatch, clear the local storage.
         const version = JSON.parse(localStorage.getItem("version"));
@@ -405,16 +422,8 @@ export default {
           this.lastColSorted = tableStorage.get(this.id, "lastColSorted");
         }
       }
-    };
+    },
 
-    if (this.url) {
-      axios.get(this.url).then(success);
-    }
-
-    this.ready = true;
-  },
-
-  methods: {
     // Called before the quickfilter, before the filter of all columns.
     preFilter: function(entries) {
       // this.old: show only older than 3 months.

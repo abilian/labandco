@@ -3,7 +3,7 @@ from __future__ import annotations
 from functools import wraps
 
 import structlog
-from flask import g, redirect, session
+from flask import g, redirect, session, url_for
 from flask_login import AnonymousUserMixin
 from werkzeug.exceptions import Forbidden
 
@@ -11,7 +11,6 @@ from labster.di import injector
 from labster.domain2.model.profile import ProfileRepository
 
 from .domain.models.profiles import Profile
-from .util import url_for
 
 
 def login_required(func):

@@ -6,8 +6,8 @@ from labster.domain2.model.profile import Profile
 from labster.domain2.model.structure import Structure
 from labster.domain2.model.type_structure import UN
 from labster.domain2.services.contacts import ContactType
-
-from ..contacts import get_contacts, update_contacts
+from labster.rpc.commands.contacts import update_contacts
+from labster.rpc.queries.contacts import get_contacts
 
 
 def test_contacts(structure_repo, profile_repo):

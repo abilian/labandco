@@ -45,25 +45,25 @@
 </template>
 
 <script>
+import { ContextFetcher } from "../../mixins";
+
 export default {
   props: { type: String },
 
+  mixins: [ContextFetcher],
+
   data() {
     return {
-      ready: false,
       title: "Chargement du formulaire en cours...",
       form: {},
       model: {},
     };
   },
-  created() {
-    this.$root.rpc("get_formulaire_vierge", [this.type], result => {
-      this.model = result.model;
-      this.form = result.form;
 
+  methods: {
+    whenReady() {
       this.title = `Nouvelle demande de type: ${this.form.label}`;
-      this.ready = true;
-    });
+    },
   },
 };
 </script>

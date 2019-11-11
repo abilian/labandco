@@ -60,7 +60,7 @@ Créer une base Postgresql `labster`:
     createdb labster
 
 puis:
-    
+
     flask create-db
 
 
@@ -80,7 +80,7 @@ Doc: http://alembic.zzzcomputing.com/en/latest/tutorial.html
         yarn --cwd front run test:unit
 
 2) Tests e2e:
-        
+
         flask cypress
         flask testcafe
 

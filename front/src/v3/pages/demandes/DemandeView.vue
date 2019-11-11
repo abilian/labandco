@@ -84,7 +84,7 @@ export default {
 
   created() {
     const args = [this.id];
-    this.$root.rpc("get_demande", args, result => {
+    this.$root.rpc("get_demande", args).then(result => {
       _.assign(this, result);
       this.ready = true;
     });

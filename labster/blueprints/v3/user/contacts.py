@@ -5,11 +5,11 @@ from typing import Any, Dict, List
 from attr import dataclass
 from marshmallow import Schema, fields
 
-from labster.blueprints.util import get_current_user
 from labster.blueprints.v3 import route
 from labster.domain.models.mapping_dgrtt import MappingDgrtt
 from labster.domain.models.profiles import Profile
 from labster.domain.services.dgrtt import BUREAUX_DGRTT, BureauDgrtt
+from labster.util import get_current_user
 
 
 @dataclass

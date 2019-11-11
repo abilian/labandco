@@ -159,7 +159,7 @@ export default {
   },
 
   created() {
-    this.$root.rpc("sg_all_structures", [], result => {
+    this.$root.rpc("sg_all_structures", []).then(result => {
       this.all_entries = result;
       if (localStorage.cache_structures) {
         this.restoreTree();
