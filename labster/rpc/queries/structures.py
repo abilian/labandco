@@ -22,6 +22,7 @@ from labster.domain2.model.structure import Structure, StructureId, \
 from labster.domain2.model.type_structure import ALL_TYPES
 from labster.domain2.services.roles import Role, RoleService
 from labster.persistence import Persistence
+from labster.rpc.cache import cache
 from labster.types import JSON
 from labster.util import sort_by_name
 
@@ -33,6 +34,7 @@ persistence = injector.get(Persistence)
 
 
 @method
+@cache.memoize()
 def sg_all_structures() -> JSON:
     root = structure_repo.get_root()
     assert root

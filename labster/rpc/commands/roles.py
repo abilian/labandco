@@ -11,6 +11,7 @@ from labster.domain2.model.profile import ProfileId, ProfileRepository
 from labster.domain2.model.structure import StructureId, StructureRepository
 from labster.domain2.services.roles import Role, RoleService
 from labster.persistence import Persistence
+from labster.rpc import cache
 from labster.types import JSON
 
 from ..util import ensure_role
@@ -35,6 +36,9 @@ def add_roles(structure_id: str, profile_ids: List[str], role_id: str):
 
     persistence.save()
 
+    cache.evict("users")
+    cache.evict("structures")
+
 
 @method
 def delete_role(structure_id: str, profile_id: str, role_id: str):
@@ -47,6 +51,9 @@ def delete_role(structure_id: str, profile_id: str, role_id: str):
     role_service.ungrant_role(profile, role, structure)
 
     persistence.save()
+
+    cache.evict("users")
+    cache.evict("structures")
 
 
 @method
@@ -70,3 +77,6 @@ def update_roles(structure_id: str, data: Dict[str, JSON]):
             role_service.grant_role(user, role, structure)
 
     persistence.save()
+
+    cache.evict("users")
+    cache.evict("structures")

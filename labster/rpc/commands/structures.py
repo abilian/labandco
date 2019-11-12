@@ -18,6 +18,7 @@ from labster.domain2.model.structure import Structure, StructureId, \
 from labster.domain2.model.type_structure import get_type_structure_by_id
 from labster.domain2.services.roles import RoleService
 from labster.persistence import Persistence
+from labster.rpc import cache
 from labster.types import JSON
 
 from ..util import ensure_role
@@ -43,6 +44,7 @@ def sg_update_structure(id: str, model: Dict[str, JSON]):
         setattr(structure, k, v)
 
     persistence.save()
+    cache.evict("structures")
 
 
 @method
@@ -64,6 +66,7 @@ def sg_create_child_structure(id: str, model: Dict[str, str]):
     structure_repo.put(new_structure)
 
     persistence.save()
+    cache.evict("structures")
 
 
 @method
@@ -76,25 +79,30 @@ def sg_delete_structure(id: str):
     structure.delete()
 
     persistence.save()
+    cache.evict("structures")
 
 
 @method
 def sg_add_edge(u_id, v_id):
     # TODO: permissions
+    ensure_role("alc")
 
     u = structure_repo.get_by_id(StructureId(u_id))
     v = structure_repo.get_by_id(StructureId(v_id))
     u.add_child(v)
+
     persistence.save()
-    return "OK"
+    cache.evict("structures")
 
 
 @method
 def sg_delete_edge(u_id, v_id):
     # TODO: permissions
+    ensure_role("alc")
 
     u = structure_repo.get_by_id(StructureId(u_id))
     v = structure_repo.get_by_id(StructureId(v_id))
     u.remove_child(v)
+
     persistence.save()
-    return "OK"
+    cache.evict("structures")

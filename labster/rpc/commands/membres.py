@@ -9,6 +9,7 @@ from labster.domain2.model.profile import Profile, ProfileId, ProfileRepository
 from labster.domain2.model.structure import StructureId, StructureRepository
 from labster.domain2.services.roles import Role, RoleService
 from labster.persistence import Persistence
+from labster.rpc import cache
 
 structure_repo = injector.get(StructureRepository)
 profile_repo = injector.get(ProfileRepository)
@@ -39,3 +40,6 @@ def update_membres_rattaches(structure_id: str, values: List[Dict]):
         role_service.ungrant_role(user, Role.MEMBRE_RATTACHE, structure)
 
     persistence.save()
+
+    cache.evict("users")
+    cache.evict("structures")

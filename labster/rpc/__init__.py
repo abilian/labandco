@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 import traceback
 from json import JSONDecodeError
 from pprint import pformat, pprint
@@ -21,8 +22,9 @@ from jsonschema.validators import validator_for
 from werkzeug.exceptions import Forbidden, Unauthorized
 
 from labster.auth import AuthContext
-from labster.rpc.registry import register_submodules
 from labster.types import JSON
+
+from .registry import register_submodules
 
 blueprint = Blueprint("rpc", __name__, url_prefix="/rpc")
 route = blueprint.route
@@ -30,6 +32,8 @@ route = blueprint.route
 validator_class = validator_for(schema)
 validator_class.check_schema(schema)
 validator = validator_class(schema)
+
+timer_d = {}
 
 
 @blueprint.record
@@ -63,13 +67,14 @@ def run(req: str, app: Flask) -> Response:
     if debug:
         print(78 * "#")
         print("RPC request:")
-        pprint(json.loads(req))
+        req_json = json.loads(req)
+        pprint(req_json)
         print(78 * "#")
         sys.stdout.flush()
+        timer_d[req_json['id']] = time.time()
 
-    response = dispatch(req)
+        response = dispatch(req)
 
-    if debug:
         print(78 * "#")
         print("RPC response:")
         s = pformat(response.deserialized())
@@ -81,8 +86,16 @@ def run(req: str, app: Flask) -> Response:
             print(s[0:200] + "...")
         if hasattr(response, "exc"):
             print(response.exc)
+
+        dt = 1000 * (time.time() - timer_d[req_json['id']])
+        print(f"Elapsed time: {dt:.2f}ms")
+        del timer_d[req_json['id']]
+
         print(78 * "#")
         sys.stdout.flush()
+
+    else:
+        response = dispatch(req)
 
     return Response(str(response), response.http_status, mimetype="application/json")
 
@@ -114,7 +127,10 @@ def dispatch(request_raw: str) -> JsonRpcResponse:
     assert isinstance(request, Request)
 
     try:
-        result = call(methods.items[request.method], *request.args, **request.kwargs)
+        method_name = request.method
+        method = methods.items[method_name]
+        result = call(method, *request.args, **request.kwargs)
+
         return SuccessResponse(result=result, id=request.id)
     except Exception as exc:
         traceback.print_exc()

@@ -41,6 +41,7 @@ toolz = "*"
 unidecode = "*"
 webargs = "==5.*,>=5.5.0"
 xlrd = "==1.*,>=1.2.0"
+diskcache = "==4.*,>=4.1.0"
 
 [dev-packages]
 black = "*"

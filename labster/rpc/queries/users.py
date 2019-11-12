@@ -11,6 +11,7 @@ from labster.di import injector
 from labster.domain2.model.profile import Profile
 from labster.domain2.model.structure import Structure
 from labster.domain2.services.roles import Role, RoleService
+from labster.rpc.cache import cache
 from labster.types import JSONDict
 from labster.util import sort_by_name
 
@@ -19,6 +20,7 @@ role_service = injector.get(RoleService)
 
 
 @method
+@cache.memoize(tag="users")
 def get_users(q="", page=0) -> JSONDict:
     page = int(page)
     query = (

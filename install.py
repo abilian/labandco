@@ -55,15 +55,26 @@ else:
     print("Reusing existing virtual env 'env'.")
 
 
-print("Installing or updating dependencies")
+print("Installing or updating back-end (Python) dependencies")
 cmd = f"./env/bin/pip install -r requirements.txt ."
 if run(cmd):
-    print(f"! Couldn't install dependencies")
+    print(f"! Couldn't install back-end dependencies")
     sys.exit()
 
+
+print("Installing or updating front-end (JavaScript) dependencies")
+cmd = f"yarn --cwd front"
+if run(cmd):
+    print(f"! Couldn't install front-end dependencies")
+    sys.exit()
+
+
+print()
 print("Everything should be fine now.")
+print()
 
 print("Available commands are:")
 print(os.popen("./env/bin/flask").read())
+print()
 
 print("Now run '. env/bin/activate' from your shell and you can start developping.")

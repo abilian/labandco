@@ -4,6 +4,7 @@ black
 bowler==0.*,>=0.8.0
 cairocffi==1.*,>=1.0.2
 dephell==0.*,>=0.7.4
+diskcache==4.*,>=4.1.0
 dotted
 fissix==19.2b1
 flake8
