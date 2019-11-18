@@ -1,29 +1,29 @@
 <template>
   <div>
-    <app-navbar-vue></app-navbar-vue>
+    <app-navbar />
 
-    <app-sidebar></app-sidebar>
+    <app-sidebar />
 
     <div class="content-wrapper">
       <section class="content">
         <div class="row">
           <div class="col-md-12">
-            <router-view></router-view>
+            <router-view />
           </div>
         </div>
       </section>
     </div>
 
-    <app-footer></app-footer>
+    <app-footer />
   </div>
 </template>
 
 <script>
-import AppNavbarVue from "./components/visual/AppNavbarVue";
-import AppSidebar from "./components/visual/AppSidebar";
-import AppFooter from "./components/visual/AppFooter";
+import AppNavbar from "./components/navigation/AppNavbar";
+import AppSidebar from "./components/navigation/AppSidebar";
+import AppFooter from "./components/navigation/AppFooter";
 
 export default {
-  components: { AppFooter, AppSidebar, AppNavbarVue },
+  components: { AppFooter, AppSidebar, AppNavbar },
 };
 </script>

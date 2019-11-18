@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "labandco"
+name = "labster"
 version = "2.1.10"
 description = ""
 authors = ["Abilian SAS"]

@@ -9,7 +9,7 @@ from labster.domain2.model.profile import Profile, ProfileId, ProfileRepository
 from labster.domain2.model.structure import StructureId, StructureRepository
 from labster.domain2.services.roles import Role, RoleService
 from labster.persistence import Persistence
-from labster.rpc import cache
+from labster.rpc.cache import cache
 
 structure_repo = injector.get(StructureRepository)
 profile_repo = injector.get(ProfileRepository)

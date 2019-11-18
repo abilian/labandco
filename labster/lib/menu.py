@@ -7,6 +7,7 @@ from flask import g
 from labster.di import injector
 from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.services.roles import Role, RoleService
+from labster.util import url_for
 
 profile_repository = injector.get(ProfileRepository)
 role_service = injector.get(RoleService)
@@ -47,7 +48,8 @@ class Node:
 
 class MenuItem(Node):
     _url = ""
-    _entries = []  # type: List[Dict]
+    _endpoint = ""
+    _entries: List[Dict] = []
 
     def __init__(self, specs: Dict[str, Any]):
         for k, v in specs.items():
@@ -58,7 +60,10 @@ class MenuItem(Node):
         if self._url:
             return self._url
 
-        return "#"
+        if self._endpoint:
+            return url_for(self._endpoint)
+
+        return ""
 
     @property
     def entries(self) -> List[MenuItem]:
@@ -66,16 +71,20 @@ class MenuItem(Node):
 
     def asdict(self):
         result = {}
+
         for k, v in vars(self).items():
             if k.startswith("_"):
                 if isinstance(v, (list, dict, int, str, type(None))):
                     result[k[1:]] = v
+
+        result["url"] = self.url
         result["entries"] = [entry.asdict() for entry in self.entries]
+
         return result
 
 
 class Menu(Node):
-    _entries = []  # type: List[Dict]
+    _entries: List[Dict] = []
 
     def __init__(self, specs: Dict) -> None:
         for k, v in specs.items():

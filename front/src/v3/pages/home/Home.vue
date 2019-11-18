@@ -1,5 +1,5 @@
 <template>
-  <div id="boxes-demandes">
+  <div id="boxes-demandes" class="pt-3">
     <message-dgrtt></message-dgrtt>
 
     <bloc-deposer-demande></bloc-deposer-demande>
@@ -21,7 +21,7 @@
 
 <script>
 import Vue from "vue";
-import MessageDgrtt from "../../components/visual/MessageDgrtt";
+import MessageDgrtt from "../../components/navigation/MessageDgrtt";
 import BoxDemandes from "../../components/grids/box-demandes";
 import BlocDeposerDemande from "./BlocDeposerDemande";
 

@@ -19,7 +19,7 @@ def context_for(name: str) -> Callable:
 
 def register_submodules():
     here = "labster.rpc"
-    subdirs = ["commands", "queries"]
+    subdirs = ["commands", "queries", "bi"]
 
     import_string(f"{here}.context")
 

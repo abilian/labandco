@@ -71,7 +71,7 @@ def run(req: str, app: Flask) -> Response:
         pprint(req_json)
         print(78 * "#")
         sys.stdout.flush()
-        timer_d[req_json['id']] = time.time()
+        timer_d[req_json["id"]] = time.time()
 
         response = dispatch(req)
 
@@ -87,9 +87,9 @@ def run(req: str, app: Flask) -> Response:
         if hasattr(response, "exc"):
             print(response.exc)
 
-        dt = 1000 * (time.time() - timer_d[req_json['id']])
+        dt = 1000 * (time.time() - timer_d[req_json["id"]])
         print(f"Elapsed time: {dt:.2f}ms")
-        del timer_d[req_json['id']]
+        del timer_d[req_json["id"]]
 
         print(78 * "#")
         sys.stdout.flush()

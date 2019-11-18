@@ -32,5 +32,5 @@ structures_concernees = FieldSet(  #
 contributeurs = FieldSet(
     "contributeurs",
     "Contributeurs autorisés à prendre la main sur la demande",
-    [Select2Field("contributeurs", "Contributeurs", choices=[], required=True)],
+    [Select2Field("contributeurs", "Contributeurs", choices=[])],
 )

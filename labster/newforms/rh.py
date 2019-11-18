@@ -7,10 +7,7 @@ from copy import deepcopy
 from labster.domain.services.constants import get_constant
 from labster.newforms.base import BooleanField, DateField, EmailField, \
     FieldSet, Form, IntegerField, Select2Field, StringField, TextAreaField
-#
-# Fieldsets
-#
-from labster.newforms.common import laboratoire, porteur, structures_concernees
+from labster.newforms.common import laboratoire, structures_concernees
 
 # acceptation_principe_recrutement = BooleanField(
 #     "J'ai pris connaissance et j'accepte les principes de recrutement de Sorbonne Université",
@@ -251,7 +248,6 @@ class DemandeRHForm(Form):
 
         fieldsets = [
             nature,
-            porteur,
             laboratoire,
             responsable_scientifique,
             structures_concernees,

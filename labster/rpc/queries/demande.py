@@ -98,14 +98,30 @@ class DemandeSchema(ModelSchema):
         model = Demande
 
         include = {
+            # Permissions
+            "acces_restreint": Method("get_acces_restreint"),
+            "is_editable": Method("get_is_editable"),
+            # Key users
             "contact_dgrtt": Method("get_contact_dgrtt"),
             "porteur": Method("get_porteur"),
             "gestionnaire": Method("get_gestionnaire"),
+            # Form
             "form_data": Method("get_form_data"),
+            # Tabs
+            "pieces_jointes": Method("get_pieces_jointes"),
             "workflow": Method("get_workflow"),
-            "acces_restreint": Method("get_acces_restreint"),
+            "workflow_history": Method("get_history"),
+            "past_versions": Method("get_past_versions"),
         }
 
+    # Permissions
+    def get_acces_restreint(self, obj: Demande) -> bool:
+        return acces_restreint(obj)
+
+    def get_is_editable(self, obj: Demande) -> bool:
+        return obj.is_editable_by(g.current_user)
+
+    # Serialize key users
     def get_contact_dgrtt(self, obj: Demande):
         return self.get_user_field(obj, "contact_dgrtt")
 
@@ -119,21 +135,48 @@ class DemandeSchema(ModelSchema):
         user = getattr(obj, key)
         return {"full_name": user.full_name, "id": user.id}
 
+    # Form
     def get_form_data(self, obj: Demande):
         return dict(obj.data)
 
+    # Tabs
     def get_workflow(self, obj: Demande) -> JSON:
         current_user = get_current_user()
         workflow = obj.get_workflow(current_user)
+        owners = [
+            {"full_name": owner.full_name, "id": owner.id}
+            for owner in workflow.current_owners()
+        ]
+        transitions = [
+            {"id": t.id, "label": t.label, "category": t.category}
+            for t in workflow.possible_transitions()
+        ]
+
         return {
             "state": {
                 "label": workflow.state.label,
                 "next_action": workflow.state.next_action,
-            }
+            },
+            "owners": owners,
+            "history": [],  # TODO
+            "transitions": transitions,
         }
 
-    def get_acces_restreint(self, obj: Demande) -> bool:
-        return acces_restreint(obj)
+    # Pour l'onglet "Pièces à joindre"
+    def get_pieces_jointes(self, obj: Demande) -> JSON:
+        return obj.pieces_jointes
+
+    # Pour l'onglet "historique"
+    def get_past_versions(self, obj: Demande) -> bool:
+        return obj.past_versions
+
+    def get_history(self, obj: Demande) -> JSON:
+        return []
+
+    # Workflow
+    def get_possible_transitions(self, obj: Demande) -> JSON:
+        user = g.current_user
+        return obj.get_workflow(user).possible_transitions()
 
         # exclude = ["parents", "children"]
 

@@ -9,7 +9,7 @@
         <div class="row">
           <div v-for="button in buttons" class="col-md-6 col-lg-4">
             <router-link
-              :to="{ name: 'nouvelle_demande', params: { type: button.type } }"
+              :to="{ name: 'demande.new', params: { type: button.type } }"
             >
               <div class="info-box">
                 <span class="info-box-icon" :class="'bg-' + button.color"

@@ -2,7 +2,7 @@
   <div>
     <breadcrumbs title="Nouvelle demande"></breadcrumbs>
 
-    <div id="vue-newform" class="wrapper">
+    <div class="wrapper">
       <div class="card box-primary">
         <div class="card-header">
           <h3 class="card-title">{{ title }}</h3>
@@ -34,9 +34,7 @@
               </p>
             </div>
 
-            <div id="form-demande">
-              <my-form :form="form" :model="model"></my-form>
-            </div>
+            <formulaire-demande :form="form" :model="model" />
           </template>
         </div>
       </div>
@@ -46,11 +44,14 @@
 
 <script>
 import { ContextFetcher } from "../../mixins";
+import FormulaireDemande from "../../components/forms/FormulaireDemande";
 
 export default {
   props: { type: String },
 
   mixins: [ContextFetcher],
+
+  components: { FormulaireDemande },
 
   data() {
     return {

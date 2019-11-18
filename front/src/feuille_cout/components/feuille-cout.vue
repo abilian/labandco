@@ -1,6 +1,6 @@
 <!-- suppress OverlyComplexArithmeticExpressionJS -->
 <template>
-  <div>
+  <div class="m-3">
     <h1>Estimation des coûts complets de la recherche</h1>
 
     <p v-if="!model.editable">
@@ -1370,3 +1370,11 @@ function duree_amortissement(m, categorie) {
   return table[categorie] || 0;
 }
 </script>
+
+<style>
+h2,
+h3 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+</style>

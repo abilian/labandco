@@ -48,7 +48,7 @@ MAIN = {
         },
         {
             "label": 'Calculette "feuille de coûts"',
-            # "endpoint": "demandes.calculette_feuille_cout",
+            "endpoint": "main.calculette_feuille_cout",
             "icon": "calculator",
         },
     ],

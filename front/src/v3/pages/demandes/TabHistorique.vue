@@ -1,48 +1,85 @@
 <template>
-  <div>
+  <div class="mt-4">
     <h3>État actuel</h3>
+
     <p>
-      Etat de workflow actuel:
-      <b>Recevabilité en cours de vérification</b> (workflow en cours)
+      Etat de workflow actuel: <b>{{ state.label }}</b> (workflow
+      {{ demande.active ? "en cours" : "terminé" }})
     </p>
+
     <p>
-      Prochaine action:
-      <b>Recevabilité à confirmer</b>
+      Prochaine action: <b>{{ state.next_action }}</b>
     </p>
-    <p>
+
+    <p v-if="owners.length">
       Tâche entre les mains de:
-      <b> <a href="/directory/users/allouache">Nour Allouache</a></b>
+      <span v-for="owner in owners">
+        <b>
+          <router-link :to="{ name: 'user', params: { id: owner.id } }">
+            {{ owner.full_name }}
+          </router-link>
+          <!--  TODO      {%- if not loop.last -%}, {% endif -%}-->
+        </b>
+      </span>
     </p>
-    <p>Nombre de jours de retard dans le traitement: <b>89</b></p>
+
+    <p v-if="demande.wf_retard">
+      Nombre de jours de retard dans le traitement:
+      <b>{{ demande.wf_retard }}</b>
+    </p>
+    <p v-else>Pas de retard.</p>
+
     <h3>Historique des actions</h3>
-    <p>
-      03 Apr 2019 17:16:20: Demande validée par la hiérarchie (<a
-        href="/directory/users/goument"
-        >Romain Goument</a
-      >).
-    </p>
-    <p>
-      03 Apr 2019 17:09:21:
-      <a href="/directory/users/djallali">Zahoua Djallali</a> a soumis sa
-      demande pour validation hiérarchique.
-    </p>
-    <p>
-      03 Apr 2019 17:09:05: Pièce-jointe(s) ajoutée(s): Sorbonne
-      Univ-FVE-SNCF-EI _Chaire Industrielle Silversight II_ version finale
-      +.docx par <a href="/directory/users/djallali">Zahoua Djallali</a>
-    </p>
-    <p>
-      03 Apr 2019 17:08:46: Demande créée par l'utilisateur Zahoua Djallali
-    </p>
+
+    <div v-for="entry in workflow_history">
+      <p>{{ entry.date }}: <span v-html="entry.message"></span></p>
+      <blockquote v-if="entry.note">
+        {{ entry.note }}
+      </blockquote>
+    </div>
+
     <h3>Historique des versions</h3>
+
     <h4>Version courante</h4>
-    <p>Version: <b>1</b>, sauvegardée le <b>mar., 2 juillet 2019 2:25</b>.</p>
+
+    <p>
+      Version: <b>{{ demande.past_versions.length + 1 }}</b
+      >, sauvegardée le
+      <b>{{ demande.updated_at | moment("DD MMMM YYYY à h:mm:ss") }}</b
+      >.
+    </p>
+
     <h4>Versions antérieures</h4>
-    <ul></ul>
+
+    <ul>
+      <!--          {% for version, date in demande.past_versions %}-->
+      <li v-for="v in past_versions">
+        Version: <b>{{ version }}</b
+        >, sauvegardée le {{ v.date | moment("DD MMMM YYYY à h:mm:ss") }}.
+
+        <!--            <a-->
+        <!--              href="{{ url_for(" .demande_compare", id=demande.id, version=loop.index) }}">Comparer-->
+        <!--            à la version courante</a></li>-->
+        <!--          {% endfor %}-->
+      </li>
+    </ul>
   </div>
 </template>
+
 <script>
 export default {
-  name: "TabHistorique",
+  props: { demande: Object },
+
+  data() {
+    const demande = this.demande;
+    const workflow = demande.workflow;
+    return {
+      workflow: workflow,
+      owners: workflow.owners,
+      state: workflow.state,
+      workflow_history: demande.workflow_history, // TODO: reverse
+      past_versions: demande.past_versions,
+    };
+  },
 };
 </script>

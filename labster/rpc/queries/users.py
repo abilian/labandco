@@ -6,6 +6,7 @@ import ramda as r
 from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 from marshmallow import Schema, fields
+from sqlalchemy import or_
 
 from labster.di import injector
 from labster.domain2.model.profile import Profile
@@ -30,8 +31,13 @@ def get_users(q="", page=0) -> JSONDict:
     )
     total = query.count()
 
+    q = q.strip()
     if q:
-        query = query.filter(Profile.nom.like(f"%{q}"))  # type: ignore
+        query = query.filter(
+            or_(Profile.nom.ilike(f"{q}%"), Profile.prenom.ilike(f"{q}%"))
+        )
+
+    print("q=", q)
 
     query = query.offset(100 * page)
     users = query.limit(100).all()

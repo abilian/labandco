@@ -9,14 +9,13 @@ from werkzeug import exceptions
 
 
 @method
-def send_message(mail: Mail) -> Dict[str, str]:
+def send_message(mail: Mail):
     message_body = request.json.get("message")
 
     if not message_body:
         raise exceptions.BadRequest()
 
     mail.send(make_message(message_body))
-    return {"status": "ok"}
 
 
 def make_message(body: str) -> Message:

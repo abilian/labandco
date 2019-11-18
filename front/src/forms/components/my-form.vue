@@ -1,11 +1,5 @@
 <template>
-  <form
-    class="form-horizontal"
-    method="POST"
-    action=""
-    @change="model_updated"
-    @submit="on_submit"
-  >
+  <form class="form-horizontal" @change="model_updated" @submit="on_submit">
     <div v-for="field_set in form.fieldsets">
       <field-set :field-set="field_set" :form="form" :model="model" />
     </div>
@@ -19,6 +13,7 @@
       >
         Créer la demande
       </button>
+
       <button
         v-if="form.mode === 'edit'"
         id="sauver-demande"
@@ -27,6 +22,7 @@
       >
         Sauver la demande
       </button>
+
       <button
         id="cancel"
         type="submit"
@@ -98,27 +94,28 @@ export default {
 
     on_submit: function(e) {
       e.preventDefault();
-      let url = "/demandes/post";
-      if (this.calculette) {
-        url = "/calculettes/devis_rh";
-      }
-      const data = {
-        action: this.form.mode,
-        model: this.model,
-        form: this.form,
-      };
-      axios
-        .post(url, data)
-        .then(result => {
-          if (result.data.length > 100) {
-            window.location = "/";
-          } else {
-            window.location = result.data;
-          }
-        })
-        .catch(error => {
-          console.error("error submitting the devis: ", error);
-        });
+
+      // let url = "/demandes/post";
+      // if (this.calculette) {
+      //   url = "/calculettes/devis_rh";
+      // }
+      // const data = {
+      //   action: this.form.mode,
+      //   model: this.model,
+      //   form: this.form,
+      // };
+      // axios
+      //   .post(url, data)
+      //   .then(result => {
+      //     if (result.data.length > 100) {
+      //       window.location = "/";
+      //     } else {
+      //       window.location = result.data;
+      //     }
+      //   })
+      //   .catch(error => {
+      //     console.error("error submitting the devis: ", error);
+      //   });
     },
   },
 };

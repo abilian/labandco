@@ -38,29 +38,45 @@ import router from "./v3/router";
 import BootstrapVue from "bootstrap-vue";
 import Multiselect from "vue-multiselect";
 import { Vue2Storage } from "vue2-storage";
+import VueMoment from "vue-moment";
+import moment from "moment";
+import accounting from "accounting";
 
-// Register plugins
+//
+// Register plugins & filters
+//
 Vue.use(BootstrapVue);
+
 Vue.component("multiselect", Multiselect);
+
 Vue.use(Vue2Storage, {
   prefix: "app_",
   driver: "local",
   ttl: 60 * 60 * 24 * 1000,
 });
 
-// My own components
-import Breadcrumbs from "./v3/components/visual/Breadcrumbs";
+moment.locale("fr");
+Vue.use(VueMoment, { moment });
+
+Vue.filter("currency", function(val, symbol) {
+  return accounting.formatMoney(val, symbol);
+});
+
+//
+// Our own components & libraries
+//
+import Breadcrumbs from "./v3/components/navigation/Breadcrumbs";
 import MyForm from "./forms/components/my-form.vue";
-
-Vue.component("breadcrumbs", Breadcrumbs);
-Vue.component("my-form", MyForm);
-
-// My stuff
 import rpc from "./v3/rpc";
 
-// My apps
+Vue.component("breadcrumbs", Breadcrumbs);
+
+//
+// Our apps
+//
 import App from "./v3/App";
 import LoginApp from "./v3/LoginApp";
+import FeuilleCout from "./feuille_cout/components/feuille-cout.vue";
 
 if (document.getElementById("app-v3")) {
   /* eslint-disable no-new */
@@ -83,25 +99,15 @@ if (document.getElementById("login")) {
   });
 }
 
-// // Filters
-// import accounting from "accounting";
-//
-// Vue.filter("currency", function(val, symbol) {
-//   return accounting.formatMoney(val, symbol);
-// });
-//
-// // Feuille de coût
-// import FeuilleCout from "./feuille_cout/components/feuille-cout.vue";
-//
-// if (document.getElementById("feuille-cout")) {
-//   const model = MODEL;
-//   new Vue({
-//     el: "#feuille-cout",
-//     components: { FeuilleCout },
-//     data: { model },
-//   });
-// }
-//
+if (document.getElementById("feuille-cout")) {
+  const model = MODEL;
+  new Vue({
+    el: "#feuille-cout",
+    components: { FeuilleCout },
+    data: { model },
+  });
+}
+
 // // Tables & formulaire demande
 // import BoxDemandes from "./grids/box-demandes.vue";
 //

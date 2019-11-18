@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import traceback
 from datetime import date, timedelta
-from typing import Any, Callable, Dict, List, Optional
+from typing import Callable, List, Optional
 
 from jsonrpcserver import method
 from sqlalchemy import or_
@@ -58,20 +58,6 @@ def get_demandes(scope="all", archives=False) -> JSONList:
 
     demandes = sorted(demandes, key=lambda d: d.created_at, reverse=True)
     return demandes_to_json(demandes, user)
-
-
-# @method
-# def get_tasks() -> JSONList:
-#     user = get_current_user()
-#     demandes = mes_taches(user)
-#     return demandes_to_json(demandes, user)
-#
-#
-# @method
-# def get_mes_demandes() -> JSONList:
-#     user = get_current_user()
-#     demandes = mes_demandes(user)
-#     return demandes_to_json(demandes, user)
 
 
 #

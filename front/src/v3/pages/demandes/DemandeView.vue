@@ -1,10 +1,11 @@
 <template>
   <div>
-    <breadcrumbs :path="path" :title="title"></breadcrumbs>
+    <breadcrumbs :path="path" :title="title" />
 
-    <infos-clefs :demande="demande"></infos-clefs>
+    <bloc-infos-clefs :demande="demande" />
 
-    <demande-actions />
+    <!-- temp: this should appear even if demande is not defined -->
+    <bloc-workflow v-if="demande" :demande="demande" />
 
     <b-card v-if="demande">
       <b-tabs>
@@ -23,30 +24,16 @@
           >
         </b-tab>
 
-        <b-tab title="Pièces à joindre">
-          <h3>Pièces-jointes</h3>
-
-          <pieces-jointes :demande="demande"></pieces-jointes>
-
-          <h3>Ajouter une ou des pièce-jointes</h3>
-
-          <form
-            method="POST"
-            enctype="multipart/form-data"
-            action="/demandes/2643/pj"
-          >
-            <input type="file" name="file" multiple="" />
-
-            <br />
-
-            <input type="submit" class="btn btn-primary" name="Envoyer" />
-          </form>
+        <b-tab v-if="!acces_restreint" title="Pièces à joindre">
+          <tab-pieces-jointes :demande="demande" />
         </b-tab>
 
-        <b-tab title="Documents générés"></b-tab>
+        <b-tab v-if="!acces_restreing" title="Documents générés">
+          <tab-documents-generes :demande="demande" />
+        </b-tab>
 
         <b-tab title="Historique">
-          <tab-historique />
+          <tab-historique :demande="demande" />
         </b-tab>
       </b-tabs>
     </b-card>
@@ -55,21 +42,21 @@
 
 <script>
 import _ from "lodash";
-import InfosClefs from "./InfosClefs";
-import DemandeActions from "./DemandeActions";
 import DemandeFormView from "./DemandeFormView";
-import PiecesJointes from "./PiecesJointes";
+import BlocInfosClefs from "./BlocInfosClefs";
+import BlocWorkflow from "./BlocWorkflow";
+import TabPiecesJointes from "./TabPiecesJointes";
 import TabHistorique from "./TabHistorique";
 
 export default {
   props: { id: String },
 
   components: {
-    TabHistorique,
-    DemandeActions,
-    InfosClefs,
-    PiecesJointes,
+    BlocInfosClefs,
+    BlocWorkflow,
     DemandeFormView,
+    TabPiecesJointes,
+    TabHistorique,
   },
 
   data() {

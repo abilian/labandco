@@ -18,7 +18,7 @@ from labster.domain2.model.structure import Structure, StructureId, \
 from labster.domain2.model.type_structure import get_type_structure_by_id
 from labster.domain2.services.roles import RoleService
 from labster.persistence import Persistence
-from labster.rpc import cache
+from labster.rpc.cache import cache
 from labster.types import JSON
 
 from ..util import ensure_role

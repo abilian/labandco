@@ -27,6 +27,8 @@ import DemandeView from "../pages/demandes/DemandeView";
 
 import NouvelleDemande from "../pages/forms/NouvelleDemande";
 
+import BiHome from "../pages/bi/BiHome";
+
 Vue.use(Router);
 
 const router = new Router({
@@ -130,6 +132,13 @@ const router = new Router({
       path: "/search",
       component: Search,
       props: route => ({ q: route.query.q }),
+    },
+
+    // BI
+    {
+      name: "bi",
+      path: "/bi",
+      component: BiHome,
     },
   ],
 

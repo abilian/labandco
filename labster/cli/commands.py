@@ -13,7 +13,7 @@ from flask import current_app
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 
-from labster.blueprints.bi.synchro import sync_all
+from labster.bi.synchro import sync_all
 from labster.di import injector
 from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.model.structure import StructureRepository
