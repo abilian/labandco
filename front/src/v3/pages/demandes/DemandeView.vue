@@ -8,27 +8,38 @@
     <bloc-workflow v-if="demande" :demande="demande" />
 
     <b-card v-if="demande">
-      <b-tabs>
+      <b-tabs v-model="tabIndex">
         <b-tab title="Détails de la demande">
-          <demande-form-view
-            :demande="demande"
-            :form="form"
-          ></demande-form-view>
+          <tab-form-view :demande="demande" :form="form" />
         </b-tab>
 
-        <b-tab title="Formulaire"></b-tab>
+        <b-tab v-if="demande.is_editable" title="Formulaire">
+          <tab-form-edit :demande="demande" :form="form" />
+        </b-tab>
 
-        <b-tab title="Feuille de coût">
-          <a class="btn btn-primary" href="/demandes/2643/feuille_cout"
+        <b-tab
+          v-if="demande.type === 'Convention de recherche'"
+          title="Feuille de coût"
+        >
+          <a
+            v-if="demande.feuille_cout_editable"
+            class="btn btn-primary mt-4"
+            :href="`/feuille_cout/${demande.id}`"
+            >Editer la feuille de coût</a
+          >
+          <a
+            v-else
+            class="btn btn-primary mt-4"
+            :href="`/feuille_cout/${demande.id}`"
             >Consulter la feuille de coût</a
           >
         </b-tab>
 
-        <b-tab v-if="!acces_restreint" title="Pièces à joindre">
+        <b-tab v-if="!demande.acces_restreint" title="Pièces à joindre">
           <tab-pieces-jointes :demande="demande" />
         </b-tab>
 
-        <b-tab v-if="!acces_restreing" title="Documents générés">
+        <b-tab v-if="!demande.acces_restreint" title="Documents générés">
           <tab-documents-generes :demande="demande" />
         </b-tab>
 
@@ -42,11 +53,15 @@
 
 <script>
 import _ from "lodash";
-import DemandeFormView from "./DemandeFormView";
+
 import BlocInfosClefs from "./BlocInfosClefs";
 import BlocWorkflow from "./BlocWorkflow";
+
+import TabFormView from "./TabFormView";
+import TabFormEdit from "./TabFormEdit";
 import TabPiecesJointes from "./TabPiecesJointes";
 import TabHistorique from "./TabHistorique";
+import TabDocumentsGeneres from "./TabDocumentsGeneres";
 
 export default {
   props: { id: String },
@@ -54,18 +69,22 @@ export default {
   components: {
     BlocInfosClefs,
     BlocWorkflow,
-    DemandeFormView,
+    //
+    TabFormView,
+    TabFormEdit,
     TabPiecesJointes,
     TabHistorique,
+    TabDocumentsGeneres,
   },
 
   data() {
     return {
       ready: false,
+      tabIndex: 0,
       path: [["Demandes", "/demandes"]],
       title: "",
-      form: {},
       demande: null,
+      form: {},
     };
   },
 
@@ -74,7 +93,14 @@ export default {
     this.$root.rpc("get_demande", args).then(result => {
       _.assign(this, result);
       this.ready = true;
+      this.title = this.demande.name;
     });
+  },
+
+  methods: {
+    goToTab(n) {
+      this.tabIndex = n;
+    },
   },
 };
 </script>

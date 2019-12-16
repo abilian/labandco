@@ -29,6 +29,8 @@
     </p>
     <p v-else>Pas de retard.</p>
 
+    <hr />
+
     <h3>Historique des actions</h3>
 
     <div v-for="entry in workflow_history">
@@ -37,6 +39,8 @@
         {{ entry.note }}
       </blockquote>
     </div>
+
+    <hr />
 
     <h3>Historique des versions</h3>
 
@@ -52,11 +56,11 @@
     <h4>Versions antérieures</h4>
 
     <ul>
-      <!--          {% for version, date in demande.past_versions %}-->
-      <li v-for="v in past_versions">
-        Version: <b>{{ version }}</b
-        >, sauvegardée le {{ v.date | moment("DD MMMM YYYY à h:mm:ss") }}.
+      <li v-for="(v, i) in past_versions">
+        Version: <b>{{ i }}</b
+        >, sauvegardée le {{ v[1] | moment("DD MMMM YYYY à h:mm:ss") }}.
 
+        <!-- TODO -->
         <!--            <a-->
         <!--              href="{{ url_for(" .demande_compare", id=demande.id, version=loop.index) }}">Comparer-->
         <!--            à la version courante</a></li>-->
@@ -73,6 +77,7 @@ export default {
   data() {
     const demande = this.demande;
     const workflow = demande.workflow;
+
     return {
       workflow: workflow,
       owners: workflow.owners,

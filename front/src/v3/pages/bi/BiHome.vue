@@ -27,7 +27,11 @@
             </b-form-group>
 
             <template v-for="selector in selectors">
-              <b-form-group :label="selector.label" :label-for="selector.name">
+              <b-form-group
+                :label="selector.label"
+                :label-for="selector.name"
+                :key="selector.name"
+              >
                 <multiselect
                   v-model="selected[selector.name]"
                   :id="selector.name"

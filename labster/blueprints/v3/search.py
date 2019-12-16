@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Dict
 
-import ramda as r
 import toolz
 import whoosh
 import whoosh.query as wq
@@ -16,7 +15,7 @@ from labster.domain.models.demandes import Demande
 from labster.domain.models.faq import FaqEntry
 from labster.domain.models.roles import RoleType
 from labster.rbac import has_read_access
-from labster.util import get_current_user
+from labster.security import get_current_user
 
 from . import route
 
@@ -93,8 +92,7 @@ def search_results(q, page):
 
 
 def filter_demandes_by_visibility(demandes):
-    user = get_current_user()
-    return [demande for demande in demandes if has_read_access(user, demande)]
+    return [demande for demande in demandes if has_read_access(demande)]
 
 
 def search(q, **search_args):

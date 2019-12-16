@@ -1,7 +1,10 @@
 <!-- suppress OverlyComplexArithmeticExpressionJS -->
 <template>
   <div class="m-3">
-    <h1>Estimation des coûts complets de la recherche</h1>
+    <h1>
+      Estimation des coûts complets de la recherche
+      <span v-if="!model.id">(calculette)</span>
+    </h1>
 
     <p v-if="!model.editable">
       Attention, seul le porteur du projet ou le gestionnaire de la demande peut
@@ -20,8 +23,8 @@
 
     <table
       class="table table-condensed table-bordered"
-      @keyup="model_updated"
-      @change="model_updated"
+      @keyup="modelUpdated"
+      @change="modelUpdated"
     >
       <thead>
         <tr class="personnel">
@@ -42,24 +45,43 @@
       <tbody>
         <tr v-for="(line, index) in model.t1.lines">
           <td>
-            <button class="btn btn-danger" @click="remove_line('t1', line)">
+            <button class="btn btn-danger" @click="removeLine('t1', line)">
               -
             </button>
           </td>
           <td>
-            <input v-model="line.nom" class="form-control" type="text" />
+            <input
+              v-model="line.nom"
+              :readonly="readonly"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>
-            <input v-model="line.prenom" class="form-control" type="text" />
+            <input
+              v-model="line.prenom"
+              :readonly="readonly"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>
-            <input v-model="line.employeur" class="form-control" type="text" />
+            <input
+              v-model="line.employeur"
+              :readonly="readonly"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>
-            <select v-model="line.statut" class="form-control">
+            <select
+              v-model="line.statut"
+              :readonly="readonly"
+              class="form-control"
+            >
               <option
                 v-for="statut in statuts"
                 :value="statut"
@@ -75,6 +97,7 @@
           <td>
             <input
               v-model="line.duree_mois"
+              :readonly="readonly"
               class="form-control"
               type="number"
             />
@@ -83,6 +106,7 @@
           <td>
             <input
               v-model="line.pc_activite"
+              :readonly="readonly"
               class="form-control"
               type="number"
             />
@@ -118,7 +142,7 @@
       </tbody>
     </table>
 
-    <button class="btn btn-default" @click="add_line('t1')">
+    <button v-if="!readonly" class="btn btn-default" @click="addLine('t1')">
       +
     </button>
 
@@ -131,8 +155,8 @@
 
     <table
       class="table table-condensed table-bordered"
-      @keyup="model_updated"
-      @change="model_updated"
+      @keyup="modelUpdated"
+      @change="modelUpdated"
     >
       <thead>
         <tr class="personnel">
@@ -151,25 +175,44 @@
       <tbody>
         <tr v-for="line in model.t2.lines">
           <td>
-            <button class="btn btn-danger" @click="remove_line('t2', line)">
+            <button class="btn btn-danger" @click="removeLine('t2', line)">
               -
             </button>
           </td>
 
           <td>
-            <input v-model="line.nom" class="form-control" type="text" />
+            <input
+              v-model="line.nom"
+              :readonly="readonly"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>
-            <input v-model="line.prenom" class="form-control" type="text" />
+            <input
+              v-model="line.prenom"
+              :readonly="readonly"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>
-            <input v-model="line.employeur" class="form-control" type="text" />
+            <input
+              v-model="line.employeur"
+              :readonly="readonly"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>
-            <select v-model="line.statut" class="form-control">
+            <select
+              v-model="line.statut"
+              :readonly="readonly"
+              class="form-control"
+            >
               <option
                 v-for="statut in statuts2"
                 :value="statut"
@@ -182,6 +225,7 @@
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.duree_mois"
               class="form-control"
               type="number"
@@ -190,6 +234,7 @@
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.pc_activite"
               class="form-control"
               type="number"
@@ -217,7 +262,7 @@
       </tbody>
     </table>
 
-    <button class="btn btn-default" @click="add_line('t2')">
+    <button v-if="!readonly" class="btn btn-default" @click="addLine('t2')">
       +
     </button>
 
@@ -229,8 +274,8 @@
 
     <table
       class="table table-condensed table-bordered"
-      @keyup="model_updated"
-      @change="model_updated"
+      @keyup="modelUpdated"
+      @change="modelUpdated"
     >
       <thead>
         <tr class="personnel">
@@ -251,27 +296,43 @@
       <tbody>
         <tr v-for="line in model.t3.lines">
           <td>
-            <button class="btn btn-danger" @click="remove_line('t3', line)">
+            <button class="btn btn-danger" @click="removeLine('t3', line)">
               -
             </button>
           </td>
 
           <td>
-            <input v-model="line.nom" class="form-control" type="text" />
+            <input
+              :readonly="readonly"
+              v-model="line.nom"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>
-            <input v-model="line.prenom" class="form-control" type="text" />
+            <input
+              :readonly="readonly"
+              v-model="line.prenom"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>
-            <input v-model="line.employeur" class="form-control" type="text" />
+            <input
+              :readonly="readonly"
+              v-model="line.employeur"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>CDD</td>
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.brut_mensuel"
               class="form-control"
               type="number"
@@ -280,6 +341,7 @@
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.duree_mois"
               class="form-control"
               type="number"
@@ -288,6 +350,7 @@
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.pc_activite"
               class="form-control"
               type="number"
@@ -333,7 +396,7 @@
       </tbody>
     </table>
 
-    <button class="btn btn-default" @click="add_line('t3')">
+    <button v-if="!readonly" class="btn btn-default" @click="addLine('t3')">
       +
     </button>
 
@@ -346,8 +409,8 @@
 
     <table
       class="table table-condensed table-bordered"
-      @keyup="model_updated"
-      @change="model_updated"
+      @keyup="modelUpdated"
+      @change="modelUpdated"
     >
       <thead>
         <tr class="personnel">
@@ -366,23 +429,34 @@
       <tbody>
         <tr v-for="line in model.t4.lines">
           <td>
-            <button class="btn btn-danger" @click="remove_line('t4', line)">
+            <button class="btn btn-danger" @click="removeLine('t4', line)">
               -
             </button>
           </td>
 
           <td>
-            <input v-model="line.nom" class="form-control" type="text" />
+            <input
+              :readonly="readonly"
+              v-model="line.nom"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>
-            <input v-model="line.prenom" class="form-control" type="text" />
+            <input
+              :readonly="readonly"
+              v-model="line.prenom"
+              class="form-control"
+              type="text"
+            />
           </td>
 
           <td>{{ model.constants.COUT_HORAIRE_STAGE | currency("€") }}</td>
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.duree_mois"
               class="form-control"
               type="number"
@@ -391,6 +465,7 @@
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.pc_activite"
               class="form-control"
               type="number"
@@ -426,7 +501,7 @@
       </tbody>
     </table>
 
-    <button class="btn btn-default" @click="add_line('t4')">
+    <button v-if="!readonly" class="btn btn-default" @click="addLine('t4')">
       +
     </button>
 
@@ -438,8 +513,8 @@
 
     <table
       class="table table-condensed table-bordered"
-      @keyup="model_updated"
-      @change="model_updated"
+      @keyup="modelUpdated"
+      @change="modelUpdated"
     >
       <thead>
         <tr class="personnel">
@@ -452,13 +527,14 @@
       <tbody>
         <tr v-for="line in model.t5.lines">
           <td>
-            <button class="btn btn-danger" @click="remove_line('t5', line)">
+            <button class="btn btn-danger" @click="removeLine('t5', line)">
               -
             </button>
           </td>
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.designation"
               class="form-control"
               type="text"
@@ -466,7 +542,12 @@
           </td>
 
           <td>
-            <input v-model="line.cout_ht" class="form-control" type="number" />
+            <input
+              :readonly="readonly"
+              v-model="line.cout_ht"
+              class="form-control"
+              type="number"
+            />
           </td>
         </tr>
 
@@ -481,7 +562,7 @@
       </tbody>
     </table>
 
-    <button class="btn btn-default" @click="add_line('t5')">
+    <button v-if="!readonly" class="btn btn-default" @click="addLine('t5')">
       +
     </button>
 
@@ -494,8 +575,8 @@
 
     <table
       class="table table-condensed table-bordered"
-      @keyup="model_updated"
-      @change="model_updated"
+      @keyup="modelUpdated"
+      @change="modelUpdated"
     >
       <thead>
         <tr class="personnel">
@@ -508,13 +589,14 @@
       <tbody>
         <tr v-for="line in model.t6.lines">
           <td>
-            <button class="btn btn-danger" @click="remove_line('t6', line)">
+            <button class="btn btn-danger" @click="removeLine('t6', line)">
               -
             </button>
           </td>
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.designation"
               class="form-control"
               type="text"
@@ -522,7 +604,12 @@
           </td>
 
           <td>
-            <input v-model="line.cout_ht" class="form-control" type="number" />
+            <input
+              :readonly="readonly"
+              v-model="line.cout_ht"
+              class="form-control"
+              type="number"
+            />
           </td>
         </tr>
 
@@ -537,7 +624,7 @@
       </tbody>
     </table>
 
-    <button class="btn btn-default" @click="add_line('t6')">
+    <button v-if="!readonly" class="btn btn-default" @click="addLine('t6')">
       +
     </button>
 
@@ -547,8 +634,8 @@
 
     <table
       class="table table-condensed table-bordered"
-      @keyup="model_updated"
-      @change="model_updated"
+      @keyup="modelUpdated"
+      @change="modelUpdated"
     >
       <thead>
         <tr class="personnel">
@@ -561,13 +648,14 @@
       <tbody>
         <tr v-for="line in model.t7.lines">
           <td>
-            <button class="btn btn-danger" @click="remove_line('t7', line)">
+            <button class="btn btn-danger" @click="removeLine('t7', line)">
               -
             </button>
           </td>
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.designation"
               class="form-control"
               type="text"
@@ -590,7 +678,7 @@
       </tbody>
     </table>
 
-    <button class="btn btn-default" @click="add_line('t7')">
+    <button v-if="!readonly" class="btn btn-default" @click="addLine('t7')">
       +
     </button>
 
@@ -600,8 +688,8 @@
 
     <table
       class="table table-condensed table-bordered"
-      @keyup="model_updated"
-      @change="model_updated"
+      @keyup="modelUpdated"
+      @change="modelUpdated"
     >
       <thead>
         <tr class="personnel">
@@ -614,13 +702,14 @@
       <tbody>
         <tr v-for="line in model.t8.lines">
           <td>
-            <button class="btn btn-danger" @click="remove_line('t8', line)">
+            <button class="btn btn-danger" @click="removeLine('t8', line)">
               -
             </button>
           </td>
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.designation"
               class="form-control"
               type="text"
@@ -628,7 +717,12 @@
           </td>
 
           <td>
-            <input v-model="line.cout_ht" class="form-control" type="number" />
+            <input
+              :readonly="readonly"
+              v-model="line.cout_ht"
+              class="form-control"
+              type="number"
+            />
           </td>
         </tr>
 
@@ -643,7 +737,7 @@
       </tbody>
     </table>
 
-    <button class="btn btn-default" @click="add_line('t8')">
+    <button v-if="!readonly" class="btn btn-default" @click="addLine('t8')">
       +
     </button>
 
@@ -655,8 +749,8 @@
 
     <table
       class="table table-condensed table-bordered"
-      @keyup="model_updated"
-      @change="model_updated"
+      @keyup="modelUpdated"
+      @change="modelUpdated"
     >
       <thead>
         <tr>
@@ -674,13 +768,14 @@
       <tbody>
         <tr v-for="line in model.t9.lines">
           <td>
-            <button class="btn btn-danger" @click="remove_line('t9', line)">
+            <button class="btn btn-danger" @click="removeLine('t9', line)">
               -
             </button>
           </td>
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.designation"
               class="form-control"
               type="text"
@@ -688,7 +783,11 @@
           </td>
 
           <td>
-            <select v-model="line.categorie" class="form-control">
+            <select
+              :readonly="readonly"
+              v-model="line.categorie"
+              class="form-control"
+            >
               <option
                 v-for="categorie in categories"
                 :value="categorie"
@@ -701,6 +800,7 @@
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.mois_annee_achat"
               class="form-control"
               type="text"
@@ -709,6 +809,7 @@
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.pc_utilisation"
               class="form-control"
               type="number"
@@ -719,6 +820,7 @@
 
           <td>
             <input
+              :readonly="readonly"
               v-model="line.prix_achat"
               class="form-control"
               type="number"
@@ -739,7 +841,7 @@
       </tbody>
     </table>
 
-    <button class="btn btn-default" @click="add_line('t9')">
+    <button v-if="!readonly" class="btn btn-default" @click="addLine('t9')">
       +
     </button>
 
@@ -747,8 +849,8 @@
 
     <table
       class="table table-condensed table-bordered"
-      @keyup="model_updated"
-      @change="model_updated"
+      @keyup="modelUpdated"
+      @change="modelUpdated"
     >
       <thead>
         <tr>
@@ -885,6 +987,7 @@
         <td>
           (=
           <input
+            :readonly="readonly"
             v-model="model.couts_induits"
             type="number"
             style="width: 40px;"
@@ -903,6 +1006,7 @@
         <td>
           (=
           <input
+            :readonly="readonly"
             v-model="model.preciput_labo"
             type="number"
             style="width: 40px;"
@@ -957,11 +1061,20 @@
 
     <p>Le coût complet correspond au montant minimum d'une prestation.</p>
 
+    {{ model.editable }}
+
     <div v-if="model.id" style="text-align: center;">
-      <button v-if="model.editable" class="btn btn-primary" @click="on_submit">
+      <button
+        v-if="model.editable && !saving"
+        class="btn btn-primary m-1"
+        @click="onSubmit"
+      >
         Sauver
       </button>
-      <button class="btn btn-danger" @click="on_cancel">
+      <button v-if="model.editable && saving" class="btn btn-primary m-1">
+        Saving...
+      </button>
+      <button class="btn btn-danger m-1" @click="onCancel">
         Retour à la demande
       </button>
     </div>
@@ -970,29 +1083,24 @@
 
 <script>
 import Vue from "vue";
-import axios from "axios";
 
 export default {
-  name: "FeuilleCout",
-
   props: {
     model: { type: Object, required: true },
   },
 
   data() {
-    const categories = this.model.constants.DUREE_AMORTISSEMENT.map(function(
-      x
-    ) {
-      return x[0];
-    });
+    const constants = this.model.constants;
+    const categories = constants.DUREE_AMORTISSEMENT.map(x => x[0]);
+    const statuts = constants.REMUNERATION.map(x => x[0]);
 
-    const statuts = this.model.constants.REMUNERATION.map(function(x) {
-      return x[0];
-    });
     return {
       statuts: [""].concat(statuts),
       statuts2: ["", "Stagiaire", "Bourse Cifre", "Invité", "Autre"],
       categories: [""].concat(categories),
+      saving: false,
+      readonly: true,
+      // readonly: !this.model.editable,
     };
   },
 
@@ -1002,11 +1110,30 @@ export default {
         Vue.set(this.model, "t" + i, { lines: [] });
       }
     }
-    this.model_updated();
+    this.modelUpdated();
   },
 
   methods: {
-    model_updated() {
+    onCancel(e) {
+      e.preventDefault();
+      window.location = `/#/demandes/${this.model.id}`;
+    },
+
+    onSubmit(e) {
+      e.preventDefault();
+      if (this.saving) {
+        return;
+      }
+      this.saving = true;
+      const html = document.children[0].innerHTML;
+      const args = [this.model, html];
+      const msg = "Feuille de coût sauvegardée";
+      this.$root.rpc("update_feuille_de_cout", args, msg).then(result => {
+        window.location = `/#/demandes/${this.model.id}`;
+      });
+    },
+
+    modelUpdated() {
       update_t1(this.model, this.model.t1);
       update_t2(this.model, this.model.t2);
       update_t3(this.model, this.model.t3);
@@ -1020,40 +1147,15 @@ export default {
       update_couts_totaux(this.model);
     },
 
-    add_line(t) {
+    addLine(t) {
       this.model[t].lines.push({});
     },
 
-    remove_line(t, line) {
+    removeLine(t, line) {
       // this.model[t].lines.[index];
       let index = this.model[t].lines.indexOf(line);
       this.model[t].lines.splice(index, 1);
-      this.model_updated();
-    },
-
-    on_cancel(e) {
-      e.preventDefault();
-      const url = "/demandes/" + this.model.id;
-      window.location = url;
-    },
-
-    on_submit(e) {
-      e.preventDefault();
-      const url = "/demandes/" + this.model.id + "/feuille_cout";
-      const data1 = { model: this.model };
-      axios
-        .post(url, data1)
-        .then(result => {
-          console.log("feuille de cout sauvegardée.");
-          console.log(result);
-          window.location = result.data;
-        })
-        .catch(error => {
-          console.log(
-            "warning: ajax error, impossible de sauvegarder la feuille de couts.: ",
-            error
-          );
-        });
+      this.modelUpdated();
     },
   },
 };

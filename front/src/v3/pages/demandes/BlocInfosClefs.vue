@@ -16,7 +16,7 @@
               Intitulé: <b>{{ demande.nom }}</b>
             </p>
             <p>
-              Fonction du poste: <b>{{ demande.fonction_du_poste }}</b>
+              Fonction du poste: <b>{{ demande.data.fonction_du_poste }}</b>
             </p>
 
             <!-- TODO: make this server-side instead -->
@@ -50,26 +50,26 @@
               Intitulé: <b>{{ demande.nom }}</b>
             </p>
             <p>
-              Type de financeur: <b>{{ demande.type_financeur }}</b>
+              Type de financeur: <b>{{ demande.data.type_financeur }}</b>
             </p>
             <p>
-              Appel à projet: <b>{{ demande.appel_a_projets }}</b>
+              Appel à projet: <b>{{ demande.data.appel_a_projets }}</b>
             </p>
             <p>
-              Type de contrat: <b>{{ demande.type_contrat }}</b>
+              Type de contrat: <b>{{ demande.data.type_contrat }}</b>
             </p>
 
             <p>
               Montant du financement envisagé:
-              <b v-if="demande.montant_financement"
-                >{{ demande.montant_financement }}euros</b
+              <b v-if="demande.data.montant_financement"
+                >{{ demande.data.montant_financement }} euros</b
               >
             </p>
 
-            <p v-if="!demande.appel_a_projets">
+            <p v-if="!demande.data.appel_a_projets">
               Durée prévisionnelle:
-              <b v-if="demande.duree_previsionnelle"
-                >{{ demande.duree_previsionnelle }} mois</b
+              <b v-if="demande.data.duree_previsionnelle"
+                >{{ demande.data.duree_previsionnelle }} mois</b
               >
             </p>
           </template>
@@ -93,16 +93,16 @@
             v-if="demande.type === 'Déclaration de logiciel / base de données'"
           >
             <p>
-              Intitulé de l'œuvre: <b>{{ demande.intitule }}</b>
+              Intitulé de l'œuvre: <b>{{ demande.data.intitule }}</b>
             </p>
             <p>
-              Acronyme: <b>{{ demande.acronyme }}</b>
+              Acronyme: <b>{{ demande.data.acronyme }}</b>
             </p>
           </template>
 
           <template v-if="demande.type === 'Déclaration d´invention'">
             <p>
-              Titre de l'invention: <b>{{ demande.titre }}</b>
+              Titre de l'invention: <b>{{ demande.data.titre }}</b>
             </p>
           </template>
         </div>
@@ -151,12 +151,12 @@
             </b>
           </p>
 
-          <p v-if="demande.contact_dgrtt">
+          <p v-if="demande.contact_labco">
             Contact Lab&amp;Co:
             <b>
               <router-link
-                :to="{ name: 'user', params: { id: demande.contact_dgrtt.id } }"
-                >{{ demande.contact_dgrtt.full_name }}
+                :to="{ name: 'user', params: { id: demande.contact_labco.id } }"
+                >{{ demande.contact_labco.full_name }}
               </router-link>
             </b>
           </p>

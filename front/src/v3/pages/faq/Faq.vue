@@ -7,54 +7,68 @@
         <h2 class="card-title">Questions &amp; suggestions</h2>
       </div>
 
-      <div class="card-body">
-        <template v-if="ready">
-          <div v-for="category in category_names" class="mb-5">
-            <h3 class="mt-3 mb-3">{{ category }}</h3>
-
-            <div v-for="entry in entriesForCategory(category)">
-              <h4 class="mt-3" v-b-toggle="'accordion-' + entry.id">
-                <b-button variant="default">
-                  <span class="when-closed"><i class="far fa-eye"></i></span>
-                  <span class="when-opened"
-                    ><i class="far fa-eye-slash"></i
-                  ></span>
-                </b-button>
-
-                {{ entry.title }}
-              </h4>
-
-              <b-collapse
-                :id="'accordion-' + entry.id"
-                accordion="my-accordion"
-                role="tabpanel"
-              >
-                <div v-html="entry.body" class="faq-body"></div>
-              </b-collapse>
-            </div>
+      <div v-if="ready" class="card-body">
+        <div
+          v-for="([category, entries], category_index) in categories"
+          class="card faq-index"
+        >
+          <div class="card-header">
+            <h3 v-b-toggle="'category-' + category_index" class="card-title">
+              <i class="far fa-chevron-right"></i>
+              &nbsp;
+              {{ category }}
+            </h3>
           </div>
 
-          <hr />
+          <div class="card-body">
+            <b-collapse :id="'category-' + category_index">
+              <div v-for="entry in entries">
+                <h4 v-b-toggle="'entry-' + entry.id">
+                  <i class="far fa-chevron-right"></i>
+                  &nbsp;
+                  {{ entry.title }}
+                  <span v-if="isAdmin"> ({{ entry.view_count }} vues) </span>
+                </h4>
 
-          <h3>Vous n'avez pas trouvé la réponse à votre question ?</h3>
+                <b-collapse
+                  :id="'entry-' + entry.id"
+                  entry="my-entry"
+                  role="tabpanel"
+                  :accordion="'category-' + category_index"
+                >
+                  <div v-html="entry.body" class="faq-body"></div>
+                </b-collapse>
+              </div>
+            </b-collapse>
+          </div>
+        </div>
 
-          <p>
-            <router-link to="/faq/message" class="btn btn-primary">
-              <i class="far fa-question"></i> Poser votre question ou faire
-              votre suggestion à la DR&I.
-            </router-link>
-          </p>
-        </template>
-        <p v-else>
-          Chargement en cours...
-        </p>
+        <div class="card faq-index">
+          <div class="card-header">
+            <h2 class="card-title">
+              Vous n'avez pas trouvé la réponse à votre question ?
+            </h2>
+          </div>
+
+          <div class="card-body">
+            <p>
+              <router-link to="/faq/message" class="btn btn-primary">
+                <i class="far fa-question"></i> Poser votre question ou faire
+                votre suggestion à la DR&I.
+              </router-link>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div v-else class="card-body">
+        Chargement en cours...
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import fp from "lodash/fp";
 import { ContextFetcher } from "../../mixins";
 
 export default {
@@ -63,20 +77,28 @@ export default {
   data() {
     return {
       categories: [],
-      category_names: [],
-      entries: [],
     };
   },
 
-  methods: {
-    whenReady() {
-      this.categories = fp.groupBy("category", this.entries);
-      this.category_names = fp.keys(this.categories);
+  computed: {
+    isAdmin() {
+      return this.$storage.get("user_context").is_admin;
     },
+  },
 
-    entriesForCategory(category) {
-      return this.categories[category];
-    },
+  mounted() {
+    this.$root.$on("bv::collapse::state", (collapseId, isJustShown) => {
+      if (isJustShown) {
+        if (collapseId.startsWith("entry-")) {
+          const id = Number(collapseId.slice("entry-".length));
+          this.$root.rpc("view_entry", { id });
+        }
+      }
+    });
+  },
+
+  methods: {
+    whenReady() {},
   },
 };
 </script>
@@ -86,25 +108,25 @@ i.far {
   width: 18px;
 }
 
-.collapsed > .when-opened,
-:not(.collapsed) > .when-closed {
-  display: none;
+.collapsed > .fa-chevron-right {
+  transition: all linear 0.3s;
 }
 
-/*.faq-index h2 {*/
-/*  font-size: 26px;*/
-/*  font-weight: 600;*/
-/*  margin-top: 0;*/
-/*}*/
+:not(.collapsed) > .fa-chevron-right {
+  transform: rotate(90deg) translate(0.25em, 0.25em);
+  transition: all linear 0.3s;
+}
 
 .faq-index h3 {
-  font-size: 22px;
+  cursor: pointer;
   font-weight: 600;
 }
 
 .faq-index h4 {
-  font-size: 20px;
+  margin-top: 0;
+  font-size: 1.2rem;
   font-style: italic;
+  cursor: pointer;
 }
 
 .faq-body {

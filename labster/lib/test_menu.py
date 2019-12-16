@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from labster.domain2.services.roles import Role
 from labster.lib.menu import Menu
 from labster.test.test_web import login_as_dgrtt
 
@@ -35,11 +36,13 @@ MAIN = {
             "endpoint": "bi.home",
             "icon": "chart-line",
             "requires_role": {
-                "alc",
-                "directeur",
-                "chef de bureau",
-                "gouvernance",
-                "direction dgrtt",
+                Role.ADMIN_CENTRAL,
+                Role.RESPONSABLE,
+                # "alc",
+                # "directeur",
+                # "chef de bureau",
+                # "gouvernance",
+                # "direction dgrtt",
             },
         },
         {

@@ -4,15 +4,14 @@ from functools import singledispatch
 
 import requests
 from flask import current_app
+from flask_sqlalchemy import SQLAlchemy
 from marshmallow import Schema, fields
 
+from labster.di import injector
 from labster.domain.models.demandes import Demande
 from labster.domain.models.profiles import Profile
 from labster.domain.models.unites import OrgUnit
 from labster.signals import model_saved
-
-# from labster.blueprints.rest_api.schemas import ProfileSchema, OrgUnitSchema, \
-#     DemandeSchema
 
 COLLECTIONS = ["users", "structures", "demandes"]
 
@@ -111,7 +110,8 @@ def sync_all_objects():
 
 
 def sync_objects(cls: type):
-    objects = cls.query.all()  # type: ignore
+    db = injector.get(SQLAlchemy)
+    objects = db.session.query(cls).all()
     for obj in objects:
         sync_object(obj)
 

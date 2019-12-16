@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: "StringWidget",
+  name: "SelectWidget",
   props: ["field", "model"],
 };
 </script>

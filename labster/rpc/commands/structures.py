@@ -2,6 +2,16 @@
 Methodes JSON-RPC pour manipuler le graphe des structures.
 
 Note: les méthodes sont préfixées par "sg_" (sg = "structures graph").
+
+Roles / Permissions:
+
+Admin central:
+
+- L’admin central est le seul qui peut créer des sous-structures dans des structures autres
+  que les labos
+- Seul l’admin central peut créer des structures virtuelles
+
+cf. https://trello.com/c/cRUEKsVv/
 """
 from __future__ import annotations
 
@@ -16,11 +26,12 @@ from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.model.structure import Structure, StructureId, \
     StructureRepository
 from labster.domain2.model.type_structure import get_type_structure_by_id
-from labster.domain2.services.roles import RoleService
+from labster.domain2.services.roles import Role, RoleService
 from labster.persistence import Persistence
 from labster.rpc.cache import cache
 from labster.types import JSON
 
+from ...rbac import check_structure_editable
 from ..util import ensure_role
 
 structure_repo = injector.get(StructureRepository)
@@ -32,13 +43,13 @@ persistence = injector.get(Persistence)
 
 @method
 def sg_update_structure(id: str, model: Dict[str, JSON]):
-    ensure_role("alc")
-
     try:
         structure = structure_repo.get_by_id(StructureId(id))
         assert structure
     except (KeyError, AssertionError):
         raise NotFound()
+
+    check_structure_editable(structure)
 
     for k, v in model.items():
         setattr(structure, k, v)
@@ -49,13 +60,13 @@ def sg_update_structure(id: str, model: Dict[str, JSON]):
 
 @method
 def sg_create_child_structure(id: str, model: Dict[str, str]):
-    ensure_role("alc")
-
     try:
         parent_structure = structure_repo.get_by_id(StructureId(id))
         assert parent_structure
     except (KeyError, AssertionError):
         raise NotFound()
+
+    check_structure_editable(parent_structure)
 
     new_structure = Structure()
     new_structure.nom = model["nom"]
@@ -71,10 +82,12 @@ def sg_create_child_structure(id: str, model: Dict[str, str]):
 
 @method
 def sg_delete_structure(id: str):
-    ensure_role("alc")
+    ensure_role(Role.ADMIN_CENTRAL)
 
     structure = structure_repo.get_by_id(StructureId(id))
     assert structure
+
+    check_structure_editable(structure)
 
     structure.delete()
 
@@ -84,11 +97,11 @@ def sg_delete_structure(id: str):
 
 @method
 def sg_add_edge(u_id, v_id):
-    # TODO: permissions
-    ensure_role("alc")
-
     u = structure_repo.get_by_id(StructureId(u_id))
     v = structure_repo.get_by_id(StructureId(v_id))
+
+    check_structure_editable(u)
+
     u.add_child(v)
 
     persistence.save()
@@ -97,11 +110,11 @@ def sg_add_edge(u_id, v_id):
 
 @method
 def sg_delete_edge(u_id, v_id):
-    # TODO: permissions
-    ensure_role("alc")
-
     u = structure_repo.get_by_id(StructureId(u_id))
     v = structure_repo.get_by_id(StructureId(v_id))
+
+    check_structure_editable(u)
+
     u.remove_child(v)
 
     persistence.save()

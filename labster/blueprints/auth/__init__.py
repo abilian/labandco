@@ -14,4 +14,4 @@ __all__ = ()
 
 @blueprint.record
 def configure(state):
-    from . import cas
+    from . import cas, backdoors

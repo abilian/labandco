@@ -2,17 +2,14 @@
   <div>
     <breadcrumbs title="Demandes archivées"></breadcrumbs>
 
-    <div id="boxes-demandes">
-      <template v-for="(box, index) in boxes">
-        <box-demandes
-          id="archives"
-          :title="box.title"
-          :url="box.api_url"
-          :key="index"
-        >
-        </box-demandes>
-      </template>
-    </div>
+    <box-demandes
+      v-for="(box, index) in boxes"
+      :id="'archives-' + index"
+      :title="box.title"
+      :scope="box.scope"
+      :archives="true"
+      :key="index"
+    />
   </div>
 </template>
 

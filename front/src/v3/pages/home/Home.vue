@@ -1,21 +1,18 @@
 <template>
-  <div id="boxes-demandes" class="pt-3">
+  <div class="pt-3">
     <message-dgrtt></message-dgrtt>
 
     <bloc-deposer-demande></bloc-deposer-demande>
 
-    <div>
-      <template v-for="(box, index) in boxes">
-        <box-demandes
-          id="archives"
-          :title="box.title"
-          :scope="box.scope"
-          :archives="box.archives"
-          :key="index"
-        >
-        </box-demandes>
-      </template>
-    </div>
+    <box-demandes
+      v-for="(box, index) in boxes"
+      :id="'home-' + index"
+      :title="box.title"
+      :scope="box.scope"
+      :archives="box.archives"
+      :key="index"
+    >
+    </box-demandes>
   </div>
 </template>
 

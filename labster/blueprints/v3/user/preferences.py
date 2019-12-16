@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from flask import flash, g, request
+from flask import flash, request
 
 from labster.extensions import db
-from labster.util import get_current_user
+from labster.security import get_current_profile
 
 from .. import route
 
@@ -16,7 +16,7 @@ CHOICES = [
 
 @route("/user/preferences")
 def preferences():
-    user = get_current_user()
+    user = get_current_profile()
 
     if user.preferences_notifications is None:
         user.preferences_notifications = 0
@@ -33,7 +33,7 @@ def preferences():
 
 @route("/user/preferences", methods=["POST"])
 def preferences_post():
-    user = g.current_user
+    user = get_current_profile()
 
     payload = request.json
 

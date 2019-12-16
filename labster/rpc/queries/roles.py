@@ -2,29 +2,27 @@ from __future__ import annotations
 
 from typing import Any, Collection, Dict, List
 
+from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 from marshmallow import Schema, fields
 
-from labster.auth import AuthContext
 from labster.di import injector
 from labster.domain2.model.profile import Profile, ProfileRepository
 from labster.domain2.model.structure import StructureId, StructureRepository
 from labster.domain2.model.type_structure import DE, EQ
 from labster.domain2.services.roles import Role, RoleService
-from labster.persistence import Persistence
+from labster.security import get_current_user
 from labster.types import JSON
 from labster.util import sort_by_name
 
 structure_repo = injector.get(StructureRepository)
 profile_repo = injector.get(ProfileRepository)
 role_service = injector.get(RoleService)
-auth_context = injector.get(AuthContext)
-persistence = injector.get(Persistence)
+db = injector.get(SQLAlchemy)
 
 
 @method
 def get_roles(structure_id: str) -> List[Dict[str, Any]]:
-    # TODO: permissions
     structure = structure_repo.get_by_id(StructureId(structure_id))
     assert structure
 
@@ -58,14 +56,12 @@ def get_role_selectors(structure_id: str) -> JSON:
     assert structure
 
     # FIXME
-    if auth_context.current_user:
-        is_admin_central = auth_context.current_user.has_role("alc")
-        is_admin_local = False
-        # TODO instead:
-        # is_admin_central = role_service.has_role(g.current_profile, Role.ADMIN_CENTRAL)
-        # is_admin_local = role_service.has_role(
-        #     g.current_profile, Role.ADMIN_LOCAL, structure
-        # )
+    current_user = get_current_user()
+    if current_user.is_authenticated:
+        profile = current_user.profile
+        is_admin_central = profile.has_role(Role.ADMIN_CENTRAL)
+        is_admin_local = profile.has_role(Role.ADMIN_LOCAL, structure)
+
     else:
         # For tests
         is_admin_central = True
@@ -107,7 +103,16 @@ def get_role_selectors(structure_id: str) -> JSON:
                 value = {"id": u.id, "label": u.name}
             else:
                 value = None
-        options = [{"id": m.id, "label": m.name} for m in membres]
+        if role != Role.GESTIONNAIRE or not is_admin_central:
+            options = [{"id": m.id, "label": m.name} for m in membres]
+        else:
+            all_users = (
+                db.session.query(Profile)
+                .filter_by(active=True)
+                .order_by(Profile.nom, Profile.prenom)
+                .all()
+            )
+            options = [{"id": m.id, "label": m.name} for m in all_users]
         selector_dto = {
             "key": role.name,
             "label": role.value,

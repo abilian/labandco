@@ -75,7 +75,7 @@ def mapping():
     ).all()
 
     structures = {m.ou_recherche for m in mappings}
-    structures = sorted(list(structures))
+    structures = sorted(structures)
     for structure in structures:
         line = []
         for bureau in bureaux():

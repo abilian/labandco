@@ -22,4 +22,4 @@ def before_request() -> None:
 
 @blueprint.record
 def configure(state):
-    from . import constants, search, user
+    from . import search, user

@@ -12,11 +12,9 @@ class InmemoryProfileRepository(BaseInMemoryRepository, ProfileRepository):
         if not profile.id:
             profile.id = ProfileId.new()
         self._data[profile.id] = profile
-        self.is_dirty = True
 
     def delete(self, profile: Profile):
         del self._data[profile.id]
-        self.is_dirty = True
 
     def get_all(self) -> Set[Profile]:
         return set(self._data.values())

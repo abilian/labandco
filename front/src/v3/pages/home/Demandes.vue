@@ -2,10 +2,7 @@
   <div>
     <breadcrumbs title="Mes demandes"></breadcrumbs>
 
-    <div id="boxes-demandes">
-      <box-demandes title="Mes demandes" id="index" scope="mes demandes">
-      </box-demandes>
-    </div>
+    <box-demandes title="Mes demandes" id="demandes" scope="mes demandes" />
   </div>
 </template>
 

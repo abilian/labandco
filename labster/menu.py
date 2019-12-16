@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from flask import g
-
 from labster.lib.menu import Menu
 
 MAIN = {
@@ -9,24 +7,9 @@ MAIN = {
     "entries": [
         # Homes
         {"label": "Accueil", "to": "/", "icon": "home"},
-        {
-            "label": "Tâches",
-            "to": "/tasks",
-            "icon": "check-square",
-            "requires_role": {"recherche", "dgrtt"},
-        },
-        {
-            "label": "Mes demandes en cours",
-            "to": "/demandes",
-            "icon": "briefcase",
-            "requires_role": {"recherche", "dgrtt"},
-        },
-        {
-            "label": "Demandes archivées",
-            "to": "/archives",
-            "icon": "graduation-cap",
-            "requires_role": {"recherche", "dgrtt"},
-        },
+        {"label": "Tâches", "to": "/tasks", "icon": "check-square",},
+        {"label": "Mes demandes en cours", "to": "/demandes", "icon": "briefcase",},
+        {"label": "Demandes archivées", "to": "/archives", "icon": "graduation-cap",},
         # Stuff
         {"label": "Questions & suggestions", "to": "/faq", "icon": "question"},
         {
@@ -36,9 +19,9 @@ MAIN = {
             "requires_role": {
                 "alc",
                 "directeur",
-                "chef de bureau",
-                "gouvernance",
-                "direction dgrtt",
+                # "chef de bureau",
+                # "gouvernance",
+                # "direction dgrtt",
             },
         },
         {
@@ -120,8 +103,3 @@ def get_menu(user):
     menus = [Menu(MAIN), Menu(ANNUAIRES), Menu(ADMIN)]
 
     return [m for m in menus if not m.is_empty()]
-
-
-def inject_menu():
-    user = g.current_user
-    g.menu = get_menu(user)

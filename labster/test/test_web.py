@@ -221,7 +221,6 @@ def login_as_gdl(client, db_session):
 def login_as(profile: Profile, client):
     uid = profile.uid
     r = client.get(url_for("auth.backdoor", uid=uid))
-    pprint(vars(r))
     assert r.status_code == 201
 
     r = client.get(url_for("v3.self"))

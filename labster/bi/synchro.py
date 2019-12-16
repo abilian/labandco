@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from functools import singledispatch
 
-from labster.domain.models.demandes import Demande, DemandeAvenantConvention, \
+from labster.domain2.model.demande import Demande, DemandeAvenantConvention, \
     DemandeConvention, DemandeRH
-from labster.domain.services.calculs_couts import get_ctx_for_demande
+from labster.domain2.services.calculs_couts import get_ctx_for_demande
 from labster.extensions import db
 
 from .model import StatsLine

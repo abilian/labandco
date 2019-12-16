@@ -34,10 +34,8 @@ def get_users(q="", page=0) -> JSONDict:
     q = q.strip()
     if q:
         query = query.filter(
-            or_(Profile.nom.ilike(f"{q}%"), Profile.prenom.ilike(f"{q}%"))
+            or_(Profile.nom.ilike(f"{q}%"), Profile.prenom.ilike(f"{q}%"))  # type: ignore
         )
-
-    print("q=", q)
 
     query = query.offset(100 * page)
     users = query.limit(100).all()
@@ -73,7 +71,7 @@ def make_structures_dto(roles_dict: Dict[Role, Set[Structure]]) -> List[Dict]:
     def make_structure_dto(structure):
         role_set = {role.value for role in structures_to_roles[structure]}
         role_set -= {"Membre", "Membre affilié"}
-        roles = sorted(list(role_set))
+        roles = sorted(role_set)
 
         structure_dto = {
             "name": structure.sigle_ou_nom,

@@ -14,7 +14,7 @@ from labster.app import create_app
 
 # from . import commands, restheart, testing
 
-MODULE_NAMES = ["commands", "restheart", "testing"]
+MODULE_NAMES = ["commands", "migration", "restheart", "testing"]
 
 
 #
@@ -30,8 +30,9 @@ def register_module(namespace, module_name):
     try:
         module = import_string(fqn)
         namespace.update(vars(module))
-    except ImportError:
+    except ImportError as e:
         print(f"Failed to import module: {fqn}")
+        print(e)
 
 
 def register_commands(app):

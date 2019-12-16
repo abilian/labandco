@@ -46,8 +46,8 @@ html2text = "*"
 # Used by workflow
 inflection = "*"
 
-# Used for parsing LDIF
-python-ldap = ">=3"
+# LDAP parser (no need for python-ldap)
+ldif = "^4"
 
 # Used by CAS auth
 requests = { version = "^2.13", extras = [ "security" ] }
@@ -76,6 +76,8 @@ webargs = "^5.5"
 glom = "^19.2"
 
 xlrd = "^1.2"
+
+# Personal forks
 flask-injector = { git = "https://github.com/abilian/flask_injector.git" }
 
 # q = "*"
@@ -101,6 +103,7 @@ flake8-tidy-imports = "*"
 mypy = "*"
 mastool = "*"
 pylint = "*"
+bandit = "^1.6"
 
 dephell = "^0.7.4"
 # Temp (otherwise it resolves to 0.0.1 !)
@@ -112,6 +115,7 @@ pre-commit = "*"
 pytest = "*"
 pytest-cov = "*"
 pytest-mock = "*"
+# pytest-randomly = "^3.1"
 tox = "*"
 typeguard = "*"
 
@@ -121,10 +125,11 @@ honcho = "*"
 
 # Formatters
 isort = "*"
-black = { version = "*", allows-prereleases = true }
+black = { version = "*", allow-prereleases = true }
+
+# Other tools
 tabulate = "^0.8.3"
 gitchangelog = "^3.0"
-pytest-randomly = "^3.1"
 gitignore_parser = "^0.0.5"
 
 

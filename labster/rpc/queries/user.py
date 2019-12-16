@@ -22,21 +22,11 @@ def get_user(id: str) -> JSONDict:
     profile_repo = injector.get(ProfileRepository)
     structure_repo = injector.get(StructureRepository)
 
-    # TEMP (need refactor)
-    user = None
-    try:
-        old_id = int(id)
-        user = profile_repo.get_by_old_id(old_id)
-    except (KeyError, ValueError):
-        pass
-
+    user = profile_repo.get_by_id(ProfileId(id))
     if not user:
-        try:
-            user = profile_repo.get_by_id(ProfileId(id))
-        except KeyError:
-            raise NotFound()
-
-    # /end
+        user = profile_repo.get_by_old_uid(id)
+    if not user:
+        raise NotFound()
 
     structure_affectation_dto: JSON
     if user.affectation:
@@ -55,7 +45,7 @@ def get_user(id: str) -> JSONDict:
     for k in ["nom", "prenom", "email", "telephone", "uid", "affectation"]:
         user_dto[k] = getattr(user, k)
     # Cas particulier: fonctions est un set() pas une liste.
-    user_dto["fonctions"] = sorted(list(user.fonctions))
+    user_dto["fonctions"] = sorted(user.fonctions)
 
     roles_dto = get_roles_dto_for_user(user, skip=True)
     perimetre_dto = get_perimetre_dto_for_user(user)
@@ -79,9 +69,12 @@ def get_roles_dto_for_user(
     roles_for_user = role_service.get_roles_for_user(user)
 
     all_structures = {}
-    for structures in roles_for_user.values():
-        for structure in structures:
-            all_structures[structure.id] = structure
+    for contexts in roles_for_user.values():
+        for context in contexts:
+            if not context:
+                continue
+            assert isinstance(context, Structure)
+            all_structures[context.id] = context
 
     list_structures = list(all_structures.values())
     list_structures.sort(key=lambda s: s.depth)

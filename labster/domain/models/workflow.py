@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Container, Dict
+from typing import Container, Dict, List
 
 import structlog
 
@@ -42,10 +42,6 @@ class EnValidation(State):
             )
             demande.wf_stage = next_validation_stage(demande)
         return demande.wf_stage.direction
-
-
-def get_validation_stage(demande):
-    return demande.wf_stage
 
 
 def next_validation_stage(demande):
@@ -141,9 +137,14 @@ TRAITEE = Traitee()
 REJETEE = Rejetee()
 ABANDONNEE = Abandonnee()
 
-ACTIVE_STATES = [EN_EDITION, EN_VALIDATION, EN_VERIFICATION, EN_INSTRUCTION]
-INACTIVE_STATES = [TRAITEE, REJETEE, ABANDONNEE]
-ALL_STATES = ACTIVE_STATES + INACTIVE_STATES
+ACTIVE_STATES: List[State] = [
+    EN_EDITION,
+    EN_VALIDATION,
+    EN_VERIFICATION,
+    EN_INSTRUCTION,
+]
+INACTIVE_STATES: List[State] = [TRAITEE, REJETEE, ABANDONNEE]
+ALL_STATES: List[State] = ACTIVE_STATES + INACTIVE_STATES
 
 
 #

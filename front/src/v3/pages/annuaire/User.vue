@@ -126,13 +126,13 @@
         </div>
       </div>
 
-      <div class="card">
+      <div v-if="ready && perimetre.length > 0" class="card">
         <div class="card-header">
           <h3 class="card-title">Périmètre DR&amp;I / DRV</h3>
         </div>
 
-        <div v-if="ready" class="card-body table-responsive p-0">
-          <table v-if="perimetre.length > 0" class="table table-striped">
+        <div class="card-body table-responsive p-0">
+          <table class="table table-striped">
             <thead>
               <tr>
                 <th class="w-50">Structure</th>
@@ -157,10 +157,6 @@
               </tr>
             </tbody>
           </table>
-
-          <div v-else class="card-body">
-            L'utilisateur n'a actuellement aucun rôle comme contact DR&amp;I.
-          </div>
         </div>
       </div>
     </div>

@@ -8,9 +8,7 @@
       <div class="box-body">
         <div class="row">
           <div v-for="button in buttons" class="col-md-6 col-lg-4">
-            <router-link
-              :to="{ name: 'demande.new', params: { type: button.type } }"
-            >
+            <a :href="button.url">
               <div class="info-box">
                 <span class="info-box-icon" :class="'bg-' + button.color"
                   ><i class="far fa-briefcase" :class="'fa-' + button.icon"></i
@@ -20,7 +18,7 @@
                   <span class="info-box-text" v-html="button.text"></span>
                 </div>
               </div>
-            </router-link>
+            </a>
           </div>
         </div>
       </div>
@@ -64,6 +62,7 @@ const BUTTONS = [
     icon: "question-circle",
     text: "Questions &amp; suggestions",
     color: "yellow",
+    url: "#/faq",
   },
 ];
 
@@ -73,7 +72,22 @@ export default {
   computed: {
     buttons() {
       const types_demandes = Vue.$storage.get("user_context").types_demandes;
-      return fp.filter(b => types_demandes.includes(b.type), BUTTONS);
+
+      const makeUrl = button => {
+        if (button.url) {
+          return button.url;
+        } else {
+          const location = {
+            name: "demande.new",
+            params: { type: button.type },
+          };
+          return this.$router.resolve(location).href;
+        }
+      };
+      return fp.pipe(
+        fp.filter(b => types_demandes.includes(b.type)),
+        fp.map(b => ({ url: makeUrl(b), ...b }))
+      )(BUTTONS);
     },
   },
 };

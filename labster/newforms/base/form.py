@@ -5,11 +5,15 @@ from typing import Any, List
 
 from flask import json
 
+from labster.di import injector
+from labster.domain2.model.structure import StructureRepository
 from labster.domain.models.roles import RoleType
 from labster.domain.services.constants import get_constants
 from labster.types import JSONDict
 
 from .fields import Field, FieldSet
+
+structure_repo = injector.get(StructureRepository)
 
 
 class Form:
@@ -36,6 +40,9 @@ class Form:
         elif laboratoire:
             self.set_membres_du_labo(laboratoire)
 
+        # More (refactor later)
+        self.set_structures_concernees_choices()
+
         if model is None:
             self.model = self.empty_model()
         elif isinstance(model, dict):
@@ -54,7 +61,7 @@ class Form:
             porteurs_org = [x for x in org.get_membres() if x.has_role("porteur")]
             membres.update(porteurs_org)
 
-        porteurs_du_labo = sorted(list(membres), key=lambda x: x.nom)
+        porteurs_du_labo = sorted(membres, key=lambda x: x.nom)
         field = self.get_field("porteur")
         if field:
             field.choices = [(m.uid, f"{m.nom} {m.prenom}") for m in porteurs_du_labo]
@@ -114,3 +121,14 @@ class Form:
             if field.name not in model:
                 model[field.name] = ""
         return model
+
+    #
+    #
+    #
+    def set_structures_concernees_choices(self):
+        field = self.get_field("structures_concernees")
+        if not field:
+            return
+
+        structures = structure_repo.get_all()
+        field.choices = [(s.id, f"{s.nom}") for s in structures]

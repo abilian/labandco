@@ -1,43 +1,43 @@
 <template>
-  <form class="form-horizontal" @change="model_updated" @submit="on_submit">
+  <form class="form-horizontal" @change="modelUpdated" @submit="onSubmit">
     <div v-for="field_set in form.fieldsets">
       <field-set :field-set="field_set" :form="form" :model="model" />
     </div>
 
-    <div v-if="!calculette" style="text-align: center;">
-      <button
-        v-if="form.mode === 'create'"
-        id="creer-demande"
-        type="submit"
-        class="btn btn-primary"
-      >
-        Créer la demande
-      </button>
+    <!--    <div v-if="!calculette" style="text-align: center;">-->
+    <!--      <button-->
+    <!--        v-if="form.mode === 'create'"-->
+    <!--        id="creer-demande"-->
+    <!--        type="submit"-->
+    <!--        class="btn btn-primary"-->
+    <!--      >-->
+    <!--        Créer la demande-->
+    <!--      </button>-->
 
-      <button
-        v-if="form.mode === 'edit'"
-        id="sauver-demande"
-        type="submit"
-        class="btn btn-primary"
-      >
-        Sauver la demande
-      </button>
+    <!--      <button-->
+    <!--        v-if="form.mode === 'edit'"-->
+    <!--        id="sauver-demande"-->
+    <!--        type="submit"-->
+    <!--        class="btn btn-primary"-->
+    <!--      >-->
+    <!--        Sauver la demande-->
+    <!--      </button>-->
 
-      <button
-        id="cancel"
-        type="submit"
-        class="btn btn-danger"
-        @submit="on_cancel"
-      >
-        Annuler
-      </button>
-    </div>
+    <!--      <button-->
+    <!--        id="cancel"-->
+    <!--        type="submit"-->
+    <!--        class="btn btn-danger"-->
+    <!--        @submit="onCancel"-->
+    <!--      >-->
+    <!--        Annuler-->
+    <!--      </button>-->
+    <!--    </div>-->
 
-    <div v-if="calculette" style="text-align: center;">
-      <button id="calculer" type="submit" class="btn btn-primary">
-        Lancer le calcul
-      </button>
-    </div>
+    <!--    <div v-if="calculette" style="text-align: center;">-->
+    <!--      <button id="calculer" type="submit" class="btn btn-primary">-->
+    <!--        Lancer le calcul-->
+    <!--      </button>-->
+    <!--    </div>-->
   </form>
 </template>
 
@@ -49,7 +49,6 @@ export default {
   props: {
     form: { type: Object, required: true },
     model: { type: Object, required: true },
-    action: { type: String },
     calculette: { type: Boolean },
   },
 
@@ -61,47 +60,57 @@ export default {
     };
   },
 
+  created() {
+    this.modelUpdated();
+  },
+
   methods: {
-    model_updated: function(e) {
+    modelUpdated(e) {
       update_form(this.form, this.model, this.salaires_indicatifs);
     },
 
-    on_cancel: function(e) {
+    onCancel: function(e) {
       e.preventDefault();
-      const url = "/demandes/post";
-      const data = {
-        action: "cancel",
-        model: this.model,
-        form: this.form,
-      };
-      axios
-        .post(url, data)
-        .then(result => {
-          if (result.data.length > 100) {
-            window.location = "/";
-          } else {
-            window.location = result.data;
-          }
-        })
-        .catch(error => {
-          console.error("error saving the form: ", error);
-        });
+      // TODO
     },
 
-    on_submit: function(e) {
+    // on_cancel: function(e) {
+    //   e.preventDefault();
+    //   const url = "/demandes/post";
+    //   const data = {
+    //     action: "cancel",
+    //     model: this.model,
+    //     form: this.form,
+    //   };
+    //   axios
+    //     .post(url, data)
+    //     .then(result => {
+    //       if (result.data.length > 100) {
+    //         window.location = "/";
+    //       } else {
+    //         window.location = result.data;
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.error("error saving the form: ", error);
+    //     });
+    // },
+
+    onSubmit(e) {
       e.preventDefault();
 
       const args = [this.model, this.form];
-      const msg = "Demande créée";
       this.$root.rpc("create_demande", args).then(result => {
-        const id = result;
-        const msg = `Demande créée avec l'id: ${id}`;
+        const id = result.id;
+        const messages = result.messages;
 
-        this.$root.$bvToast.toast(msg, {
-          title: "OK",
-          variant: "success",
-          solid: true,
-        });
+        for (let msg of messages) {
+          this.$root.$bvToast.toast(msg[0], {
+            title: "",
+            variant: msg[1],
+            solid: true,
+          });
+        }
 
         this.$router.push(`/demandes/${id}`);
       });

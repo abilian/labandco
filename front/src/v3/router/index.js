@@ -22,7 +22,6 @@ import Timeline from "../pages/tools/Timeline";
 import Contacts from "../pages/tools/Contacts";
 import Preferences from "../pages/tools/Preferences";
 
-import DemandeEdit from "../pages/demandes/DemandeEdit";
 import DemandeView from "../pages/demandes/DemandeView";
 
 import NouvelleDemande from "../pages/forms/NouvelleDemande";
@@ -97,10 +96,6 @@ const router = new Router({
       path: "/demandes/:id",
       component: DemandeView,
       props: true,
-    },
-    {
-      path: "/demandes/:id/edit",
-      component: DemandeEdit,
     },
 
     // Faq

@@ -1,22 +1,22 @@
 from __future__ import annotations
 
-from pprint import pprint
 from typing import List
 
 import dateutil.parser
 import pandas as pd
 import ramda as r
+from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 from werkzeug.exceptions import Forbidden
 
-from labster.auth import AuthContext
 from labster.bi.model import StatsLine
 from labster.di import injector
-from labster.domain.models.demandes import AVENANT_CONVENTION, CONVENTION, \
-    PI_INVENTION, PI_LOGICIEL, RECRUTEMENT
-from labster.domain.models.unites import OrgUnit
-from labster.domain.models.workflow import ALL_STATES
+from labster.domain2.model.demande import DemandeType
+from labster.domain2.model.structure import Structure
+from labster.domain2.services.roles import Role
+from labster.domain2.services.workflow import ALL_STATES
 from labster.rpc.registry import context_for
+from labster.security import get_current_user
 
 from .form import get_selectors
 from .util import mes_structures
@@ -24,15 +24,15 @@ from .util import mes_structures
 SECONDS_IN_DAY = 60.0 * 60 * 24
 ALLOWED_ROLES = ["alc", "directeur", "chef de bureau", "gouvernance", "direction dgrtt"]
 
+db = injector.get(SQLAlchemy)
+
 
 @method
 @context_for("bi")
 def get_bi_context():
-    user = injector.get(AuthContext).current_user
+    check_permission()
 
-    if user.is_anonymous or not user.has_role(ALLOWED_ROLES):
-        raise Forbidden()
-
+    user = get_current_user()
     ctx = get_stats2(user)
     ctx["selectors"] = get_selectors()
     return ctx
@@ -40,13 +40,9 @@ def get_bi_context():
 
 @method
 def get_stats(**args):
-    user = injector.get(AuthContext).current_user
-
-    if user.is_anonymous or not user.has_role(ALLOWED_ROLES):
-        raise Forbidden()
+    check_permission()
 
     args2 = {}
-    pprint(args)
     for arg_name, arg_value in args.items():
         if not arg_value:
             continue
@@ -56,7 +52,24 @@ def get_stats(**args):
             value = arg_value["value"]
         args2[arg_name] = value
 
+    user = get_current_user()
     return get_stats2(user, **args2)
+
+
+def check_permission():
+    user = get_current_user()
+    if user.is_anonymous:
+        raise Forbidden()
+
+    profile = user.profile
+    allowed = False
+    if profile.has_role(Role.RESPONSABLE, "*"):
+        allowed = True
+    if profile.has_role(Role.ADMIN_CENTRAL):
+        allowed = True
+
+    if not allowed:
+        raise Forbidden()
 
 
 def get_stats2(
@@ -97,13 +110,13 @@ def get_stats2(
             if structure_id not in {s.id for s in structures}:
                 raise Forbidden()
 
-        structure = OrgUnit.query.get(structure_id)
+        structure = db.session.query(Structure).get(structure_id)
         descendant_ids = [s.id for s in structure.descendants()]
         query = query.filter(
             StatsLine.structure_id.in_([structure_id] + descendant_ids)
         )
 
-    elif user.has_role("directeur"):
+    elif user.has_role(Role.RESPONSABLE, "*"):
         structures = mes_structures(user)
         query = query.filter(StatsLine.structure_id.in_([s.id for s in structures]))
 
@@ -152,35 +165,37 @@ def parse_date(s):
 
 
 def make_rh_stats(query):
-    lines = query.filter(StatsLine.type_demande == RECRUTEMENT).all()
+    lines = query.filter(StatsLine.type_demande == DemandeType.RECRUTEMENT.value).all()
     result = make_stats(lines, ["duree", "salaire_brut_mensuel", "cout_total_mensuel"])
     result["count"] = len(lines)
     return result
 
 
 def make_conventions_stats(query):
-    lines = query.filter(StatsLine.type_demande == CONVENTION).all()
+    lines = query.filter(StatsLine.type_demande == DemandeType.CONVENTION.value).all()
     result = make_stats(lines, ["montant", "recrutements_prev", "duree"])
     result["count"] = len(lines)
     return result
 
 
 def make_avenants_stats(query):
-    lines = query.filter(StatsLine.type_demande == AVENANT_CONVENTION).all()
+    lines = query.filter(
+        StatsLine.type_demande == DemandeType.AVENANT_CONVENTION.value
+    ).all()
     result = make_stats(lines, [])
     result["count"] = len(lines)
     return result
 
 
 def make_pi_logiciel_stats(query):
-    lines = query.filter(StatsLine.type_demande == PI_LOGICIEL).all()
+    lines = query.filter(StatsLine.type_demande == DemandeType.PI_LOGICIEL.value).all()
     result = make_stats(lines, [])
     result["count"] = len(lines)
     return result
 
 
 def make_pi_invention_stats(query):
-    lines = query.filter(StatsLine.type_demande == PI_INVENTION).all()
+    lines = query.filter(StatsLine.type_demande == DemandeType.PI_INVENTION.value).all()
     result = make_stats(lines, [])
     result["count"] = len(lines)
     return result
@@ -229,4 +244,4 @@ def make_stats(lines, attrs):
 
 
 def format_float(x):
-    return "{:,.2f}".format(float(x)).replace(",", "\u00A0").replace(".", ",")
+    return f"{float(x):,.2f}".replace(",", "\u00A0").replace(".", ",")

@@ -1,27 +1,32 @@
 from __future__ import annotations
 
-from abc import ABC, ABCMeta, abstractmethod
-from typing import List, Optional, Set
-from uuid import uuid1
+from abc import ABC, ABCMeta
+from typing import TYPE_CHECKING, Any, List, Optional, Set
+from uuid import uuid4
 
 from attr import attrs
 
 from labster.domain2.model.base import Repository
 
+if TYPE_CHECKING:
+    from labster.domain2.services.roles import Role
+
 
 class ProfileId(str):
     @staticmethod
     def new() -> ProfileId:
-        return ProfileId(uuid1())
+        return ProfileId(uuid4())
 
 
 @attrs(eq=False, order=False, repr=False, auto_attribs=True)
 class Profile:
     id: ProfileId = ProfileId("")
-    uid: str = ""
-    old_id: Optional[int] = None
-    old_uid: str = ""
+
+    uid: Optional[str] = None
     login: str = ""
+
+    old_id: Optional[int] = None
+    old_uid: Optional[str] = None
 
     active: bool = True
 
@@ -58,8 +63,6 @@ class Profile:
     #     DateTime, default=datetime.utcnow, nullable=False)
     #
 
-    # preferences_notifications = Column(Integer)
-
     def __str__(self):
         return f"<Profile {self.full_name}>"
 
@@ -83,6 +86,13 @@ class Profile:
 
     def deactivate(self):
         self.active = False
+
+    def has_role(self, role: Role, context: Any = None) -> bool:
+        from labster.domain2.services.roles import RoleService
+        from labster.di import injector
+
+        role_service = injector.get(RoleService)
+        return role_service.has_role(self, role, context)
 
 
 class ProfileRepository(Repository, ABC, metaclass=ABCMeta):

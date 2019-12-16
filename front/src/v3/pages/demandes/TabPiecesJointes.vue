@@ -1,38 +1,35 @@
 <template>
   <div class="mt-4">
-    <h3>Pièces-jointes</h3>
+    <div v-if="demande.type === 'Recrutement'">
+      <ul>
+        <li v-if="demande.type === 'Doctorant'">Carte d'étudiant</li>
+        <li v-if="demande.financement === 'Notification de financement'">
+          Notification de financement
+        </li>
+        <li v-if="demande.financement2 === 'Notification de financement'">
+          Notification de co-financement
+        </li>
+      </ul>
+      <p>
+        Ces documents peuvent être sous forme d'un ou plusieurs fichiers PDF, à
+        votre convenance. Pensez bien, néanmoins, à vérifier que tous les
+        documents demandés sont bien attachés à votre demande avant de la
+        soumettre.
+      </p>
+    </div>
 
-    <!--{% if demande.type == "Recrutement" %}-->
-    <!--  <div> {{ constants.demande_recrutement.pj | safe }} </div>-->
-    <!--  <ul>-->
-    <!--    {% if demande.type == 'Doctorant' %}-->
-    <!--      <li>Carte d'étudiant</li>-->
-    <!--    {% endif %}-->
-    <!--    {% if demande.financement == "Notification de financement" %}-->
-    <!--      <li>Notification de financement</li>-->
-    <!--    {% endif %}-->
-    <!--    {% if demande.financement2 == "Notification de financement" %}-->
-    <!--      <li>Notification de co-financement</li>-->
-    <!--    {% endif %}-->
-    <!--  </ul>-->
+    <div v-if="demande.type === 'Convention de recherche'">
+      <p>
+        Vous pouvez (et, probablement, devez) joindre à ce formulaire des
+        documents complémentaires : canevas d’appel à projets, annexe
+        scientifique, annexe financière…
+      </p>
+    </div>
 
-    <!--  <p>-->
-    <!--    Ces documents peuvent être sous forme d'un ou plusieurs fichiers PDF, à-->
-    <!--    votre convenance. Pensez bien, néanmoins, à vérifier que tous les documents-->
-    <!--    demandés sont bien attachés à votre demande avant de la soumettre.-->
-    <!--  </p>-->
-    <!--{% elif demande.type == "Convention" %}-->
-    <!--  <p>-->
-    <!--    Vous pouvez (et, probablement, devez) joindre à ce formulaire des documents-->
-    <!--    complémentaires : canevas d’appel à projets, annexe scientifique, annexe-->
-    <!--    financière…-->
-    <!--  </p>-->
-    <!--{% endif %}-->
+    <h3>Pièces-jointes actuelles</h3>
 
-    <h3>Pièces-jointes</h3>
-
-    <ul v-if="pieces_jointes">
-      <li v-for="pj in pieces_joints" class="row">
+    <ul v-if="piecesJointes">
+      <li v-for="pj in piecesJointes" class="row">
         <div class="col-md-6">
           <!--            <a-->
           <!--                href="{{ url_for(".demande_get_attachment", id=demande.id, pj_id=pj.id) }}">{{ pj.name }}</a>-->
@@ -58,6 +55,7 @@
       </li>
       <!--    {% endfor %}-->
     </ul>
+
     <p v-else>Aucune pièce-jointe pour l'instant.</p>
 
     <!--{% if user.has_role('dgrtt') or user in demande.owners %}-->
@@ -73,33 +71,6 @@
     <!--    <input type="submit" class="btn btn-primary" name="Envoyer">-->
     <!--  </form>-->
     <!--{% endif %}-->
-
-    <!--    <ul>-->
-    <!--      <li class="row">-->
-    <!--        <div class="col-md-6">-->
-    <!--          <a href="/demandes/2643/pj/8209"-->
-    <!--          >Sorbonne_Univ-FVE-SNCF-EI__Chaire_Industrielle_Silversight_II__version_finale_.docx</a-->
-    <!--          >-->
-
-    <!--          <br/>(déposée par: Zahoua Djallali). Le 03/04/2019 a 17:09.-->
-    <!--        </div>-->
-
-    <!--        <div class="col-md-1">-->
-    <!--          <form-->
-    <!--              method="post"-->
-    <!--              enctype="multipart/form-data"-->
-    <!--              role="form"-->
-    <!--              name="delete-attachment"-->
-    <!--              class="form-inline"-->
-    <!--              action="/demandes/2643/pj/8209/delete"-->
-    <!--          >-->
-    <!--            <button type="submit" class="form-group form-actions text-danger">-->
-    <!--              <span class="glyphicon glyphicon-trash"></span>-->
-    <!--            </button>-->
-    <!--          </form>-->
-    <!--        </div>-->
-    <!--      </li>-->
-    <!--    </ul>-->
   </div>
 </template>
 
@@ -109,7 +80,7 @@ export default {
 
   data() {
     return {
-      pieces_jointes: this.demande.pieces_jointes,
+      piecesJointes: this.demande.pieces_jointes,
     };
   },
 };

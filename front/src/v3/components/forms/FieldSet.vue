@@ -2,7 +2,7 @@
   <fieldset v-if="fieldSet.visible && !fieldSet.hidden">
     <legend>{{ fieldSet.label }}</legend>
 
-    <div v-for="field_name in fieldSet.fields">
+    <template v-for="field_name in fieldSet.fields">
       <form-group
         v-if="
           form.fields[field_name].visible && !form.fields[field_name].hidden
@@ -10,10 +10,11 @@
         :field-name="field_name"
         :model="model"
         :form="form"
+        :key="field_name"
       />
 
       <span class="clearfix" />
-    </div>
+    </template>
   </fieldset>
 </template>
 

@@ -2,11 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
-from flask import g
-
 from labster.di import injector
 from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.services.roles import Role, RoleService
+from labster.security import get_current_profile
 from labster.util import url_for
 
 profile_repository = injector.get(ProfileRepository)
@@ -23,24 +22,20 @@ class Node:
         return getattr(self, "_" + key, default)
 
     def is_active(self) -> bool:
-        user = g.current_user
+        profile = get_current_profile()
         required_roles = self.get("requires_role")
 
         if not required_roles:
             return True
 
-        # XXX: Temp hack
-        if isinstance(list(required_roles)[0], Role):
-            if not hasattr(user, "uid"):
-                return False
-            profile = profile_repository.get_by_uid(user.uid)
-            result = any(
-                role_service.has_role(profile, role) for role in required_roles
-            )
+        for role in required_roles:
+            if role == "alc" and profile.has_role(Role.ADMIN_CENTRAL):
+                return True
 
-        else:
-            result = any(user.has_role(role) for role in required_roles)
-        return result
+            if role == "directeur" and profile.has_role(Role.RESPONSABLE, "*"):
+                return True
+
+        return False
 
     def __repr__(self):
         return f"<Node label={self._label}>"
@@ -95,9 +90,7 @@ class Menu(Node):
     def active_entries(self) -> List[MenuItem]:
         if not self.is_active():
             return []
-        # print("all:", [e for e in self.entries])
         result = [e for e in self.entries if e.is_active()]
-        # print("after filtering:", result)
         return result
 
     def is_empty(self) -> bool:

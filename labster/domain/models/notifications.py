@@ -17,6 +17,7 @@ from .profiles import Profile
 class NotificationQuery(BaseQuery):
     def get_for_user(self, user, page=0):
         # TODO: paging
+        # FIXME
         return (
             self.filter(Notification.user == user)
             .order_by(Notification.created_at.desc())

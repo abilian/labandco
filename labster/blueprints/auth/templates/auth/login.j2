@@ -7,11 +7,11 @@
 
 {% from "_macros.html" import flashed_messages %}
 
-{% macro login_btn(uid, label=None) %}
-  <a class="btn btn-default" href="/switch?uid={{ uid }}">{{ uid }}
-    {% if label %}({{ label }}){% endif %}</a>
+{% macro login_btn(user, label=None) %}
+  <a class="btn btn-default m-1 w-100" href="/switch?login={{ user.login }}">
+    {{ user.name }} ({{ user.login }})<br>
+    {% if label %}<em>{{ label }}</em>{% endif %}</a>
 {% endmacro %}
-
 
 <body class="login-page">
 <div class="login-box">
@@ -30,29 +30,17 @@
     <p>En phase de test (les données saisies sont purement fantaisistes)
       vous pouvez vous connecter en tant que:</p>
 
-    <h3>Gouvernance</h3>
+    <form action="/switch" class="mb-4">
+      Login: <input type="text" name="login">
+    </form>
 
-    {{ login_btn("chambaz", "Président de Sorbonne Université") }}
+    {% for name, users in groups %}
+      <h3 class="mt-4">{{ name }}</h3>
 
-    <h3>Laboratoires</h3>
-
-    {% for group in chercheurs|groupby('laboratoire') %}
-      <h4>{{ group.grouper.sigle }}</h4>
-
-      {% for user in group.list %}
-        {{ login_btn(user.uid, ", ".join(user.all_roles()[1:])) }}
+      {% for user in users %}
+        {{ login_btn(user, user._roles) }}
       {% endfor %}
     {% endfor %}
-
-    {#    {% for user in all_users if user.has_role('recherche') %}#}
-    {#      {{ login_btn(user.uid, user.laboratoire.sigle + " : " + ", ".join(user.all_roles()[1:])) }}#}
-    {#    {% endfor %}#}
-
-    <h3>DR&amp;I</h3>
-    {% for user in all_users if user.has_role('dgrtt') %}
-      {{ login_btn(user.uid, ", ".join(user.all_roles()[1:])) }}
-    {% endfor %}
-
   </div>
 </div>
 

@@ -11,10 +11,9 @@ from labster.domain2.model.profile import ProfileId, ProfileRepository
 from labster.domain2.model.structure import StructureId, StructureRepository
 from labster.domain2.services.roles import Role, RoleService
 from labster.persistence import Persistence
+from labster.rbac import check_can_edit_roles
 from labster.rpc.cache import cache
 from labster.types import JSON
-
-from ..util import ensure_role
 
 structure_repo = injector.get(StructureRepository)
 profile_repo = injector.get(ProfileRepository)
@@ -25,10 +24,9 @@ persistence = injector.get(Persistence)
 
 @method
 def add_roles(structure_id: str, profile_ids: List[str], role_id: str):
-    ensure_role("alc")
-    # TODO: permissions
-
     structure = structure_repo.get_by_id(StructureId(structure_id))
+    check_can_edit_roles(structure)
+
     for profile_id in profile_ids:
         profile = profile_repo.get_by_id(ProfileId(profile_id))
         role = Role[role_id]
@@ -42,10 +40,9 @@ def add_roles(structure_id: str, profile_ids: List[str], role_id: str):
 
 @method
 def delete_role(structure_id: str, profile_id: str, role_id: str):
-    ensure_role("alc")
-    # TODO: permissions
-
     structure = structure_repo.get_by_id(StructureId(structure_id))
+    check_can_edit_roles(structure)
+
     profile = profile_repo.get_by_id(ProfileId(profile_id))
     role = Role[role_id]
     role_service.ungrant_role(profile, role, structure)
@@ -58,9 +55,8 @@ def delete_role(structure_id: str, profile_id: str, role_id: str):
 
 @method
 def update_roles(structure_id: str, data: Dict[str, JSON]):
-    # TODO: permissions
     structure = structure_repo.get_by_id(StructureId(structure_id))
-    assert structure
+    check_can_edit_roles(structure)
 
     for role_name in data:
         role = getattr(Role, role_name)

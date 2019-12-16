@@ -2,8 +2,14 @@
 
 from __future__ import annotations
 
+import re
+import sys
 from copy import deepcopy
 
+from flask_sqlalchemy import SQLAlchemy
+
+from labster.di import injector
+from labster.domain2.model.structure import Structure
 from labster.domain.services.constants import get_constant
 from labster.newforms.base import BooleanField, DateField, EmailField, \
     FieldSet, Form, IntegerField, Select2Field, StringField, TextAreaField
@@ -13,6 +19,7 @@ from labster.newforms.common import laboratoire, structures_concernees
 #     "J'ai pris connaissance et j'accepte les principes de recrutement de Sorbonne Université",
 #     validators=[required()])
 
+db = injector.get(SQLAlchemy)
 
 CHOICES1_ = ["CDD", "Doctorant", "Bourse Marie Curie"]
 CHOICES1 = [[x, x] for x in CHOICES1_]
@@ -50,16 +57,30 @@ nature = FieldSet(
 
 
 def choice6():
-    return [""] + get_constant("recrutement.ecoles_doctorales")
+    ecoles_doctorales = (
+        db.session.query(Structure).filter_by(type_name="École doctorale").all()
+    )
+
+    def sorter(ed):
+        m = re.search("([0-9]+)", ed.nom)
+        if m:
+            n = int(m.group(1))
+        else:
+            n = 0
+        return n
+
+    ecoles_doctorales.sort(key=sorter)
+    return [""] + [ed.nom for ed in ecoles_doctorales]
 
 
 responsable_scientifique = FieldSet(  #
     "responsable_scientifique",
     "Responsable scientifique de la personne recrutée",
     [
-        # Select2Field(
-        #     "ecole_doctorale", "École doctorale", choices=choice6, required=True
-        # ),
+        # TODO
+        Select2Field(
+            "ecole_doctorale", "École doctorale", choices=choice6, required=True
+        ),
         Select2Field("porteur", "Nom", choices=[], required=True),
     ],
 )

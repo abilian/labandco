@@ -5,37 +5,32 @@ from typing import Any, List
 from jsonrpcserver import method
 from marshmallow import Schema, fields
 
-from labster.auth import AuthContext
-from labster.di import injector
+from labster.domain2.model.profile import Profile
 from labster.domain2.services.demande import get_demande_types_for_user
-from labster.domain2.services.roles import RoleService
+from labster.domain2.services.roles import Role
 from labster.domain.models.notifications import Notification
-from labster.domain.models.profiles import Profile
 from labster.menu import get_menu
-from labster.rpc.queries.demandes_tables import mes_taches, mes_taches_en_retard
+from labster.security import get_current_profile
 from labster.types import JSONDict
-from labster.util import get_current_user
 
+from .demandes_tables import mes_taches, mes_taches_en_retard
 from .home_boxes import get_boxes
-
-auth_context = injector.get(AuthContext)
-role_service = injector.get(RoleService)
 
 
 @method
 def get_user_context() -> JSONDict:
-    user = get_current_user()
-    current_profile = auth_context.current_profile
+    current_profile = get_current_profile()
 
-    menus = get_menu(user)
-    types_demandes = list(get_demande_types_for_user(current_profile, role_service))
+    menus = get_menu(current_profile)
+    types_demandes = list(get_demande_types_for_user(current_profile))
 
     return {
         "menu": [menu.asdict() for menu in menus],
-        "user": UserSchema().dump(user).data,
+        "user": UserSchema().dump(current_profile).data,
         "types_demandes": types_demandes,
         "home_boxes": get_boxes(),
         "archives_boxes": get_boxes(archives=True),
+        "is_admin": current_profile.has_role(Role.ADMIN_CENTRAL),
     }
 
 
@@ -53,7 +48,7 @@ class UserSchema(Schema):
     nb_taches_retard = fields.Method("get_nb_taches_retard")
 
     def get_is_admin(self, user: Profile):
-        return user.has_role("alc")
+        return user.has_role(Role.ADMIN_CENTRAL)
 
     def get_roles(self, user: Profile) -> List[Any]:
         assert isinstance(user, Profile)

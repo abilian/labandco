@@ -1,27 +1,40 @@
 from __future__ import annotations
 
-from typing import Dict
-
-from flask import g, request
 from flask_mail import Mail, Message
+from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 from werkzeug import exceptions
 
+from labster.di import injector
+from labster.domain2.model.profile import Profile
+from labster.domain.models.faq import FaqEntry
+from labster.security import get_current_profile
+
 
 @method
-def send_message(mail: Mail):
-    message_body = request.json.get("message")
+def send_message(message):
+    mail = injector.get(Mail)
+    current_profile = get_current_profile()
 
-    if not message_body:
+    if not message:
         raise exceptions.BadRequest()
 
-    mail.send(make_message(message_body))
+    mail.send(make_message(message, current_profile))
 
 
-def make_message(body: str) -> Message:
+@method
+def view_entry(id: int):
+    db = injector.get(SQLAlchemy)
+
+    entry: FaqEntry = FaqEntry.query.get(id)
+    entry.view_count = (entry.view_count or 0) + 1
+    db.session.commit()
+
+
+def make_message(body: str, user: Profile) -> Message:
     subject = "Message reçu sur Lab&co"
     sender = "direction.recherche@upmc.fr"
-    body = f"Message de: {g.current_user.email}\n\n{body}\n"
+    body = f"Message de: {user.email}\n\n{body}\n"
     html_body = f"<pre>{body}</pre>"
     recipients = ["direction.recherche@upmc.fr"]
     return Message(

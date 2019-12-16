@@ -10,14 +10,11 @@ from flask import Flask, current_app, g, request, session
 from toolz import first, memoize
 from werkzeug.utils import import_string
 
-from labster.di import injector
-from labster.persistence import Persistence
 from labster.util import url_for
 
 from . import search
 from .bus import register_callback
-from .menu import inject_menu
-from .security import login_user
+from .security import get_current_user, login_user
 
 BLUEPRINTS = [
     "labster.rpc",
@@ -32,22 +29,15 @@ def init_web(app: Flask) -> None:
 
     register_blueprints(app)
 
-    persistence = injector.get(Persistence)
-    app.before_request(persistence.load)
-
     app.before_request(login_user)
     app.before_request(stop_services)
     app.before_request(inject_debug_info)
     app.before_request(make_session_permanent)
-    app.before_request(inject_menu)
     app.before_request(inject_assets)
 
     app.jinja_env.filters.update(datetime=lambda x: x.strftime("%d/%m/%y %H:%M"))
 
     search.register(app)
-
-    # api.init_app(app)
-    # register_api(app)
 
     register_callback()
 
@@ -67,10 +57,9 @@ def make_session_permanent() -> None:
 
 def inject_debug_info() -> None:
     debug_info = {}
-    if g.current_user.is_authenticated:
-        debug_info["user_uid"] = g.current_user.uid
-        if g.current_user.laboratoire:
-            debug_info["laboratoire"] = g.current_user.laboratoire.nom
+    current_user = get_current_user()
+    if current_user.is_authenticated:
+        debug_info["user_uid"] = current_user.uid
     debug_info["url"] = request.url
 
     g.debug_info = debug_info

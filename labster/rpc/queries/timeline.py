@@ -8,15 +8,15 @@ from marshmallow import Schema, fields
 from labster.di import injector
 from labster.domain.models.notifications import Notification
 from labster.rpc.registry import context_for
+from labster.security import get_current_profile
 from labster.types import JSONDict
-from labster.util import get_current_user
 
 db = injector.get(SQLAlchemy)
 
 
 @context_for("timeline")
 def timeline() -> JSONDict:
-    user = get_current_user()
+    user = get_current_profile()
 
     notifications = Notification.query.get_for_user(user)
     notifications_dto = NotificationSchema().dump(notifications, many=True).data

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import warnings
 from typing import Callable, Dict, Optional, Type
 
@@ -21,7 +22,8 @@ from .logging import init_logging
 
 # Set up warnings control
 warnings.simplefilter("ignore", category=sqlalchemy.exc.SAWarning)
-
+# Doesn't work, despite https://github.com/Kozea/WeasyPrint/issues/312
+logging.getLogger("weasyprint").setLevel(100)
 
 __all__ = ("create_app", "Application")
 

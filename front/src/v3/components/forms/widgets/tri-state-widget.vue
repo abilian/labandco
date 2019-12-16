@@ -1,37 +1,49 @@
 <template>
   <div>
-    <label class="checkbox-inline">
+    <div class="form-check form-check-inline">
       <input
         :id="field.name"
         v-model="model[field.name]"
         type="radio"
         :name="field.name"
         value="oui"
+        class="form-check-input"
       />
-      Oui
-    </label>
 
-    <label class="checkbox-inline">
+      <label class="form-check-label" :for="field.name">
+        Oui
+      </label>
+    </div>
+
+    <div class="form-check form-check-inline">
       <input
         :id="field.name"
         v-model="model[field.name]"
         type="radio"
         :name="field.name"
         value="non"
+        class="form-check-input"
       />
-      Non
-    </label>
 
-    <label class="checkbox-inline">
+      <label class="form-check-label" :for="field.name">
+        Non
+      </label>
+    </div>
+
+    <div class="form-check form-check-inline">
       <input
         :id="field.name"
         v-model="model[field.name]"
         type="radio"
         :name="field.name"
         value="?"
+        class="form-check-input"
       />
-      Ne sait pas
-    </label>
+
+      <label class="form-check-label" :for="field.name">
+        Ne sait pas
+      </label>
+    </div>
   </div>
 </template>
 

@@ -1,97 +1,186 @@
 from __future__ import annotations
 
-from werkzeug.exceptions import Forbidden
+from typing import Optional
 
-from labster.domain.models.demandes import Demande, DemandeRH
-from labster.domain.models.profiles import Profile
-from labster.domain.models.workflow import EN_EDITION
-from labster.domain.services.dgrtt import get_bureau_dgrtt
-from labster.domain.services.roles import has_role
-from labster.util import get_current_user
+from werkzeug.exceptions import Forbidden, abort
+
+from labster.auth import AuthContext
+from labster.di import injector
+from labster.domain2.model.demande import Demande, DemandeConvention, DemandeRH
+from labster.domain2.model.profile import Profile
+from labster.domain2.model.structure import Structure, StructureRepository
+from labster.domain2.model.type_structure import DE, EQ, LA
+from labster.domain2.services.contacts import ContactService, ContactType
+from labster.domain2.services.roles import Role
+from labster.domain2.services.workflow import EN_EDITION
+from labster.ldap.constants import DRI_DN, DRV_DNS, FAC_DNS
+from labster.security import get_current_profile
+
+structure_repo = injector.get(StructureRepository)
 
 
-def check_read_access(demande: Demande) -> None:
-    """Raises 'Forbidden' if current user doesn't have access to demande.
-    """
-    user = get_current_user()
-    if not has_read_access(user, demande):
-        raise Forbidden()
+def is_membre_dri(user: Profile) -> bool:
+    dri = structure_repo.get_by_dn(DRI_DN)
+    return user.has_role(Role.MEMBRE, dri)
 
+
+def get_drv_membership(user: Profile) -> Optional[Structure]:
+    for drv_dn in DRV_DNS.values():
+        drv = structure_repo.get_by_dn(drv_dn)
+        assert drv
+        if user.has_role(Role.MEMBRE, drv):
+            return drv
     return None
 
 
-def has_read_access(user: Profile, demande: Demande):
-    if user.has_role("recherche"):
-        if user in (demande.porteur, demande.gestionnaire):
+def is_membre_drv(user: Profile) -> bool:
+    return get_drv_membership(user) is not None
+
+
+def check_read_access(demande: Optional[Demande]):
+    """Raises 'Forbidden' if current user doesn't have access to demande.
+    """
+    if not demande:
+        abort(404)
+    if not has_read_access(demande):
+        raise Forbidden()
+
+
+def has_read_access(demande: Demande) -> bool:
+    user = get_current_profile()
+
+    if user in (demande.porteur, demande.gestionnaire):
+        return True
+
+    # DRI
+    if is_membre_dri(user) and demande.wf_state != EN_EDITION.id:
+        return True
+
+    # DRV
+    drv = get_drv_membership(user)
+    if drv:
+        fac = drv.parent
+        assert fac
+        if demande.structure in {fac} | fac.descendants:
             return True
 
-        structure = demande.structure
+    # TODO: verifier ce qu'on fait pour le cas des sous-structures
+    if user.has_role(Role.GESTIONNAIRE, demande.structure):
+        return True
 
-        equipe = structure.equipe
-        if equipe and (
-            has_role(user, "directeur", equipe)
-            or has_role(user, "gestionnaire", equipe)
-        ):
-            return True
+    if user.has_role(Role.RESPONSABLE, demande.structure):
+        return True
 
-        departement = structure.departement
-        if departement and (
-            has_role(user, "directeur", departement)
-            or has_role(user, "gestionnaire", departement)
-        ):
-            return True
+    return False
 
-        laboratoire = structure.laboratoire
-        if laboratoire and (
-            has_role(user, "directeur", laboratoire)
-            or has_role(user, "gestionnaire", laboratoire)
-        ):
-            return True
 
+def feuille_cout_editable(demande: Demande) -> bool:
+    """
+    Feuille de coût : celle-ci devient modifiable par le Contact Lab&Co lorsqu'il a la main.
+    Chaque enregistrement, par le Porteur, un Contributeur, un Gestionnaire ou un Contact...
+
+    https://trello.com/c/O702eRzQ/
+    """
+    if not isinstance(demande, DemandeConvention):
         return False
 
-    elif user.has_role("dgrtt"):
-        return demande.wf_state != EN_EDITION.id
+    user = get_current_profile()
+    if user in (demande.porteur, demande.gestionnaire, demande.contact_labco):
+        return True
 
-    else:
-        # Should not happen
-        return False
+    structure = demande.structure
+    if user.has_role(Role.GESTIONNAIRE, structure):
+        return True
+
+    # TODO: contributeur
+    # TODO: un contact ?
+    return False
 
 
 def acces_restreint(demande: Demande) -> bool:
     """Retourne True si l'utilisateur courant n'a pas le droit de voir les info
     confidentielles d'un formulaire RH."""
-    user = get_current_user()
-    bureau_dgrtt = get_bureau_dgrtt(user)
 
-    if isinstance(demande, DemandeRH):
-        if bureau_dgrtt and bureau_dgrtt.id == "CT":
-            return False
-        if user.has_role("direction dgrtt"):
-            return False
-        if user.has_role("alc"):
+    if not isinstance(demande, DemandeRH):
+        return False
+
+    user = get_current_profile()
+    if user in demande.owners:
+        return False
+
+    if user.has_role(Role.ADMIN_CENTRAL):
+        return False
+
+    if demande.structure:
+        structures_parentes = demande.structure.ancestors
+        for structure in structures_parentes:
+            if user.has_role(Role.RESPONSABLE, structure):
+                return False
+
+    dri = structure_repo.get_by_dn(DRI_DN)
+    if user.has_role(Role.RESPONSABLE, dri):
+        return False
+
+    contact_service = injector.get(ContactService)
+    mapping = contact_service.get_mapping()
+    for d in mapping.values():
+        if ContactType.CONTACT_RH in d.keys():
             return False
 
-        if user in demande.owners:
-            return False
+    return True
 
-        labo = demande.laboratoire
-        if has_role(user, "directeur", labo):
-            return False
 
-        # TODO: c'est quoi les règles à présent ?
-        # dept = demande.departement
-        # if dept:
-        #     info = wf_info(dept)
-        #     if info["validation_dept"] and has_role(user, "directeur", dept):
-        #         return False
-        #
-        # equipe = demande.equipe
-        # if equipe:
-        #     info = wf_info(equipe)
-        #     if info["validation_equipe"] and has_role(user, "directeur", equipe):
-        #         return False
+def structure_is_editable(structure: Optional[Structure]):
+    """Cf. https://trello.com/c/cRUEKsVv/
+    """
+    if not structure:
+        abort(404)
 
+    auth_context = injector.get(AuthContext)
+    user = auth_context.current_profile
+
+    # For tests
+    if not user:
         return True
 
+    if user.has_role(Role.ADMIN_CENTRAL):
+        return True
+
+    if structure.type in [LA, DE, EQ]:
+        return user.has_role(Role.ADMIN_LOCAL, structure)
+
     return False
+
+
+def check_structure_editable(structure: Optional[Structure]):
+    if not structure_is_editable(structure):
+        raise Forbidden()
+
+
+def can_edit_roles(structure: Optional[Structure]):
+    if not structure:
+        abort(404)
+
+    auth_context = injector.get(AuthContext)
+    user = auth_context.current_profile
+
+    # For tests
+    if not user:
+        return True
+
+    if user.has_role(Role.ADMIN_CENTRAL):
+        return True
+
+    for fac_dn in FAC_DNS:
+        fac = structure_repo.get_by_dn(fac_dn)
+        assert fac
+        if user.has_role(Role.ADMIN_LOCAL, fac):
+            if structure in {fac} | fac.descendants:
+                return True
+
+    return False
+
+
+def check_can_edit_roles(structure: Optional[Structure]):
+    if not can_edit_roles(structure):
+        raise Forbidden()

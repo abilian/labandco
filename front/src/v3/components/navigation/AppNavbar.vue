@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="dark" class="main-header navbar-secondary">
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      <b-navbar-toggle target="nav-collapse" />
 
       <b-collapse id="nav-collapse" is-nav>
         <!-- SEARCH FORM -->
@@ -25,11 +25,15 @@
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <b-nav-item to="/contacts" title="Mes contacts">
+          <b-nav-item v-if="user" to="/contacts" title="Mes contacts">
             <i class="far fa-lg fa-heart"></i>
           </b-nav-item>
 
-          <b-nav-item to="/demandes_en_retard" title="Mes demandes en retard">
+          <b-nav-item
+            v-if="user"
+            to="/demandes_en_retard"
+            title="Mes demandes en retard"
+          >
             <i class="far fa-lg fa-exclamation-triangle"></i>
             <span
               v-if="user.nb_taches_retard"
@@ -38,7 +42,7 @@
             >
           </b-nav-item>
 
-          <b-nav-item href="#" title="Mes tâches">
+          <b-nav-item v-if="user" href="#" title="Mes tâches">
             <i class="far fa-lg fa-check-square"></i>
             <span
               v-if="user.nb_taches"
@@ -47,7 +51,7 @@
             >
           </b-nav-item>
 
-          <li class="nav-item">
+          <li v-if="user" class="nav-item">
             <router-link
               to="/timeline"
               title="Mes notifications"
@@ -64,19 +68,23 @@
 
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
-            <template slot="button-content"
+            <template v-if="user" slot="button-content"
               ><i class="far far-user"></i> {{ user.prenom }} {{ user.nom }}
             </template>
 
-            <b-dropdown-item :to="{ name: 'user', params: { id: user.id } }"
+            <b-dropdown-item
+              v-if="user"
+              :to="{ name: 'user', params: { id: user.id } }"
               >Mon profil utilisateur</b-dropdown-item
             >
 
-            <b-dropdown-item to="/preferences">Préférences</b-dropdown-item>
+            <b-dropdown-item v-if="user" to="/preferences"
+              >Préférences</b-dropdown-item
+            >
 
             <b-dropdown-divider></b-dropdown-divider>
 
-            <b-dropdown-item v-if="user.is_admin" href="/switch"
+            <b-dropdown-item v-if="user && user.is_admin" href="/switch"
               >Changer d'utilisateur</b-dropdown-item
             >
             <b-dropdown-item href="#" @click="onLogout()"
@@ -101,7 +109,9 @@ export default {
 
   computed: {
     user() {
-      return this.$storage.get("user_context").user;
+      const user = this.$storage.get("user_context").user;
+      console.log("user=", user);
+      return user;
     },
   },
 

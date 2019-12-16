@@ -8,33 +8,30 @@ from __future__ import annotations
 from collections import Sequence
 from typing import Collection, Dict, List, Tuple
 
-from flask import g
 from jsonrpcserver import method
 from marshmallow import Schema, fields
 from marshmallow_annotations import AnnotationSchema
 from werkzeug.exceptions import NotFound
 
-from labster.auth import AuthContext
 from labster.di import injector
 from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.model.structure import Structure, StructureId, \
     StructureRepository
 from labster.domain2.model.type_structure import ALL_TYPES
 from labster.domain2.services.roles import Role, RoleService
-from labster.persistence import Persistence
+from labster.rbac import structure_is_editable
 from labster.rpc.cache import cache
+from labster.security import get_current_user
 from labster.types import JSON
 from labster.util import sort_by_name
 
 structure_repo = injector.get(StructureRepository)
 profile_repo = injector.get(ProfileRepository)
 role_service = injector.get(RoleService)
-auth_context = injector.get(AuthContext)
-persistence = injector.get(Persistence)
 
 
 @method
-@cache.memoize()
+@cache.memoize(tag="structures")
 def sg_all_structures() -> JSON:
     root = structure_repo.get_root()
     assert root
@@ -68,17 +65,20 @@ def sg_all_structures() -> JSON:
 
 @method
 def sg_get_structure(structure_id) -> JSON:
-    current_user = auth_context.current_user
-    if current_user:
-        editable = current_user.has_role("alc")
-    else:
-        editable = True
+    # current_user = get_current_user()
+    # if current_user.is_authenticated:
+    #     editable =
+    #     editable = current_user.profile.has_role(Role.ADMIN_CENTRAL)
+    # else:
+    #     # Only for tests
+    #     editable = True
 
     try:
         structure = structure_repo.get_by_id(StructureId(structure_id))
         assert structure
     except (KeyError, AssertionError):
         raise NotFound()
+    editable = structure_is_editable(structure)
 
     ou_dto = FullStructureSchema().dump(structure).data
     ou_dto["editable"] = editable
@@ -193,11 +193,11 @@ class FullStructureSchema(AnnotationSchema):
 
     def _can_be_deleted(self, structure):
         # For tests
-        try:
-            if not g.current_user.has_role("alc"):
+        current_user = get_current_user()
+        if current_user.is_authenticated:
+            profile = current_user.profile
+            if not profile.has_role(Role.ADMIN_CENTRAL):
                 return False
-        except RuntimeError:
-            pass
 
         if structure.children:
             return False

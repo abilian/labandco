@@ -14,9 +14,9 @@
       v-if="field.type[0] !== 'HTML' && field.scalar"
       v-show="field.visible"
       :id="'field-' + field.name"
-      class="form-group"
+      class="form-group row"
     >
-      <label :for="field.id" class="control-label col-sm-4">
+      <label :for="field.id" class="col-form-label col-sm-4">
         <span v-html="field.label" />&nbsp;<template v-if="field.required">
           (<span class="text-red">*</span>)
         </template>
@@ -42,6 +42,7 @@ import IntegerWidget from "./widgets/integer-widget.vue";
 import EmailWidget from "./widgets/email-widget.vue";
 import DateWidget from "./widgets/date-widget.vue";
 import SelectWidget from "./widgets/select-widget.vue";
+import MultipleSelectWidget from "./widgets/multiple-select-widget.vue";
 import TextAreaWidget from "./widgets/textarea-widget.vue";
 import BooleanWidget from "./widgets/boolean-widget.vue";
 import YesNoWidget from "./widgets/yesno-widget.vue";
@@ -65,6 +66,7 @@ const components = {
   DateWidget,
   TextAreaWidget,
   SelectWidget,
+  MultipleSelectWidget,
   BooleanWidget,
   YesNoWidget,
   TriStateWidget,

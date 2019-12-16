@@ -1,109 +1,84 @@
 from __future__ import annotations
 
-from typing import Collection, Dict, List, Optional, Tuple
+import re
+from io import BytesIO
+from typing import Any, Collection, Dict, List, Optional, Tuple
 
 import structlog
 from attr import attrs
-from ldif import LDIFRecordList
+from ldif import LDIFParser
 from tqdm import tqdm
 
 from labster.di import injector
 from labster.domain2.model.profile import Profile, ProfileRepository
 from labster.domain2.model.structure import StructureRepository
-from labster.domain2.services.roles import RoleService
+from labster.ldap.constants import ADMINS_DN, get_parent_dn
 
 logger = structlog.get_logger()
 
 profile_repo = injector.get(ProfileRepository)
 structure_repo = injector.get(StructureRepository)
-role_service = injector.get(RoleService)
 
 
-def get_ldif_file():
-    fn = "annuaire/lab-co.ldif"
-    return fn
-
-    # # TODO later
-    # files = glob.glob("annuaire/extraction-personnels.ldif")
-    # files.sort()
-    # if not files:
-    #     logger.error("Error: not LDIF file found in annuaire/")
-    #     sys.exit(-1)
-    # ldif_file = files[-1]
-    #
-    # # Remove old files
-    # for file_to_remove in files[0:-1]:
-    #     logger.info(f"removing {file_to_remove}")
-    #     os.unlink(file_to_remove)
-    #
-    # return ldif_file
-
-
-def parse_ldif_file(ldif_file) -> List:
+def parse_ldif_file(ldif_file: str) -> List[Tuple[str, Dict[str, Any]]]:
     logger.info(f"### Parsing LDIF file {ldif_file}")
 
-    class LdifFileReader:
-        def __init__(self, fd):
-            self.fd = fd
+    orig_ldif_fd = open(ldif_file, "rb")
+    ldif_fd = BytesIO()
+    for line in orig_ldif_fd.readlines():
+        if line.startswith(b"# search result"):
+            break
+        ldif_fd.write(line)
 
-        def __getattr__(self, name):
-            class MethodProxy:
-                def __init__(self, fd, name):
-                    self.fd = fd
-                    self.name = name
+    ldif_fd.seek(0)
 
-                def __call__(self, *args, **kw):
-                    if self.name == "readline":
-                        result = self.fd.readline()
-                        if result.startswith("search:"):
-                            return ""
-                        else:
-                            return result
-
-                    result = getattr(self.fd, self.name)(*args, **kw)
-                    return result
-
-            return MethodProxy(self.fd, name)
-
-    parser = LDIFRecordList(LdifFileReader(open(ldif_file, "r")))
-    parser.parse()
-    return parser.all_records
+    parser = LDIFParser(ldif_fd)
+    return list(parser.parse())
 
 
 @attrs(auto_attribs=True)
 class LdifRecord:
-    dn: str
-    raw: Dict[str, List[bytes]]
+    raw: Dict[str, List[str]]
+
+    def __getattr__(self, name):
+        return self.raw.get(name, [""])[0]
 
     @property
     def uid(self) -> Optional[str]:
         if "uid" not in self.raw:
             return None
-        return self.raw["uid"][0].decode()
+        return self.raw["uid"][0]
 
     @property
     def affectation(self) -> Optional[str]:
-        affectations = self.raw.get("sorbonneUniversiteEmpAffectation", [])
+        affectations = self.raw.get("sorbonneUniversiteEmpAffectation")
         if not affectations:
             return None
-        assert len(affectations) == 1
-        return affectations[0].decode()
+
+        # assert len(affectations) == 1
+        affectation = affectations[0]
+
+        if affectation in ADMINS_DN:
+            affectation = get_parent_dn(affectation)
+
+        return affectation
 
     @property
     def fonctions(self):
-        affiliations = self.raw.get("eduPersonAffiliation", [])
-        return [s.decode() for s in affiliations]
+        return self.raw.get("eduPersonAffiliation", [])
 
-    def __getattr__(self, name):
-        return self.raw.get(name, [b""])[0].decode()
+    @property
+    def address(self):
+        adresse = self.raw.get("postalAddress", [""])[0]
+        adresse = adresse.replace("$", "\n")
+        adresse = re.sub("\n\n+", "\n\n", adresse)
+        adresse = adresse.strip()
+        return adresse
 
 
-def update_users_from_records(records: List[Tuple[str, Dict[str, List[bytes]]]]):
-    structures = structure_repo.get_all()
-    structure_dns = {s.dn for s in structures if s.dn}
-
+def update_users_from_records(records: List[Tuple[str, Dict[str, List[str]]]]):
     profiles = profile_repo.get_all()
-    old_profile_uids = {p.uid for p in profiles}
+    old_profile_uids = {p.uid for p in profiles if p.uid}
     count0 = len(old_profile_uids)
     print(f"old total: {count0:d}")
     logger.info(f"old total: {count0:d}")
@@ -112,7 +87,7 @@ def update_users_from_records(records: List[Tuple[str, Dict[str, List[bytes]]]])
     for _dn, r in records:
         if "uid" not in r:
             continue
-        uid = r["uid"][0].decode()
+        uid = r["uid"][0]
         new_profile_uids.add(uid)
 
     deleted_uids = old_profile_uids.difference(new_profile_uids)
@@ -120,8 +95,8 @@ def update_users_from_records(records: List[Tuple[str, Dict[str, List[bytes]]]])
 
     uids_to_profiles = {p.uid: p for p in profiles}
 
-    for dn, r in tqdm(records):
-        record = LdifRecord(dn, r)
+    for _dn, r in tqdm(records):
+        record = LdifRecord(r)
         if not record.uid:
             continue
         uid = record.uid
@@ -133,38 +108,48 @@ def update_users_from_records(records: List[Tuple[str, Dict[str, List[bytes]]]])
             profile = Profile(uid=uid)
             profile_repo.put(profile)
 
-        update_profile_from_record(profile, record, structure_dns)
+        update_profile_from_record(profile, record)
 
 
 def deactivate_users(deleted_uids):
-    logger.info("To be deleted:", deleted_uids=deleted_uids)
+    logger.info("To be deactivated:", deleted_uids=deleted_uids)
 
     for uid in tqdm(deleted_uids):
         user = profile_repo.get_by_uid(uid)
         user.deactivate()
 
 
-def update_profile_from_record(
-    profile: Profile, record: LdifRecord, structure_dns: Collection[str]
-):
+def update_profile_from_record(profile: Profile, record: LdifRecord):
     profile.nom = record.sn
     profile.prenom = record.givenName
+    profile.uid = record.uid
+    profile.email = record.mail
     profile.telephone = record.telephoneNumber
-    profile.adresse = record.postalAddress.replace("$", "\n")
+    profile.adresse = record.address
     profile.login = record.supannAliasLogin
+    profile.adresse = record.adresse
 
     affectation = record.affectation
-    if not affectation or affectation not in structure_dns:
+    structure_d_affectation = None
+    if affectation:
+        structure_d_affectation = structure_repo.get_by_dn(affectation)
+
+    if not structure_d_affectation:
         if profile and profile.active:
+            profile.affectation = ""
+            profile.deactivate()
             profile.active = False
             # TODO: log
         return
 
+    if not profile.active:
+        profile.activate()
+
     if profile.affectation != affectation:
         # TODO: log
-        print(profile.affectation, affectation)
-        logger.info(f"Updating affectation for {record.uid} ({profile.name})")
-        profile.affectation = affectation
+        # print(profile.affectation, affectation)
+        # logger.info(f"Updating affectation for {record.uid} ({profile.name})")
+        profile.affectation = affectation or ""
 
     fonctions = list(record.fonctions)
     if set(profile.fonctions) != set(fonctions):

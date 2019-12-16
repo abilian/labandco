@@ -1,70 +1,29 @@
 from __future__ import annotations
 
-from typing import Set
+from typing import Any, Optional, Set
 
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
-from sqlalchemy.orm import Session, backref, mapper, relationship
+from sqlalchemy.orm import Session
 
 from labster.domain2.model.structure import Structure, StructureId, \
     StructureRepository
-
-
-def make_mapper(metadata):
-    hierarchy = Table(
-        "v3_hierarchy",
-        metadata,
-        Column("parent_id", String(36), ForeignKey("v3_structures.id")),
-        Column("child_id", String(36), ForeignKey("v3_structures.id")),
-    )
-
-    structures = Table(
-        "v3_structures",
-        metadata,
-        #
-        Column("id", String(36), primary_key=True),
-        Column("old_id", Integer),
-        Column("active", Boolean),
-        Column("type_name", String),
-        #
-        Column("nom", String),
-        Column("sigle", String),
-        Column("dn", String),
-        Column("old_dn", String),
-        Column("email", String),
-        #
-        Column("permettre_reponse_directe", Boolean),
-        Column("permettre_soummission_directe", Boolean),
-        #
-    )
-    mapper(
-        Structure,
-        structures,
-        properties={
-            "children": relationship(
-                Structure,
-                secondary=hierarchy,
-                primaryjoin=(hierarchy.c.parent_id == structures.c.id),
-                secondaryjoin=(hierarchy.c.child_id == structures.c.id),
-                collection_class=set,
-                backref=backref("parents", collection_class=set),
-            )
-        },
-    )
+from labster.infrastructure.repositories.sqla.mappers import Mapper
 
 
 class SqlaStructureRepository(StructureRepository):
     session: Session
 
     @inject
-    def __init__(self, db: SQLAlchemy):
+    def __init__(self, db: SQLAlchemy, mapper: Mapper):
         self.db = db
-        self.session = self.db.session
-        make_mapper(self.db.metadata)
+        self.session = db.session
+
+    def query(self):
+        return self.session.query(Structure)
 
     def get_all(self) -> Set[Structure]:
-        return set(self.session.query(Structure).all())
+        return set(self.query().all())
 
     def put(self, structure: Structure):
         if not structure.id:
@@ -77,14 +36,18 @@ class SqlaStructureRepository(StructureRepository):
         self.session.flush()
 
     def is_empty(self):
-        return self.session.query(Structure).count() == 0
+        return self.query().count() == 0
 
     def clear(self):
-        self.session.query(Structure).delete()
+        self.query().delete()
         self.session.flush()
 
-    def get_by_id(self, id: StructureId):
-        return self.session.query(Structure).get(id)
+    def get_by(self, key: str, value: Any) -> Optional[Structure]:
+        return self.query().filter_by(**{key: value}).first()
 
-    def get_by_dn(self, dn: str):
-        return self.session.query(Structure).filter(Structure.dn == dn).first()
+    # Not needed I think
+    # def get_by_id(self, id: StructureId) -> Optional[Structure]:
+    #     return self.query().get(id)
+    #
+    # def get_by_dn(self, dn: str) -> Optional[Structure]:
+    #     return self.query().filter(Structure.dn == dn).first()

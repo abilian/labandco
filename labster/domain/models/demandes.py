@@ -257,6 +257,8 @@ class Demande(IdMixin, TimestampedMixin, Indexable, db.Model):
         for k in set(current_data.keys()) | set(data.keys()):
             if k in ["csrf_token"]:
                 continue
+            if k.startswith("html-"):
+                continue
             current_value = current_data.get(k)
             new_value = data.get(k)
             if current_value != new_value:
@@ -299,7 +301,9 @@ class Demande(IdMixin, TimestampedMixin, Indexable, db.Model):
         return []
 
     def is_editable_by(self, user: Profile):
-        return self.editable and user in [self.gestionnaire, self.porteur]
+        # FIXME
+        return True
+        # return self.editable and user in [self.gestionnaire, self.porteur]
 
     def feuille_cout_is_editable_by(self, user: Profile) -> bool:
         return self.active and user in [

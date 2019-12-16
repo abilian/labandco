@@ -5,11 +5,18 @@
     </div>
 
     <div v-if="demande" class="card-body">
-      <a v-if="demande.is_editable" href="#" class="btn">Modifier la demande</a>
+      <!-- TODO -->
+      <a v-if="demande.is_editable" href="#" class="btn btn-primary m-2"
+        >Modifier la demande</a
+      >
 
       <!--          href="{{ url_for(".demande_edit", id=demande.id) }}"-->
       <!--            class="btn {% if form.errors %}btn-primary{% else %}btn-default{% endif %}">-->
       <!--          Modifier la demande</a>-->
+
+      <a v-if="demande.is_duplicable" href="#" class="btn btn-default m-2"
+        >Dupliquer la demande</a
+      >
 
       <!--        {% if g.current_user in [demande.porteur, demande.gestionnaire] %}-->
       <!--          <button name="action" value="dupliquer"-->
@@ -18,18 +25,10 @@
       <!--          </button>-->
       <!--        {% endif %}-->
 
-      <!--        {% set transitions = workflow.possible_transitions() %}-->
-      <!--        {% if transitions %}-->
-      <!--          {% if csrf_token is defined %}-->
-      <!--            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">-->
-      <!--          {% endif %}-->
-
-      <!--          <input type="hidden" name="id" value="{{ demande.id }}">-->
-
       <button
         v-for="transition in transitions"
         type="submit"
-        :class="`btn btn-${transition.category}`"
+        :class="`btn btn-${transition.category} m-2`"
         name="action"
         :value="transition.id"
       >

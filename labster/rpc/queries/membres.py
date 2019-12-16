@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import sys
 from typing import List
 
+from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 
 from labster.di import injector
@@ -9,7 +11,6 @@ from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.model.structure import Structure, StructureId, \
     StructureRepository
 from labster.domain2.services.roles import Role, RoleService
-from labster.persistence import Persistence
 from labster.rpc.queries.user import get_roles_dto_for_user
 from labster.types import JSON
 from labster.util import sort_by_name
@@ -17,7 +18,7 @@ from labster.util import sort_by_name
 structure_repo = injector.get(StructureRepository)
 profile_repo = injector.get(ProfileRepository)
 role_service = injector.get(RoleService)
-persistence = injector.get(Persistence)
+db = injector.get(SQLAlchemy)
 
 
 @method

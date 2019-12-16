@@ -12,7 +12,8 @@ from labster.domain.services.notifications import send_notification
 from labster.forms.workflow import WorkflowForm
 
 if TYPE_CHECKING:
-    from labster.domain.models.profiles import Profile
+    from labster.domain2.model.profile import Profile
+    from labster.domain2.model.demande import Demande
 
 
 class WorkflowException(Exception):
@@ -69,8 +70,8 @@ class State:
 class Transition:
     label = ""
     category = "primary"
-    from_states = []  # type: List[State]
-    to_state = None  # type: Optional[State]
+    from_states: List[State] = []
+    to_state: Optional[State] = None
     form = WorkflowForm
     message = (
         "Transition de l'état '{old_state}' vers l'état "
@@ -120,8 +121,10 @@ class Workflow:
     states: List[State] = []
     transitions: List[Transition] = []
     initial_state: Optional[State] = None
+    case: Demande
+    actor: Profile
 
-    def __init__(self, case, actor):
+    def __init__(self, case: Demande, actor: Profile):
         self.case = case
         self.actor = actor
         if not case.wf_state:
@@ -205,6 +208,9 @@ class Workflow:
 
         users_to_notify = transition.get_users_to_notify(self, old_state)
         for user in users_to_notify:
+            # FIXME: this shouldn't happen!
+            if not user:
+                continue
             send_notification(user, notification_msg, self)
 
     def get_transition_by_id(self, id: str) -> Transition:

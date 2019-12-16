@@ -4,9 +4,9 @@
       <b-table-simple striped hover outlined class="mt-4">
         <tbody v-if="editing">
           <tr v-for="selector in selectors">
-            <td class="w-40 text-bold">{{ selector.label }}</td>
+            <td class="w-30 text-muted text-right ">{{ selector.label }}</td>
 
-            <td class="w-60">
+            <td class="w-70">
               <multiselect
                 v-model="selector.value"
                 :options="selector.options"
@@ -20,7 +20,7 @@
 
         <tbody v-else>
           <tr v-for="role in roles">
-            <td class="w-30 text-muted text-right ">{{ role.label }}</td>
+            <td class="w-30 text-muted text-right">{{ role.label }}</td>
 
             <td class="w-70">
               <ul class="mb-0 pl-0" style="list-style-type: none;">

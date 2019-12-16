@@ -19,7 +19,7 @@ from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.model.structure import StructureRepository
 from labster.domain2.services.roles import RoleService
 from labster.domain.models.demandes import Demande
-from labster.ldap2 import sync
+from labster.ldap import sync
 
 logger = structlog.get_logger()
 
@@ -106,7 +106,7 @@ def create_new_tables():
     for name in table_names:
         if name.startswith("v3_"):
             print(f"Dropping {name}")
-            db.engine.execute(f"drop table if exists {name};")
+            db.engine.execute(f'drop table if exists "{name}" cascade;')
 
     db.create_all()
 
@@ -124,13 +124,14 @@ def ldap_sync():
 
 
 @click.command()
+@click.option("--max", default=0)
 @with_appcontext
-def update_roles():
+def update_roles(max):
     print("# Updating roles")
     audit_service.stop(ignore_state=True)
     index_service.stop(ignore_state=True)
 
-    sync.update_roles()
+    sync.update_roles(max)
 
     db.session.commit()
 

@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from flask import g
 from flask_sqlalchemy import SQLAlchemy
 
 from labster.bi.model import StatsLine
 from labster.di import injector
-from labster.domain.models.profiles import Profile
-from labster.domain.models.unites import OrgUnit
+from labster.domain2.model.profile import Profile
+from labster.domain2.model.structure import Structure
+from labster.domain2.services.roles import Role
+from labster.security import get_current_profile
 
 from .util import mes_structures
 
@@ -67,7 +68,7 @@ def get_selectors():
         .distinct()
         .all()
     )
-    porteurs = [Profile.query.get(id) for id in porteur_ids]
+    porteurs = [db.session.query(Profile).get(id) for id in porteur_ids]
     porteurs.sort(key=lambda x: (x.nom, x.prenom))
     result.append(
         {
@@ -122,14 +123,15 @@ def get_structure_choices():
         .all()
     )
 
-    user = g.current_user
-    if user.has_role("directeur"):
+    user = get_current_profile()
+    if user.has_role(Role.RESPONSABLE, "*"):
         structures = mes_structures(user)
 
     else:
         ids = labo_ids + departement_ids + equipe_ids + ufr_ids + pole_ids
         structure_ids = [x[0] for x in ids]
-        structures = [OrgUnit.query.get(id) for id in structure_ids]
+        query = db.session.query(Structure)
+        structures = [query.get(id) for id in structure_ids]
 
     def path(structure):
         keys = ["pole", "ufr", "laboratoire", "departement", "equipe"]

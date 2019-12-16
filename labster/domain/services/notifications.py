@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Text
+from typing import TYPE_CHECKING
 
 from flask import render_template
 from flask_mail import Message
@@ -10,12 +10,11 @@ from labster.extensions import db, mail
 
 if TYPE_CHECKING:
     from labster.domain.models.profiles import Profile
-    from labster.lib.workflow import Workflow
     from labster.domain.models.notifications import Notification
+    from labster.lib.workflow import Workflow
 
 
-def send_notification(user, body, workflow):
-    # type: (Profile, Text, Workflow) -> Notification
+def send_notification(user: Profile, body: str, workflow: Workflow) -> Notification:
     """
     :param user: user to notify
     :param body: message body (HTML)
@@ -42,9 +41,7 @@ def send_notification(user, body, workflow):
     return notification
 
 
-def send_notification_by_email(notification):
-    # type: (Notification) -> None
-
+def send_notification_by_email(notification: Notification) -> None:
     user = notification.user  # type: Profile
     subject = "Une action a été réalisée sur une de vos demandes Lab&Co"
     recipients = [user.email]

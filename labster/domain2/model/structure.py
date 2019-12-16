@@ -23,10 +23,10 @@
 from __future__ import annotations
 
 import math
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABC, ABCMeta
 from pprint import pformat
 from typing import Any, Collection, List, Optional, Set
-from uuid import uuid1
+from uuid import uuid4
 
 from attr import Factory, attrs
 
@@ -38,7 +38,7 @@ from .type_structure import ED, TypeStructure, get_type_structure
 class StructureId(str):
     @staticmethod
     def new():
-        return StructureId(uuid1())
+        return StructureId(uuid4())
 
 
 @attrs(eq=False, order=False, repr=False, auto_attribs=True)
@@ -157,7 +157,7 @@ class Structure:
     def remove_child(self, child: Structure):
         child._depth = -1
         child.parents.remove(self)
-        self.children.remove(child)
+        # self.children.remove(child)
 
     def can_have_child(self, other: Structure) -> bool:
         # if other.parents and other.type == EQ:
@@ -222,20 +222,21 @@ class Structure:
 
     def check(self):
         state = vars(self)
-        for k, v in state.items():
-            if isinstance(v, float) and math.isnan(v):
-                raise ValueError(f"Attribute {k} is NaN")
+        try:
+            for k, v in state.items():
+                if isinstance(v, float) and math.isnan(v):
+                    raise ValueError(f"Attribute {k} is NaN")
 
-        self.type.full_check(self)
+            self.type.full_check(self)
 
-        if self.type == ED:
-            assert len(self.parents) == 1
-            parent = list(self.parents)[0]
-            assert parent.sigle == "IFD"
+            if self.type == ED:
+                assert len(self.parents) == 1
+                assert self.parent.sigle == "IFD"
 
-        # FIXME: remove later
-        msg = f"Check failed on {self.sigle_ou_nom}. " + pformat(vars(self))
-        assert len(self.parents) in {0, 1}, msg
+        except (AssertionError, ValueError):
+            msg = f"Check failed on {self.sigle_ou_nom}. " + pformat(state)
+            print(msg)
+            raise
 
 
 class StructureRepository(Repository, ABC, metaclass=ABCMeta):

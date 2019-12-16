@@ -98,7 +98,7 @@
         </tbody>
       </table>
 
-      <div v-else>Chargement en cours...</div>
+      <div v-else class="p-3">Chargement en cours...</div>
     </div>
 
     <div class="card-footer">
@@ -197,7 +197,10 @@ export default {
     },
     title: String,
     scope: String,
-    archives: Boolean,
+    archives: {
+      type: Boolean,
+      default: false,
+    },
     dgrtt: {
       type: Boolean,
       default: false,
@@ -259,16 +262,16 @@ export default {
           sort_key: "no_infolab",
         },
         {
-          id: "laboratoire",
+          id: "structure",
           label: "Structure",
-          href: "laboratoire_url",
-          sort_key: "laboratoire",
+          href: "structure_url",
+          sort_key: "structure",
         },
         {
-          id: "contact_dgrtt_nom",
+          id: "contact_labco_nom",
           label: "Contact",
-          href: "contact_dgrtt_url",
-          sort_key: "contact_dgrtt_nom",
+          href: "contact_labco_url",
+          sort_key: "contact_labco_nom",
         },
         {
           id: "prochaine_action",
@@ -447,7 +450,7 @@ export default {
           " " +
           e.laboratoire +
           " " +
-          e.contact_dgrtt +
+          e.contact_labco +
           " " +
           e.no_infolab +
           " " +

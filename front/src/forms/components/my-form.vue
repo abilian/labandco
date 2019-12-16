@@ -27,7 +27,7 @@
         id="cancel"
         type="submit"
         class="btn btn-danger"
-        @submit="on_cancel"
+        @submit="onCancel"
       >
         Annuler
       </button>
@@ -70,7 +70,7 @@ export default {
       update_form(this.form, this.model, this.salaires_indicatifs);
     },
 
-    on_cancel: function(e) {
+    onCancel: function(e) {
       e.preventDefault();
       const url = "/demandes/post";
       const data = {

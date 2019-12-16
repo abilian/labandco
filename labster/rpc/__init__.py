@@ -5,7 +5,7 @@ import sys
 import time
 import traceback
 from json import JSONDecodeError
-from pprint import pformat, pprint
+from pprint import pformat
 
 from flask import Blueprint, Flask
 from flask import Request as FlaskRequest
@@ -64,11 +64,11 @@ def debug(method_name: str, app: Flask, request: FlaskRequest):
 
 def run(req: str, app: Flask) -> Response:
     debug = app.config["DEBUG"]
+
     if debug:
         print(78 * "#")
-        print("RPC request:")
+        print("# RPC request:")
         req_json = json.loads(req)
-        pprint(req_json)
         print(78 * "#")
         sys.stdout.flush()
         timer_d[req_json["id"]] = time.time()
@@ -76,7 +76,16 @@ def run(req: str, app: Flask) -> Response:
         response = dispatch(req)
 
         print(78 * "#")
-        print("RPC response:")
+        print("# RPC response:")
+
+        print("request:")
+        s = pformat(req_json)
+        if len(s) < 200:
+            print(s)
+        else:
+            print(s[0:200] + "...")
+
+        print("response:")
         s = pformat(response.deserialized())
         if isinstance(response, ErrorResponse):
             print(s)
@@ -87,9 +96,11 @@ def run(req: str, app: Flask) -> Response:
         if hasattr(response, "exc"):
             print(response.exc)
 
-        dt = 1000 * (time.time() - timer_d[req_json["id"]])
-        print(f"Elapsed time: {dt:.2f}ms")
-        del timer_d[req_json["id"]]
+        req_id = req_json["id"]
+        if req_id in timer_d:
+            dt = 1000 * (time.time() - timer_d[req_id])
+            print(f"Elapsed time: {dt:.2f}ms")
+            del timer_d[req_id]
 
         print(78 * "#")
         sys.stdout.flush()
@@ -132,6 +143,7 @@ def dispatch(request_raw: str) -> JsonRpcResponse:
         result = call(method, *request.args, **request.kwargs)
 
         return SuccessResponse(result=result, id=request.id)
+
     except Exception as exc:
         traceback.print_exc()
         sys.stdout.flush()

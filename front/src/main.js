@@ -15,21 +15,21 @@ import "../sass/adminlte.css";
 import "../sass/main.scss";
 
 import Vue from "vue";
-import "./plugins/element.js";
+import "./plugins/element";
 
-import Toasted from "vue-toasted";
-
-Vue.use(Toasted, {
-  position: "top-center",
-  duration: 5000,
-  fullWidth: true,
-  action: {
-    text: "X",
-    onClick: (e, toastObject) => {
-      toastObject.goAway(0);
-    },
-  },
-});
+// import Toasted from "vue-toasted";
+//
+// Vue.use(Toasted, {
+//   position: "top-center",
+//   duration: 5000,
+//   fullWidth: true,
+//   action: {
+//     text: "X",
+//     onClick: (e, toastObject) => {
+//       toastObject.goAway(0);
+//     },
+//   },
+// });
 
 //
 // v3
@@ -66,7 +66,7 @@ Vue.filter("currency", function(val, symbol) {
 // Our own components & libraries
 //
 import Breadcrumbs from "./v3/components/navigation/Breadcrumbs";
-import MyForm from "./forms/components/my-form.vue";
+// import MyForm from "./forms/components/my-form.vue";
 import rpc from "./v3/rpc";
 
 Vue.component("breadcrumbs", Breadcrumbs);
@@ -76,7 +76,7 @@ Vue.component("breadcrumbs", Breadcrumbs);
 //
 import App from "./v3/App";
 import LoginApp from "./v3/LoginApp";
-import FeuilleCout from "./feuille_cout/components/feuille-cout.vue";
+import FeuilleCout from "./v3/components/FeuilleCout.vue";
 
 if (document.getElementById("app-v3")) {
   /* eslint-disable no-new */
@@ -105,6 +105,9 @@ if (document.getElementById("feuille-cout")) {
     el: "#feuille-cout",
     components: { FeuilleCout },
     data: { model },
+    methods: {
+      rpc: rpc,
+    },
   });
 }
 

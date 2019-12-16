@@ -1,4 +1,3 @@
-""""""
 from __future__ import annotations
 
 import json
@@ -7,18 +6,22 @@ from urllib.parse import parse_qs, urlencode, urljoin, urlsplit, urlunsplit
 
 import requests
 import structlog
-from flask import Flask, Request, abort, flash, g, redirect, render_template, \
-    session, url_for
+from flask import Flask, Request, abort, redirect, render_template, session, \
+    url_for
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import Unauthorized
 
-from labster.domain.models.profiles import Profile
-from labster.domain.services.roles import get_all_users
-from labster.extensions import db, login_manager
+from labster.di import injector
+from labster.domain2.model.profile import Profile
+from labster.extensions import login_manager
+from labster.security import get_current_user
 
 from . import route
 
 logger = structlog.get_logger()
+
+db = injector.get(SQLAlchemy)
 
 
 @login_manager.unauthorized_handler
@@ -35,7 +38,7 @@ def unauthorized(app: Flask, request: Request):
 #
 @route("/login")
 def login():
-    current_user: Profile = g.current_user
+    current_user = get_current_user()
     if current_user.is_authenticated:
         return render_template("auth/redirect.j2")
     else:
@@ -44,8 +47,8 @@ def login():
 
 @route("/login", methods=["POST"])
 def login_post():
-    if "current_user" in session:
-        del session["current_user"]
+    if "current_user_id" in session:
+        del session["current_user_id"]
     return redirect(url_for(".login", _external=True))
 
 
@@ -67,58 +70,6 @@ def callback(app: Flask, request: Request):
         login_manager.unauthorized()
 
     return redirect(next_url)
-
-
-@route("/backdoor")
-def backdoor(app: Flask, request: Request):
-    config = app.config
-
-    if not (config.get("ALLOW_BACKDOOR") or app.testing):
-        raise Unauthorized()
-
-    uid = request.args.get("uid", "poulainm")
-    user = get_user(uid)
-    login_user(user)
-
-    if "text/html" in request.headers.get("accept", ""):
-        home_url = url_for(".login", _external=True)
-        return redirect(home_url)
-    else:
-        return "", 201
-
-
-@route("/switch", methods=["GET", "POST"])
-def switch(app: Flask, request: Request):
-    user = g.current_user
-
-    config = app.config
-    testing = config.get("TESTING", False)
-
-    if not testing and (user.is_anonymous or not user.has_role("alc")):
-        raise Unauthorized()
-
-    uid = request.args.get("uid", None)
-
-    if uid:
-        try:
-            current_user = Profile.query.get_by_uid(uid)
-        except NoResultFound:
-            flash(f"Utilisateur {uid} inconnu.", "danger")
-            return redirect(url_for(".login", _external=True))
-
-        if not current_user.active:
-            flash(f"Utilisateur {uid} inactif.", "danger")
-            return redirect(url_for(".login", _external=True))
-
-        session["current_user_id"] = current_user.id
-        session["current_user"] = current_user.uid
-        return redirect(url_for(".login", _external=True))
-
-    else:
-        all_users = get_all_users()
-        chercheurs = [u for u in all_users if u.has_role("recherche")]
-        ctx = {"all_users": all_users, "chercheurs": chercheurs}
-        return render_template("auth/login.j2", **ctx)
 
 
 #
@@ -163,24 +114,27 @@ def login_with_ticket(ticket: str, cas_server: str):
     auth_data = service_response["authenticationSuccess"]
 
     # Note: this is the "old" uid
-    uid = auth_data["user"]
+    login = auth_data["user"]
     attributes = auth_data["attributes"]
 
-    if uid == "fermigier":
-        uid = "poulainm"
+    if login == "fermigier":
+        login = "poulainm"
 
     # FIXME: uid is not the "new" uid (which is attributes["uid"])
-    try:
-        user = get_user(uid)
-    except NoResultFound:
-        user = Profile(uid=uid)
-        user.nom = attributes["sn"]
-        user.prenom = attributes["givenName"]
-        user.roles = attributes["eduPersonAffiliation"]
+    user = get_user_by_login(login)
 
-        db.session.add(user)
+    if not user:
+        raise Unauthorized()
+        # user = Profile(uid=uid)
+        # user.nom = attributes["sn"]
+        # user.prenom = attributes["givenName"]
+        # # user.roles = attributes["eduPersonAffiliation"]
+        #
+        # db.session.add(user)
 
     login_user(user)
+
+    # TODO: add these fields to Profile
     user.cas_entry = json.dumps(attributes)
     user.date_last_login = datetime.utcnow()
 
@@ -188,12 +142,15 @@ def login_with_ticket(ticket: str, cas_server: str):
     return redirect(url_for(".login", _external=True))
 
 
-def get_user(uid) -> Profile:
-    return Profile.query.get_by_uid(uid)
+def get_user_by_login(login: str) -> Profile:
+    # This fixes some nasty "current transaction is aborted" bug
+    db.session.commit()
+    query = db.session.query(Profile).filter_by(active=True)
+    user = query.filter_by(login=login).first()
+    return user
 
 
 def login_user(user):
+    assert user.active
     session["current_user_id"] = user.id
-    session["current_user"] = user.uid
-
-    logger.info("User has logged in", login=user.uid)
+    logger.info("User has logged in", login=user.login, uid=user.uid)

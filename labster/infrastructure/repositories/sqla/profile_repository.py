@@ -2,53 +2,27 @@ from __future__ import annotations
 
 from typing import Set
 
-from abilian.core.sqlalchemy import JSON
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject
-from sqlalchemy import Boolean, Column, Integer, String, Table
-from sqlalchemy.orm import Session, mapper
+from sqlalchemy.orm import Session
 
 from labster.domain2.model.profile import Profile, ProfileId, ProfileRepository
-
-
-def make_mapper(metadata):
-    profiles = Table(
-        "v3_profiles",
-        metadata,
-        #
-        Column("id", String(36), primary_key=True),
-        Column("uid", String(64), nullable=False),
-        Column("old_id", Integer),
-        Column("old_uid", String(64), default="", nullable=False),
-        Column("login", String(64), default="", nullable=False),
-        #
-        Column("nom", String, default="", nullable=False),
-        Column("prenom", String, default="", nullable=False),
-        Column("email", String, default="", nullable=False),
-        Column("adresse", String, default="", nullable=False),
-        Column("telephone", String, default="", nullable=False),
-        #
-        Column("active", Boolean, default=False, nullable=False),
-        Column("affectation", String, default="", nullable=False),
-        Column("fonctions", JSON, nullable=False),
-        #
-        Column("preferences_notifications", Integer, default=0, nullable=False),
-    )
-
-    mapper(Profile, profiles)
+from labster.infrastructure.repositories.sqla.mappers import Mapper
 
 
 class SqlaProfileRepository(ProfileRepository):
     session: Session
 
     @inject
-    def __init__(self, db: SQLAlchemy):
+    def __init__(self, db: SQLAlchemy, mapper: Mapper):
         self.db = db
-        self.session = self.db.session
-        make_mapper(self.db.metadata)
+        self.session = db.session
+
+    def query(self):
+        return self.session.query(Profile)
 
     def get_all(self) -> Set[Profile]:
-        return set(self.session.query(Profile).all())
+        return set(self.query().all())
 
     def put(self, profile: Profile):
         if not profile.id:
@@ -59,18 +33,23 @@ class SqlaProfileRepository(ProfileRepository):
         self.session.delete(profile)
 
     def is_empty(self):
-        return self.session.query(Profile).count() == 0
+        return self.query().count() == 0
 
     def clear(self):
-        self.session.query(Profile).delete()
+        self.query().delete()
         self.session.flush()
 
     def get_by_id(self, id: ProfileId) -> Profile:
-        return self.session.query(Profile).get(id)
+        return self.query().get(id)
 
-    # TODO:
-    # def get_by_uid(self, uid: str) -> Profile:
-    #
-    # def get_by_old_id(self, old_id: int) -> Profile:
-    #
-    # def get_by_login(self, login: str) -> Profile:
+    def get_by_old_id(self, old_id: int) -> Profile:
+        return self.query().filter_by(old_id=old_id).one()
+
+    def get_by_login(self, login: str) -> Profile:
+        return self.query().filter_by(login=login).one()
+
+    def get_by_uid(self, uid: str) -> Profile:
+        return self.query().filter_by(uid=uid).one()
+
+    def get_by_old_uid(self, old_uid: str) -> Profile:
+        return self.query().filter_by(old_uid=old_uid).one()

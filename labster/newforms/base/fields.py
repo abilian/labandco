@@ -107,6 +107,22 @@ class Select2Field(Field):
         return d
 
 
+class MultipleSelect2Field(Field):
+    choices: List[str] = []
+
+    def to_dict(self) -> JSONDict:
+        d = Field.to_dict(self)
+        if callable(self.choices):
+            choices = self.choices()
+        else:
+            choices = self.choices
+        if choices and isinstance(choices[0], str):
+            d["choices"] = [[x, x] for x in choices]
+        else:
+            d["choices"] = choices
+        return d
+
+
 class TextAreaField(Field):
     pass
 

@@ -64,7 +64,6 @@
 import FormViewLine from "./FormViewLine";
 
 export default {
-  name: "DemandeFormView",
   props: { demande: Object, form: Object },
 
   components: { FormViewLine },

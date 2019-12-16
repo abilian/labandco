@@ -9,7 +9,7 @@ from labster.blueprints.v3 import route
 from labster.domain.models.mapping_dgrtt import MappingDgrtt
 from labster.domain.models.profiles import Profile
 from labster.domain.services.dgrtt import BUREAUX_DGRTT, BureauDgrtt
-from labster.util import get_current_user
+from labster.security import get_current_user
 
 
 @dataclass

@@ -9,21 +9,12 @@ from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.model.structure import Structure, StructureId, \
     StructureRepository
 from labster.domain2.services.contacts import ContactService, ContactType
-from labster.persistence import Persistence
+from labster.ldap.constants import DRI_ET_DRV_DNS
 from labster.types import JSON
-
-DRI_DN = "ou=0107,ou=SCUN,ou=SU,ou=Affectations,dc=chapeau,dc=fr"
-DRI_ET_DRV_DNS = [
-    DRI_DN,
-    "ou=M0107,ou=FACM,ou=SU,ou=Affectations,dc=chapeau,dc=fr",
-    "ou=RE,ou=SG,ou=FACL,ou=SU,ou=Affectations,dc=chapeau,dc=fr",
-    "ou=S0107,ou=UP6,ou=SU,ou=Affectations,dc=chapeau,dc=fr",
-]
 
 structure_repo = injector.get(StructureRepository)
 profile_repo = injector.get(ProfileRepository)
 contact_service = injector.get(ContactService)
-persistence = injector.get(Persistence)
 
 
 @method
