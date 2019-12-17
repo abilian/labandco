@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import traceback
 from datetime import date, timedelta
+from pprint import pprint
 from typing import List, Optional
 
 from flask_sqlalchemy import SQLAlchemy
@@ -281,10 +282,13 @@ class DrvTableView(TableView):
             fac = drv.parent
             assert fac
             structures_possibles = {fac} | fac.descendants
+            ids_structures_possibles = {s.id for s in structures_possibles}
+
             demandes = [
                 demande
                 for demande in demandes
-                if demande.laboratoire in structures_possibles
+                if demande.structure
+                and demande.structure.id in ids_structures_possibles
             ]
             return demandes
 

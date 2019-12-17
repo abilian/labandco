@@ -4,6 +4,7 @@ import logging
 import sqlite3
 import time
 import uuid
+from pathlib import Path
 
 import structlog
 from flask import Flask, g, request
@@ -18,10 +19,13 @@ def init_logging(app: Flask) -> None:
     if not log_db:
         return
 
+    log_db_path = str(Path(app.instance_path) / log_db)
+    print(log_db_path)
+
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     logger.handlers[0].setLevel(logging.INFO)
-    sh = SQLiteHandler(log_db)
+    sh = SQLiteHandler(log_db_path)
     # sh.setLevel(logging.INFO)
     logger.addHandler(sh)
 

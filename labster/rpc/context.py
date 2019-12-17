@@ -10,9 +10,13 @@ from .registry import registry
 
 
 @method
-def get_context(name: str, params: Optional[JSONDict] = None) -> JSONDict:
+def get_context(name: str, params: Optional[JSONDict] = None, **kw) -> JSONDict:
     if params is None:
         params = {}
+
+    if kw:
+        params = kw
+
     if name in registry:
         return registry[name](**params)
     else:

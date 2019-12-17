@@ -23,7 +23,7 @@
                   type="search"
                   id="filterInput"
                   placeholder="Type to Search"
-                ></b-form-input>
+                />
                 <b-input-group-append>
                   <b-button :disabled="!filter.q" @click="filter.q = ''"
                     >Clear</b-button
@@ -73,13 +73,13 @@
               >{{ entry.structure.name }} ({{ entry.structure.type }})
             </router-link>
             :
-            <role-list :roles="entry.roles"></role-list>
+            <role-list :roles="entry.roles" />
           </div>
         </template>
 
         <template v-slot:table-busy>
           <div class="text-center my-2">
-            <b-spinner class="align-middle"></b-spinner>
+            <b-spinner class="align-middle" />
             <strong>Chargement en cours...</strong>
           </div>
         </template>
@@ -93,13 +93,13 @@
               v-model="currentPage"
               :total-rows="totalRows"
               :per-page="perPage"
-            ></b-pagination>
+            />
           </b-col>
         </b-row>
       </b-container>
 
       <button
-        v-if="!editing && !isBusy"
+        v-if="!editing && !isBusy && ou.editable"
         class="btn btn-default mt-3"
         @click="makeEditable"
       >

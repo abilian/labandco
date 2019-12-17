@@ -21,7 +21,7 @@
                 class="btn btn-danger btn-sm"
                 @click="deleteEdge(parent.id, ou.id)"
               >
-                <i class="far fa-times"></i>
+                <i class="far fa-times" />
               </button>
             </td>
           </tr>
@@ -31,8 +31,8 @@
           <b-button
             class="btn-default btn-sm"
             @click="$bvModal.show('add-parent')"
-            ><i class="far fa-plus"></i
-          ></b-button>
+            ><i class="far fa-plus"
+          /></b-button>
 
           <b-modal id="add-parent" hide-footer>
             <template v-slot:modal-title>
@@ -73,7 +73,7 @@
                 class="btn btn-danger btn-sm"
                 @click="deleteEdge(ou.id, child.id)"
               >
-                <i class="far fa-times"></i>
+                <i class="far fa-times" />
               </button>
             </td>
           </tr>
@@ -83,8 +83,8 @@
           <b-button
             class="btn-default btn-sm"
             @click="$bvModal.show('add-child')"
-            ><i class="far fa-plus"></i
-          ></b-button>
+            ><i class="far fa-plus"
+          /></b-button>
 
           <b-modal id="add-child" hide-footer>
             <template v-slot:modal-title>
@@ -106,9 +106,7 @@
               </b-button>
             </div>
 
-            <p>Ou</p>
-
-            <div class="mt-4">
+            <div v-if="typeOptions.length" class="mt-4">
               <h3>Créer un nouvelle structure fille</h3>
 
               <b-form>
@@ -118,7 +116,7 @@
                     v-model="createModel.type_id"
                     :options="typeOptions"
                     required
-                  ></b-form-select>
+                  />
                 </b-form-group>
 
                 <b-form-group label="Nom:" label-for="input-2">
@@ -126,7 +124,7 @@
                     label-for="input-2"
                     v-model="createModel.nom"
                     required
-                  ></b-form-input>
+                  />
                 </b-form-group>
               </b-form>
 

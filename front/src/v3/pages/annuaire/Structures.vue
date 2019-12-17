@@ -1,8 +1,8 @@
 <template>
   <div>
-    <breadcrumbs title="Structures"></breadcrumbs>
+    <breadcrumbs title="Structures" />
 
-    <table-structures url="/v3/api/structures"></table-structures>
+    <table-structures url="/v3/api/structures" />
   </div>
 </template>
 

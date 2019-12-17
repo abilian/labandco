@@ -91,7 +91,7 @@ class DefaultConfig:
     RESTHEART_AUTH = ("admin", "DfgV0UYgwdMM")
 
     # Logs
-    LOG_DB = "var/log.db"
+    LOG_DB = "data/log.db"
 
 
 class DevConfig(DefaultConfig):

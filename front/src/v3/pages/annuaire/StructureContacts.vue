@@ -33,7 +33,11 @@
       <button class="btn btn-primary mr-3" @click="save">Enregistrer</button>
       <button class="btn btn-danger" @click="cancel">Annuler</button>
     </template>
-    <button v-else class="btn btn-default" @click="makeEditable">
+    <button
+      v-else-if="ou.editable"
+      class="btn btn-default"
+      @click="makeEditable"
+    >
       Modifier
     </button>
   </div>

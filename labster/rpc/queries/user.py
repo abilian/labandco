@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+from pprint import pprint
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from werkzeug.exceptions import NotFound
@@ -44,8 +46,13 @@ def get_user(id: str) -> JSONDict:
     user_dto = {}
     for k in ["nom", "prenom", "email", "telephone", "uid", "affectation"]:
         user_dto[k] = getattr(user, k)
+
     # Cas particulier: fonctions est un set() pas une liste.
-    user_dto["fonctions"] = sorted(user.fonctions)
+    if isinstance(user.fonctions, str):
+        fonctions = json.loads(user.fonctions)
+    else:
+        fonctions = user.fonctions
+    user_dto["fonctions"] = sorted(fonctions)
 
     roles_dto = get_roles_dto_for_user(user, skip=True)
     perimetre_dto = get_perimetre_dto_for_user(user)

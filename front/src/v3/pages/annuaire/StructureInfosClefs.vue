@@ -63,7 +63,7 @@
               <i
                 v-if="ou.permettre_reponse_directe"
                 class="far fa-check-square"
-              ></i>
+              />
             </a>
           </td>
         </tr>
@@ -81,7 +81,7 @@
               <i
                 v-if="ou.permettre_soummission_directe"
                 class="far fa-check-square"
-              ></i>
+              />
             </a>
           </td>
         </tr>
@@ -92,7 +92,11 @@
       <button class="btn btn-primary mr-3" @click="save">Enregistrer</button>
       <button class="btn btn-danger" @click="cancel">Annuler</button>
     </template>
-    <button v-else class="btn btn-default" @click="makeEditable">
+    <button
+      v-else-if="ou.editable"
+      class="btn btn-default"
+      @click="makeEditable"
+    >
       Modifier
     </button>
   </div>

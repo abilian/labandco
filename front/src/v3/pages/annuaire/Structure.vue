@@ -13,11 +13,11 @@
           <b-tab title="Informations clefs" class="pt-4 pb-3">
             <h3>Informations clefs</h3>
 
-            <structure-infos-clefs :ou="ou"></structure-infos-clefs>
+            <structure-infos-clefs :ou="ou" />
 
             <div v-if="ou && ou.can_be_deleted" class="mt-5">
               <button class="btn btn-danger" @click="remove">
-                <i class="far fa-trash"></i> Supprimer la structure
+                <i class="far fa-trash" /> Supprimer la structure
               </button>
             </div>
           </b-tab>
@@ -25,25 +25,25 @@
           <b-tab title="Hiérarchie" class="pt-4 pb-3">
             <h3>Hiérarchie</h3>
 
-            <structure-hierarchie :ou="ou"></structure-hierarchie>
+            <structure-hierarchie :ou="ou" />
           </b-tab>
 
           <b-tab title="Membres" class="pt-4 pb-3">
             <h3>Membres</h3>
 
-            <structure-membres :ou="ou"></structure-membres>
+            <structure-membres :ou="ou" />
           </b-tab>
 
           <b-tab title="Rôles" class="pt-4 pb-3">
             <h3>Rôles au sein de la structure</h3>
 
-            <structure-roles :ou="ou"></structure-roles>
+            <structure-roles :ou="ou" />
           </b-tab>
 
           <b-tab title="Contacts Lab&amp;Co" class="pt-4 pb-3">
             <h3>Contacts Lab&amp;Co</h3>
 
-            <structure-contacts :ou="ou"></structure-contacts>
+            <structure-contacts :ou="ou" />
           </b-tab>
 
           <b-tab v-if="debug" title="Debug" class="pt-4 pb-3">

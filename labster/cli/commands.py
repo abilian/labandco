@@ -113,6 +113,19 @@ def create_new_tables():
 
 @click.command()
 @with_appcontext
+def drop_all_tables():
+    print("# Dropping all tables")
+
+    table_names = db.metadata.tables.keys()
+    for name in table_names:
+        print(f"Dropping {name}")
+        db.engine.execute(f'drop table if exists "{name}" cascade;')
+
+    db.create_all()
+
+
+@click.command()
+@with_appcontext
 def ldap_sync():
     print("# Synchro LDAP")
     audit_service.stop(ignore_state=True)

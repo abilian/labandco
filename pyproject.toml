@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "labster"
-version = "2.1.10"
+version = "2.1.13"
 description = ""
 authors = ["Abilian SAS"]
 
@@ -11,6 +11,8 @@ include = [
     "etc/**/*",
     "boot/**/*",
     "scripts/**/*",
+    "wsgi.py",
+    "tasks.py",
     #    "*.py",
 ]
 

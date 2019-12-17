@@ -229,7 +229,7 @@ def migrate_demande(old_demande: OldDemande) -> Demande:
         entry = deepcopy(old_entry)
         old_message = entry["message"]
         pat = r'<a href="/directory/users/(.*?)">'
-        repl = r'<a href="/#/directory/users/\1">'
+        repl = r'<a href="/#/annuaire/users/\1">'
         message = re.sub(pat, repl, old_message)
         entry["message"] = message
         demande.wf_history.append(entry)

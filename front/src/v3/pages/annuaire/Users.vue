@@ -1,8 +1,8 @@
 <template>
   <div>
-    <breadcrumbs title="Utilisateurs"></breadcrumbs>
+    <breadcrumbs title="Utilisateurs" />
 
-    <table-users title="Utilisateurs Lab&Co" url="/v3/api/users"> </table-users>
+    <table-users title="Utilisateurs Lab&Co" url="/v3/api/users" />
   </div>
 </template>
 

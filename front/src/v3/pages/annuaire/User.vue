@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <breadcrumbs :path="path" :title="title"></breadcrumbs>
+      <breadcrumbs :path="path" :title="title" />
 
       <div v-if="ready && user.active" class="alert alert-danger" role="alert">
         Attention, cet utilisateur a été désactivé (il n'est plus dans
@@ -118,7 +118,7 @@
                   </router-link>
                 </td>
                 <td class="w-50">
-                  <role-list :roles="role.roles"></role-list>
+                  <role-list :roles="role.roles" />
                 </td>
               </tr>
             </tbody>
