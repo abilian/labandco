@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumbs title="Préférences"></breadcrumbs>
+    <breadcrumbs title="Préférences" />
 
     <div class="card">
       <div class="card-header with-border">
@@ -26,12 +26,7 @@
           aucune activité.
         </p>
 
-        <b-form-input
-          v-model="nbJours"
-          type="range"
-          min="0"
-          max="30"
-        ></b-form-input>
+        <b-form-input v-model="nbJours" type="range" min="0" max="30" />
 
         <p>{{ nbJours }}</p>
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Optional, Set
+from uuid import uuid4
 
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject
@@ -26,8 +27,6 @@ class SqlaStructureRepository(StructureRepository):
         return set(self.query().all())
 
     def put(self, structure: Structure):
-        if not structure.id:
-            structure.id = StructureId.new()
         self.session.add(structure)
         self.session.flush()
 

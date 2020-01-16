@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumbs title="Questions & Suggestions"></breadcrumbs>
+    <breadcrumbs title="Questions & Suggestions" />
 
     <div class="card faq-index">
       <div class="card-header">
@@ -14,7 +14,7 @@
         >
           <div class="card-header">
             <h3 v-b-toggle="'category-' + category_index" class="card-title">
-              <i class="far fa-chevron-right"></i>
+              <i class="far fa-chevron-right" />
               &nbsp;
               {{ category }}
             </h3>
@@ -24,7 +24,7 @@
             <b-collapse :id="'category-' + category_index">
               <div v-for="entry in entries">
                 <h4 v-b-toggle="'entry-' + entry.id">
-                  <i class="far fa-chevron-right"></i>
+                  <i class="far fa-chevron-right" />
                   &nbsp;
                   {{ entry.title }}
                   <span v-if="isAdmin"> ({{ entry.view_count }} vues) </span>
@@ -53,7 +53,7 @@
           <div class="card-body">
             <p>
               <router-link to="/faq/message" class="btn btn-primary">
-                <i class="far fa-question"></i> Poser votre question ou faire
+                <i class="far fa-question" /> Poser votre question ou faire
                 votre suggestion à la DR&I.
               </router-link>
             </p>

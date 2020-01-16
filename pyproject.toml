@@ -9,7 +9,7 @@ include = [
     "labster/static/**/*",
     "migrations/**/*",
     "etc/**/*",
-    "boot/**/*",
+    #    "boot/**/*",
     "scripts/**/*",
     "wsgi.py",
     "tasks.py",
@@ -17,8 +17,12 @@ include = [
 ]
 
 
+# [[tool.poetry.source]]
+# name = "fury"
+# url = "https://pypi.fury.io/sfermigier/"
+
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 
 abilian-core = ">=0.11"
 psycopg2-binary = "*"
@@ -26,6 +30,7 @@ Flask-Redis = "*"
 
 # Pinned for now
 pandas = "<0.25"
+Flask-Assets = "< 2"
 
 # Seems tricky
 cairocffi = "^1.0.2"
@@ -36,7 +41,7 @@ Flask-WeasyPrint = "*"
 # flask-apispec = "==0.4.2"
 
 # Marshmallow & friends
-marshmallow = "*"
+marshmallow = "<3"
 marshmallow-sqlalchemy = "*"
 marshmallow-annotations = "*"
 flask-resty = "^0.21.4"
@@ -81,6 +86,7 @@ xlrd = "^1.2"
 
 # Personal forks
 flask-injector = { git = "https://github.com/abilian/flask_injector.git" }
+#Flask-Injector-Abilian = "*"
 
 # q = "*"
 
@@ -133,6 +139,7 @@ black = { version = "*", allow-prereleases = true }
 tabulate = "^0.8.3"
 gitchangelog = "^3.0"
 gitignore_parser = "^0.0.5"
+pyinfra = "^0.11"
 
 
 [tool.poetry.scripts]
@@ -143,6 +150,3 @@ labster = "labster.cli:cli"
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
-# [build-system]
-# requires = ["poetry>=0.12"]
-# build-backend = "poetry.masonry.api"

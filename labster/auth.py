@@ -15,7 +15,7 @@ class AuthContext:
     def current_user(self) -> User:
         try:
             return g.current_user
-        except RuntimeError:
+        except (RuntimeError, AttributeError):
             from labster.security import AnonymousUser
 
             return AnonymousUser()
@@ -24,5 +24,5 @@ class AuthContext:
     def current_profile(self) -> Optional[NewProfile]:
         try:
             return g.current_profile
-        except RuntimeError:
+        except (RuntimeError, AttributeError):
             return None

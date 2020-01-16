@@ -6,15 +6,14 @@ from typing import TYPE_CHECKING, Container, Dict, List
 
 import structlog
 
-from labster.domain2.services.roles import Role
-from labster.domain.services.notifications import send_email
+from labster.domain2.services.notifications import send_email
+from labster.domain2.services.roles import Role, RoleService
 from labster.forms.workflow import ConfirmerFinalisationForm, \
     ConfirmerRecevabiliteForm, WorkflowForm
 from labster.lib.workflow import State, Transition, Workflow
 
 if TYPE_CHECKING:
     from labster.domain2.model.demande import Demande
-    from labster.domain2.model.structure import Structure
     from labster.domain2.model.profile import Profile
 
 
@@ -40,10 +39,17 @@ class EnValidation(State):
     label_short = "En validation"
     next_action = "Demande à considérer pour validation"
 
-    def task_owners(self, workflow):
-        # TODO
-        return []
-        # demande = workflow.case
+    def task_owners(self, workflow: Workflow):
+        demande = workflow.case
+        assert demande
+        structure = demande.structure
+
+        # assert structure
+        if not structure:
+            return []
+        else:
+            return structure.responsables
+
         # # assert validation_stage
         # if not demande.wf_stage:
         #     logger.warning(
@@ -51,6 +57,7 @@ class EnValidation(State):
         #     )
         #     demande.wf_stage = next_validation_stage(demande)
         # return demande.wf_stage.direction
+        # return []
 
 
 # def get_validation_stage(demande):
@@ -178,7 +185,9 @@ class Abandonner(Transition):
         if old_state == EN_EDITION:
             return []
         if old_state == EN_VALIDATION:
-            return case.owners + case.structure.direction
+            # FIXME
+            # return case.owners + case.structure.direction
+            return case.owners
         if old_state in (EN_VERIFICATION, EN_INSTRUCTION):
             return case.owners + [case.contact_labco]
         raise RuntimeError(f"Unknown state: {old_state}")
@@ -599,12 +608,12 @@ class Commenter(Transition):
         demande = workflow.case
         if workflow.state == EN_EDITION and not demande.contact_labco:
             return False
-        return actor in self._get_stakeholder(workflow)
+        return actor in self._get_stakeholders(workflow)
 
     def get_users_to_notify(self, workflow, old_state):
-        return self._get_stakeholder(workflow)
+        return self._get_stakeholders(workflow)
 
-    def _get_stakeholder(self, workflow: Workflow) -> Container:
+    def _get_stakeholders(self, workflow: Workflow) -> Container:
         from labster.di import injector
         from flask_sqlalchemy import SQLAlchemy
         from labster.domain2.model.profile import Profile
@@ -702,14 +711,3 @@ class LabsterWorkflow(Workflow):
 
     def actor_is_porteur_or_gestionnaire(self):
         return self.actor in (self.case.porteur, self.case.gestionnaire)
-
-
-def get_valideur_suivant(workflow):
-    from labster.domain.models.unites import LABORATOIRE
-
-    demande = workflow.demande
-    porteur = demande.porteur
-    structure_du_porteur = porteur.structure
-
-    if structure_du_porteur.type == LABORATOIRE:
-        pass

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumbs title="Demandes archivées"></breadcrumbs>
+    <breadcrumbs title="Demandes archivées" />
 
     <box-demandes
       v-for="(box, index) in boxes"

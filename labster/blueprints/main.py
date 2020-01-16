@@ -9,7 +9,7 @@ from werkzeug.exceptions import NotFound
 from labster.domain.models.demandes import Demande
 from labster.domain.services.constants import get_constants
 from labster.rbac import check_read_access, feuille_cout_editable
-from labster.security import get_current_profile, login_required
+from labster.security import login_required
 
 blueprint = Blueprint("main", __name__, url_prefix="")
 route = blueprint.route
@@ -45,7 +45,6 @@ def calculette_feuille_cout():
 @route("/feuille_cout/<id>")
 def feuille_cout(id, db: SQLAlchemy):
     constants = get_constants()
-    constants = get_constants()
 
     demande = db.session.query(Demande).get(id)
     check_read_access(demande)
@@ -73,6 +72,6 @@ def blob(demande_id: str, blob_id: str, db: SQLAlchemy):
     blob = Blob.query.get(blob_id)
     response = make_response(blob.value)
     response.headers["content-type"] = "application/binary"
-    content_disposition = 'attachment;filename="{}"'.format(filename)
+    content_disposition = f'attachment;filename="{filename}"'
     response.headers["content-disposition"] = content_disposition
     return response

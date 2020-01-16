@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-from pprint import pprint
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from werkzeug.exceptions import NotFound
@@ -44,7 +43,7 @@ def get_user(id: str) -> JSONDict:
         structure_affectation_dto = None
 
     user_dto = {}
-    for k in ["nom", "prenom", "email", "telephone", "uid", "affectation"]:
+    for k in ["nom", "prenom", "email", "telephone", "uid", "affectation", "login"]:
         user_dto[k] = getattr(user, k)
 
     # Cas particulier: fonctions est un set() pas une liste.

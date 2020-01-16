@@ -79,6 +79,11 @@
               </tr>
 
               <tr>
+                <td class="text-muted text-right w-25">Login</td>
+                <td class="w-75">{{ user.login }}</td>
+              </tr>
+
+              <tr>
                 <td class="text-muted text-right">Affectation</td>
                 <td>{{ user.affectation }}</td>
               </tr>

@@ -5,15 +5,15 @@ from labster.security import get_current_profile
 from labster.types import JSON
 
 SCOPES = [
-    # Recherche
-    "porteur",
-    "gestionnaire",
-    "mes structures",
     # DR&I
     "contact",
     "mes structures dri",
     "dri",
     "drv",
+    # Autres structures
+    "porteur",
+    "gestionnaire",
+    "mes structures",
 ]
 
 

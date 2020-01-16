@@ -4,40 +4,42 @@
       <field-set :field-set="field_set" :form="form" :model="model" />
     </div>
 
-    <!--    <div v-if="!calculette" style="text-align: center;">-->
-    <!--      <button-->
-    <!--        v-if="form.mode === 'create'"-->
-    <!--        id="creer-demande"-->
-    <!--        type="submit"-->
-    <!--        class="btn btn-primary"-->
-    <!--      >-->
-    <!--        Créer la demande-->
-    <!--      </button>-->
+    <div v-if="!calculette" style="text-align: center;">
+      <button
+        v-if="form.mode === 'create'"
+        id="creer-demande"
+        type="submit"
+        class="btn btn-primary"
+        @click="onCreate"
+      >
+        Créer la demande
+      </button>
 
-    <!--      <button-->
-    <!--        v-if="form.mode === 'edit'"-->
-    <!--        id="sauver-demande"-->
-    <!--        type="submit"-->
-    <!--        class="btn btn-primary"-->
-    <!--      >-->
-    <!--        Sauver la demande-->
-    <!--      </button>-->
+      <button
+        v-if="form.mode === 'edit'"
+        id="sauver-demande"
+        type="submit"
+        class="btn btn-primary"
+        @click="onSave"
+      >
+        Sauver la demande
+      </button>
 
-    <!--      <button-->
-    <!--        id="cancel"-->
-    <!--        type="submit"-->
-    <!--        class="btn btn-danger"-->
-    <!--        @submit="onCancel"-->
-    <!--      >-->
-    <!--        Annuler-->
-    <!--      </button>-->
-    <!--    </div>-->
+      <button
+        id="cancel"
+        type="submit"
+        class="btn btn-danger"
+        @click="onCancel"
+      >
+        Annuler
+      </button>
+    </div>
 
-    <!--    <div v-if="calculette" style="text-align: center;">-->
-    <!--      <button id="calculer" type="submit" class="btn btn-primary">-->
-    <!--        Lancer le calcul-->
-    <!--      </button>-->
-    <!--    </div>-->
+    <div v-else style="text-align: center;">
+      <button id="calculer" type="submit" class="btn btn-primary">
+        Lancer le calcul
+      </button>
+    </div>
   </form>
 </template>
 
@@ -61,7 +63,7 @@ export default {
   },
 
   created() {
-    this.modelUpdated();
+    update_form(this.form, this.model, this.salaires_indicatifs);
   },
 
   methods: {
@@ -69,36 +71,38 @@ export default {
       update_form(this.form, this.model, this.salaires_indicatifs);
     },
 
-    onCancel: function(e) {
-      e.preventDefault();
-      // TODO
-    },
-
-    // on_cancel: function(e) {
-    //   e.preventDefault();
-    //   const url = "/demandes/post";
-    //   const data = {
-    //     action: "cancel",
-    //     model: this.model,
-    //     form: this.form,
-    //   };
-    //   axios
-    //     .post(url, data)
-    //     .then(result => {
-    //       if (result.data.length > 100) {
-    //         window.location = "/";
-    //       } else {
-    //         window.location = result.data;
-    //       }
-    //     })
-    //     .catch(error => {
-    //       console.error("error saving the form: ", error);
-    //     });
-    // },
-
     onSubmit(e) {
       e.preventDefault();
+    },
 
+    onCancel(e) {
+      this.$router.push("/");
+      this.$root.$bvToast.toast("Action annulée", {
+        title: "OK",
+        variant: "success",
+        solid: true,
+      });
+    },
+
+    onSave(e) {
+      const args = [this.model.id, this.model, this.form];
+      this.$root.rpc("update_demande", args).then(result => {
+        const id = result.id;
+        const messages = result.messages;
+
+        for (let msg of messages) {
+          this.$root.$bvToast.toast(msg[0], {
+            title: "",
+            variant: msg[1],
+            solid: true,
+          });
+        }
+
+        this.$router.push(`/demandes/${id}`);
+      });
+    },
+
+    onCreate(e) {
       const args = [this.model, this.form];
       this.$root.rpc("create_demande", args).then(result => {
         const id = result.id;
@@ -114,28 +118,6 @@ export default {
 
         this.$router.push(`/demandes/${id}`);
       });
-
-      // let url = "/demandes/post";
-      // if (this.calculette) {
-      //   url = "/calculettes/devis_rh";
-      // }
-      // const data = {
-      //   action: this.form.mode,
-      //   model: this.model,
-      //   form: this.form,
-      // };
-      // axios
-      //   .post(url, data)
-      //   .then(result => {
-      //     if (result.data.length > 100) {
-      //       window.location = "/";
-      //     } else {
-      //       window.location = result.data;
-      //     }
-      //   })
-      //   .catch(error => {
-      //     console.error("error submitting the devis: ", error);
-      //   });
     },
   },
 };

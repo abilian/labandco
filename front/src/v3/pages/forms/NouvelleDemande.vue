@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumbs title="Nouvelle demande"></breadcrumbs>
+    <breadcrumbs title="Nouvelle demande" />
 
     <div class="wrapper">
       <div class="card box-primary">

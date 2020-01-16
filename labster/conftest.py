@@ -87,6 +87,13 @@ def client(app, db):
     return app.test_client()
 
 
+@fixture
+def injector(app):
+    from labster.di import injector
+
+    return injector
+
+
 #
 # Cleanup utilities
 #

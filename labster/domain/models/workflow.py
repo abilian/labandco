@@ -678,14 +678,3 @@ class LabsterWorkflow(Workflow):
 
     def actor_is_porteur_or_gdl(self):
         return self.actor in (self.case.porteur, self.case.gestionnaire)
-
-
-def get_valideur_suivant(workflow):
-    from labster.domain.models.unites import LABORATOIRE
-
-    demande = workflow.demande
-    porteur = demande.porteur
-    structure_du_porteur = porteur.structure
-
-    if structure_du_porteur.type == LABORATOIRE:
-        pass

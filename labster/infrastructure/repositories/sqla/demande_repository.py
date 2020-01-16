@@ -6,10 +6,10 @@ from flask_sqlalchemy import SQLAlchemy
 from injector import inject
 from sqlalchemy.orm import Session
 
-from labster.domain2.model.demande import _REGISTRY, Demande, DemandeRepository
+from labster.domain2.model.demande import Demande, DemandeRepository
 from labster.infrastructure.repositories.sqla.mappers import Mapper
 
-types_demande = [cls._type.value for cls in _REGISTRY.values()]
+# types_demande = [cls._type.value for cls in _REGISTRY.values()]
 
 
 class SqlaDemandeRepository(DemandeRepository):
@@ -30,4 +30,9 @@ class SqlaDemandeRepository(DemandeRepository):
         # if not demande.id:
         #     demande.id = DemandeId.new()
         self.session.add(demande)
+        self.session.flush()
+
+    def clear(self):
+        for x in self.get_all():
+            self.session.delete(x)
         self.session.flush()

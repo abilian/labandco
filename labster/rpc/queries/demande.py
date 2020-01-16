@@ -1,23 +1,19 @@
 from __future__ import annotations
 
-from typing import Optional
-
 import structlog
 from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 from marshmallow.fields import Method
 from marshmallow_sqlalchemy import TableSchema
+from more_itertools import first
 from sqlalchemy.orm import joinedload
 
 from labster.di import injector
 from labster.domain2.model.demande import Demande
-from labster.domain2.model.profile import Profile
-from labster.domain2.model.structure import Structure
-from labster.domain2.services.constants import get_constants
+from labster.domain2.services.roles import Role, RoleService
 from labster.infrastructure.repositories.sqla.mappers import Mapper
 from labster.newforms import get_form_class_by_name, get_form_class_for
-from labster.rbac import acces_restreint, check_read_access, \
-    feuille_cout_editable
+from labster.rbac import acces_restreint, feuille_cout_editable
 from labster.rpc.registry import context_for
 from labster.security import get_current_profile
 from labster.types import JSON, JSONDict
@@ -30,25 +26,10 @@ db = injector.get(SQLAlchemy)
 @context_for("demande.new")
 def get_new(type: str = "rh") -> JSONDict:
     """Retourne les données nécessaires pour un formulaire vierge."""
-    structure = get_structure()
-
     form_class = get_form_class_by_name(type)
-
-    form = form_class(
-        laboratoire=structure,
-        porteur=get_porteur(),
-        gestionnaire=get_gestionnaire(),
-        mode="create",
-    )
-
+    form = form_class(mode="create")
     model = form.empty_model()
-    if structure and "laboratoire" in model:
-        model["laboratoire"] = structure.nom
-
-    porteur = get_porteur()
-    if porteur and "porteur" in model:
-        model["porteur"] = porteur.uid
-
+    post_process_form_and_model(form, model)
     return {"form": form.to_dict(), "model": model}
 
 
@@ -64,20 +45,41 @@ def get_demande(id: str) -> JSON:
         )
         .get(id)
     )
-    check_read_access(demande)
+    # FIXME!!!!
+    # check_read_access(demande)
 
     # constants = get_constants()
 
     form = get_form_class_for(demande)()
     form.errors = False  # FIXME later
+    post_process_form_and_model(form)
 
     demande_dto = DemandeSchema().dump(demande).data
 
-    # for k in DemandeSchema.Meta.include:
-    #     pprint([k, demande_dto.get(k, "????")])
-    #     sys.stdout.flush()
-
     return {"demande": demande_dto, "form": form.to_dict()}
+
+
+def post_process_form_and_model(form, model=None):
+    user = get_current_profile()
+    role_service = injector.get(RoleService)
+    roles = role_service.get_roles_for_user(user)
+    structures_d_affectation = roles[Role.MEMBRE_AFFECTE]
+
+    # Cas "Porteur"
+    field = form.get_field("laboratoire")
+    field.choices = [[s.id, s.nom] for s in structures_d_affectation]
+
+    field = form.get_field("porteur")
+    choices = [[user.id, user.full_name]]
+    field.choices = choices
+
+    if not model:
+        return
+
+    porteur = user
+    model["porteur"] = porteur.id
+
+    model["laboratoire"] = first(structures_d_affectation).id
 
 
 #
@@ -182,55 +184,3 @@ class DemandeSchema(TableSchema):
     def get_possible_transitions(self, obj: Demande) -> JSON:
         user = get_current_profile()
         return obj.get_workflow(user).possible_transitions()
-
-
-#
-# Utility functions
-#
-def get_demandeur() -> Profile:
-    return get_current_profile()
-
-
-def get_porteur() -> Optional[Profile]:
-    return None
-    # FIXME
-    # demandeur = get_demandeur()
-    # if not demandeur.has_role("gestionnaire"):
-    #     return demandeur
-    # else:
-    #     return None
-
-
-def get_gestionnaire() -> Optional[Profile]:
-    return None
-    # FIXME
-    # demandeur = get_demandeur()
-    # if demandeur.has_role("gestionnaire"):
-    #     return demandeur
-    # else:
-    #     return None
-
-
-# FIXME
-def get_structure() -> Optional[Structure]:
-    return None
-    # FIXME
-    # demandeur = get_demandeur()
-    # return demandeur.laboratoire
-
-
-def cleanup_model(model, form):
-    """Remove values for fields that are not visible."""
-    new_model = {}
-    fields = form["fields"]
-    for key, value in model.items():
-        if key not in fields:
-            continue
-        if key.startswith("html-"):
-            continue
-        field = fields[key]
-        if not field.get("visible") and value:
-            value = None
-        new_model[key] = value
-
-    return new_model

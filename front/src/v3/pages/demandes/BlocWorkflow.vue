@@ -6,31 +6,27 @@
 
     <div v-if="demande" class="card-body">
       <!-- TODO -->
-      <a v-if="demande.is_editable" href="#" class="btn btn-primary m-2"
-        >Modifier la demande</a
+      <button
+        v-if="demande.is_editable"
+        id="action-modifier"
+        v-on:click="onClick"
+        class="btn btn-primary m-2"
       >
+        Modifier la demande
+      </button>
 
-      <!--          href="{{ url_for(".demande_edit", id=demande.id) }}"-->
-      <!--            class="btn {% if form.errors %}btn-primary{% else %}btn-default{% endif %}">-->
-      <!--          Modifier la demande</a>-->
-
+      <!-- TODO -->
       <a v-if="demande.is_duplicable" href="#" class="btn btn-default m-2"
         >Dupliquer la demande</a
       >
-
-      <!--        {% if g.current_user in [demande.porteur, demande.gestionnaire] %}-->
-      <!--          <button name="action" value="dupliquer"-->
-      <!--              formaction="{{ url_for(".demande_post", id=demande.id) }}"-->
-      <!--              class="btn btn-default">Dupliquer la demande-->
-      <!--          </button>-->
-      <!--        {% endif %}-->
 
       <button
         v-for="transition in transitions"
         type="submit"
         :class="`btn btn-${transition.category} m-2`"
-        name="action"
         :value="transition.id"
+        v-on:click="onClick"
+        name="action"
       >
         {{ transition.label }}
       </button>
@@ -51,6 +47,29 @@ export default {
       state: workflow.state,
       transitions: workflow.transitions,
     };
+  },
+
+  methods: {
+    onClick(e) {
+      const button = e.path[0];
+      const buttonId = button.id;
+
+      if (buttonId === "action-modifier") {
+        this.$parent.goToTab(1);
+      } else if (button.name === "action") {
+        const action = button.value;
+        const args = { demande_id: this.demande.id, action: action };
+        this.$root.rpc("wf_transition", args).then(result => {
+          const msg = result;
+          this.$root.$bvToast.toast(msg[0], {
+            title: "",
+            variant: msg[1],
+            solid: true,
+          });
+          this.$router.go();
+        });
+      }
+    },
   },
 };
 </script>

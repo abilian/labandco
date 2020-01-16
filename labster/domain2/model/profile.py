@@ -1,15 +1,21 @@
 from __future__ import annotations
 
 from abc import ABC, ABCMeta
-from typing import TYPE_CHECKING, Any, List, Optional, Set
+from typing import TYPE_CHECKING, Any, Set
 from uuid import uuid4
 
-from attr import attrs
+from abilian.app import db
+from sqlalchemy import JSON, Boolean, Column, Integer, String
 
 from labster.domain2.model.base import Repository
 
 if TYPE_CHECKING:
     from labster.domain2.services.roles import Role
+
+
+FLUX_TENDU = 0
+DAILY = 1
+WEEKLY = 2
 
 
 class ProfileId(str):
@@ -18,31 +24,32 @@ class ProfileId(str):
         return ProfileId(uuid4())
 
 
-@attrs(eq=False, order=False, repr=False, auto_attribs=True)
-class Profile:
-    id: ProfileId = ProfileId("")
+# @attrs(eq=False, order=False, repr=False, auto_attribs=True)
+class Profile(db.Model):
 
-    uid: Optional[str] = None
-    login: str = ""
+    __tablename__ = "v3_profiles"
 
-    old_id: Optional[int] = None
-    old_uid: Optional[str] = None
+    id = Column(String(36), primary_key=True)
 
-    active: bool = True
+    uid = Column(String(64), unique=True, nullable=True)
+    old_id = Column(Integer, unique=True, nullable=True)
+    old_uid = Column(String(64), unique=True, nullable=True)
+    login = Column(String(64), default="", nullable=False)
 
-    nom: str = ""
-    prenom: str = ""
-    email: str = ""
-    adresse: str = ""
-    telephone: str = ""
+    nom = Column(String, default="", nullable=False)
+    prenom = Column(String, default="", nullable=False)
+    email = Column(String, default="", nullable=False)
+    adresse = Column(String, default="", nullable=False)
+    telephone = Column(String, default="", nullable=False)
 
-    affectation: str = ""
-    fonctions: List[str] = []
+    active = Column(Boolean, default=False, nullable=False)
+    affectation = Column(String, default="", nullable=False)
+    fonctions = Column(JSON, nullable=False)
 
     #: FLUX_TENDU = 0
     #: DAILY = 1
     #: WEEKLY = 2
-    preferences_notifications: int = 0
+    preferences_notifications = Column(Integer, default=0, nullable=False)
 
     # #: Membre de la gouvernance ?
     # gouvernance = Column(Boolean)
@@ -62,6 +69,13 @@ class Profile:
     # date_derniere_notification_vue = Column(
     #     DateTime, default=datetime.utcnow, nullable=False)
     #
+
+    def __init__(self, **kw):
+        self.id = str(uuid4())
+        self.nom = ""
+        self.prenom = ""
+        self.fonctions = []
+        super().__init__(**kw)
 
     def __str__(self):
         return f"<Profile {self.full_name}>"

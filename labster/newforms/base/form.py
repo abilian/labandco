@@ -11,6 +11,7 @@ from labster.domain.models.roles import RoleType
 from labster.domain.services.constants import get_constants
 from labster.types import JSONDict
 
+from ...domain2.model.type_structure import DE, EQ
 from .fields import Field, FieldSet
 
 structure_repo = injector.get(StructureRepository)
@@ -131,4 +132,10 @@ class Form:
             return
 
         structures = structure_repo.get_all()
-        field.choices = [(s.id, f"{s.nom}") for s in structures]
+        choices = [
+            (s.id, f"{s.type}: {s.nom} ({s.sigle})")
+            for s in structures
+            if s.type not in {DE, EQ}
+        ]
+        choices.sort(key=lambda t: t[1])
+        field.choices = choices

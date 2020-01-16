@@ -10,7 +10,7 @@ from typing import Collection, Dict, List, Tuple
 
 from jsonrpcserver import method
 from marshmallow import Schema, fields
-from marshmallow_annotations import AnnotationSchema
+from marshmallow_sqlalchemy import ModelSchema
 from werkzeug.exceptions import NotFound
 
 from labster.di import injector
@@ -182,13 +182,13 @@ def possible_children(
 #
 # Serialization
 #
-class FullStructureSchema(AnnotationSchema):
-    id = fields.String()
-    can_be_deleted = fields.Method("_can_be_deleted")
+class FullStructureSchema(ModelSchema):
     is_reelle = fields.Bool()
+    _depth = fields.Integer()
+    can_be_deleted = fields.Method("_can_be_deleted")
 
     class Meta:
-        target = Structure
+        model = Structure
         exclude = ["parents", "children"]
 
     def _can_be_deleted(self, structure):

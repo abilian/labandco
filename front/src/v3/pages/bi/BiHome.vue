@@ -15,7 +15,7 @@
                 id="periode_debut"
                 v-model="selected.periode_debut"
                 placeholder="AAAA-MM-JJ"
-              ></b-form-input>
+              />
             </b-form-group>
 
             <b-form-group label="Au" label-for="periode_fin">
@@ -23,7 +23,7 @@
                 id="periode_fin"
                 v-model="selected.periode_fin"
                 placeholder="AAAA-MM-JJ"
-              ></b-form-input>
+              />
             </b-form-group>
 
             <template v-for="selector in selectors">
@@ -192,7 +192,7 @@
             </tr>
 
             <tr>
-              <td colspan="7"></td>
+              <td colspan="7" />
             </tr>
 
             <tr>

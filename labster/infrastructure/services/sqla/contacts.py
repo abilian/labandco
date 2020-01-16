@@ -130,7 +130,7 @@ class SqlaContactService(ContactService):
         query = self.query().filter(Contact.structure_id == structure.id)
 
         contacts = query.all()
-        return {ContactType[c.contact_type_name]: c.user_id for c in contacts}
+        return {ContactType[c.contact_type_name]: c.user for c in contacts}
 
     def get_mapping(self) -> Dict[Structure, Dict[ContactType, Profile]]:
         # TODO: optimize

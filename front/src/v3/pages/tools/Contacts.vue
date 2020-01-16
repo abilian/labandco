@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumbs title="Contacts Lab &amp; Co"></breadcrumbs>
+    <breadcrumbs title="Contacts Lab &amp; Co" />
 
     <div class="card">
       <div class="card-header with-border">
@@ -24,7 +24,7 @@
                     v-model="filter"
                     type="search"
                     id="filterInput"
-                  ></b-form-input>
+                  />
                   <b-input-group-append>
                     <b-button :disabled="!filter" @click="filter = ''"
                       >Effacer</b-button
@@ -34,7 +34,7 @@
               </b-form-group>
             </b-col>
 
-            <b-col md="2"></b-col>
+            <b-col md="2" />
 
             <b-col md="4" class="my-1 text-right">
               <b-pagination
@@ -42,7 +42,7 @@
                 :total-rows="totalRows"
                 :per-page="perPage"
                 size="sm"
-              ></b-pagination>
+              />
             </b-col>
           </b-row>
         </b-container>
@@ -97,7 +97,7 @@
 
           <template v-slot:table-busy>
             <div class="text-center my-2">
-              <b-spinner class="align-middle"></b-spinner>
+              <b-spinner class="align-middle" />
               <strong>Chargement en cours...</strong>
             </div>
           </template>
@@ -111,7 +111,7 @@
                 v-model="currentPage"
                 :total-rows="totalRows"
                 :per-page="perPage"
-              ></b-pagination>
+              />
             </b-col>
           </b-row>
         </b-container>

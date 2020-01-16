@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import os
 import uuid
-from pprint import pprint
 
 import pytest
 from flask import url_for

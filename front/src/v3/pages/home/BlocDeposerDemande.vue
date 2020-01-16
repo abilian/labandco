@@ -11,11 +11,11 @@
             <a :href="button.url">
               <div class="info-box">
                 <span class="info-box-icon" :class="'bg-' + button.color"
-                  ><i class="far fa-briefcase" :class="'fa-' + button.icon"></i
-                ></span>
+                  ><i class="far fa-briefcase" :class="'fa-' + button.icon"
+                /></span>
 
                 <div class="info-box-content">
-                  <span class="info-box-text" v-html="button.text"></span>
+                  <span class="info-box-text" v-html="button.text" />
                 </div>
               </div>
             </a>
@@ -67,11 +67,10 @@ const BUTTONS = [
 ];
 
 export default {
-  name: "BlocDeposerDemande",
-
   computed: {
     buttons() {
-      const types_demandes = Vue.$storage.get("user_context").types_demandes;
+      const user = Vue.$storage.get("user_context");
+      const types_demandes = user.types_demandes;
 
       const makeUrl = button => {
         if (button.url) {

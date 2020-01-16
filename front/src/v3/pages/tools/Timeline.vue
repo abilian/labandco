@@ -6,11 +6,11 @@
       </li>
 
       <li v-for="notification in g">
-        <i v-bind:class="[notification.demande.icon_class, 'bg-blue']"></i>
+        <i v-bind:class="[notification.demande.icon_class, 'bg-blue']" />
 
         <div class="timeline-item">
           <span class="time">
-            <i class="far fa-clock"></i>
+            <i class="far fa-clock" />
             {{ notification.created_at }}
           </span>
 

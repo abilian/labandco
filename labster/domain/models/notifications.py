@@ -4,7 +4,6 @@ from datetime import datetime
 
 import pytz
 from abilian.core.models import IdMixin
-from flask_sqlalchemy import BaseQuery
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, Unicode
 from sqlalchemy.orm import relationship
 
@@ -14,21 +13,8 @@ from .demandes import Demande
 from .profiles import Profile
 
 
-class NotificationQuery(BaseQuery):
-    def get_for_user(self, user, page=0):
-        # TODO: paging
-        # FIXME
-        return (
-            self.filter(Notification.user == user)
-            .order_by(Notification.created_at.desc())
-            .limit(25)
-            .all()
-        )
-
-
 class Notification(IdMixin, db.Model):
     __tablename__ = "notification"
-    query_class = NotificationQuery
 
     created_at = Column(DateTime, default=datetime.utcnow)
 

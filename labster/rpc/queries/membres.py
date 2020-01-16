@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from typing import List
 
 from flask_sqlalchemy import SQLAlchemy
@@ -8,8 +7,7 @@ from jsonrpcserver import method
 
 from labster.di import injector
 from labster.domain2.model.profile import ProfileRepository
-from labster.domain2.model.structure import Structure, StructureId, \
-    StructureRepository
+from labster.domain2.model.structure import Structure, StructureRepository
 from labster.domain2.services.roles import Role, RoleService
 from labster.rpc.queries.user import get_roles_dto_for_user
 from labster.types import JSON
@@ -23,7 +21,7 @@ db = injector.get(SQLAlchemy)
 
 @method
 def get_membres(structure_id: str) -> JSON:
-    structure = structure_repo.get_by_id(StructureId(structure_id))
+    structure = structure_repo.get_by_id(structure_id)
     assert structure
 
     membres = role_service.get_users_with_given_role(Role.MEMBRE, structure)
@@ -36,7 +34,7 @@ def get_membres(structure_id: str) -> JSON:
 
 @method
 def get_membres_rattaches_selector(structure_id: str) -> JSON:
-    structure = structure_repo.get_by_id(StructureId(structure_id))
+    structure = structure_repo.get_by_id(structure_id)
     assert structure
 
     membres = role_service.get_users_with_given_role(Role.MEMBRE_RATTACHE, structure)

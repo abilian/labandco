@@ -14,7 +14,7 @@ from labster.app import create_app
 
 # from . import commands, restheart, testing
 
-MODULE_NAMES = ["commands", "migration", "restheart", "testing"]
+MODULE_NAMES = ["commands", "migration", "restheart", "testing", "indexing"]
 
 
 #

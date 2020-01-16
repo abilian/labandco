@@ -3,14 +3,23 @@
 from __future__ import annotations
 
 from labster.newforms.base import FieldSet, Select2Field, StringField
-
 #
 # Fieldsets
 #
+from labster.newforms.base.fields import MultipleSelect2Field
+
 laboratoire = FieldSet(  #
     "laboratoire",
     "Structure demandeuse",
-    [StringField("laboratoire", "Nom de la structure demandeuse", editable=False)],
+    [
+        Select2Field(
+            "laboratoire",
+            "Nom de la structure demandeuse",
+            choices=[],
+            required=True,
+            editable=True,
+        )
+    ],
 )
 
 porteur = FieldSet(  #
@@ -23,8 +32,8 @@ structures_concernees = FieldSet(  #
     "structures_concernees",
     "Structures concernées",
     [
-        Select2Field(
-            "structures_concernees", "Structures concernées", choices=[], required=True
+        MultipleSelect2Field(
+            "structures_concernees", "Structures concernées", choices=[]
         )
     ],
 )

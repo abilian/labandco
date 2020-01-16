@@ -28,11 +28,19 @@ from pprint import pformat
 from typing import Any, Collection, List, Optional, Set
 from uuid import uuid4
 
-from attr import Factory, attrs
+from abilian.app import db
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
+from sqlalchemy.orm import backref, relationship
 
-from labster.domain2.model.base import Repository
-
+from .base import Repository
 from .type_structure import ED, TypeStructure, get_type_structure
+
+hierarchy = Table(
+    "v3_hierarchy",
+    db.metadata,
+    Column("parent_id", String(36), ForeignKey("v3_structures.id")),
+    Column("child_id", String(36), ForeignKey("v3_structures.id")),
+)
 
 
 class StructureId(str):
@@ -41,8 +49,8 @@ class StructureId(str):
         return StructureId(uuid4())
 
 
-@attrs(eq=False, order=False, repr=False, auto_attribs=True)
-class Structure:
+# @attrs(eq=False, order=False, repr=False, auto_attribs=True)
+class Structure(db.Model):
     # Cf. Slides de specs, page 2.
     """Un structure S comprend:
 
@@ -69,43 +77,79 @@ class Structure:
     • Une liste de gestionnaires
     • Une liste d’administrateurs
     """
-    id: StructureId = StructureId("")
-    old_id: Optional[int] = None
-    active: bool = True
 
-    #: Nom
-    nom: str = ""
+    __tablename__ = "v3_structures"
 
-    #: Un acronyme (éventuellement vide)
-    sigle: str = ""
+    id = Column(String(36), primary_key=True)
+    old_id = Column(Integer)
+    active = Column(Boolean, default=True, nullable=False)
+    type_name = Column(String)
+    #
+    nom = Column(String, default="", nullable=False)
+    sigle = Column(String, default="", nullable=False)
+    dn = Column(String, default="", nullable=False)
+    old_dn = Column(String, default="", nullable=False)
+    email = Column(String, default="", nullable=False)
+    #
+    permettre_reponse_directe = Column(Boolean)
+    permettre_soummission_directe = Column(Boolean)
 
-    #: Un type (cf. tableau page suivante)
-    type_name: str = ""
+    children = relationship(
+        "Structure",
+        secondary=hierarchy,
+        primaryjoin=(lambda: hierarchy.c.parent_id == Structure.id),
+        secondaryjoin=(lambda: hierarchy.c.child_id == Structure.id),
+        collection_class=set,
+        backref=backref("parents", collection_class=set),
+    )
 
-    #: Un champ LDAP, pour les structures réelles
-    dn: str = ""
+    # id: StructureId = StructureId("")
+    # old_id: Optional[int] = None
+    # active: bool = True
+    #
+    # #: Nom
+    # nom: str = ""
+    #
+    # #: Un acronyme (éventuellement vide)
+    # sigle: str = ""
+    #
+    # #: Un type (cf. tableau page suivante)
+    # type_name: str = ""
+    #
+    # #: Un champ LDAP, pour les structures réelles
+    # dn: str = ""
+    #
+    # #: Old DN, in case this comes from the old directory
+    # old_dn: str = ""
+    #
+    # #: Parents
+    # parents: Set[Structure] = Factory(set)
+    #
+    # #: Enfants
+    # children: Set[Structure] = Factory(set)
+    #
+    # #: Cache
+    # _depth: int = -1
+    #
+    # #: Propriétés additionnelles (non-spécifiées)
+    # permettre_reponse_directe: bool = False
+    # permettre_soummission_directe: bool = False
+    #
+    # email: str = Factory(str)
 
-    #: Old DN, in case this comes from the old directory
-    old_dn: str = ""
+    def __init__(self, **kw):
+        self.id = str(uuid4())
 
-    #: Parents
-    parents: Set[Structure] = Factory(set)
+        self.active = True
+        self._depth = -1
+        self.permettre_reponse_directe = False
+        self.permettre_soummission_directe = False
+        self.email = ""
+        self.sigle = ""
+        self.dn = ""
+        self.old_dn = ""
 
-    #: Enfants
-    children: Set[Structure] = Factory(set)
-
-    #: Cache
-    _depth: int = -1
-
-    #: Propriétés additionnelles (non-spécifiées)
-    permettre_reponse_directe: bool = False
-    permettre_soummission_directe: bool = False
-
-    email: str = Factory(str)
-
-    def __attrs_post_init__(self):
-        pass
-        # self.check()
+        super().__init__(**kw)
 
     def __str__(self):
         return f"<Structure type='{self.type_name}' nom='{self.nom}' id={id(self)}>"
@@ -117,9 +161,13 @@ class Structure:
     def name(self) -> str:
         return self.nom
 
-    @property
-    def type(self) -> TypeStructure:
+    def get_type(self) -> TypeStructure:
         return get_type_structure(self.type_name)
+
+    def set_type(self, type: TypeStructure) -> None:
+        self.type_name = type.name
+
+    type = property(get_type, set_type)
 
     @property
     def is_reelle(self) -> bool:
@@ -151,7 +199,7 @@ class Structure:
             raise ValueError("Forbidden relation")
 
         child._depth = -1
-        child.parents.add(self)
+        # child.parents.add(self)
         self.children.add(child)
 
     def remove_child(self, child: Structure):
@@ -216,9 +264,25 @@ class Structure:
     def path(self):
         return []
 
-    def get_directeurs(self):
-        # TODO
-        return []
+    #
+    # Roles
+    #
+    @property
+    def responsables(self):
+        from labster.di import injector
+        from labster.domain2.services.roles import RoleService, Role
+
+        role_service = injector.get(RoleService)
+        responsables = role_service.get_users_with_given_role(Role.RESPONSABLE, self)
+        return responsables
+
+    # def get_directeurs(self):
+    #     # TODO
+    #     return []
+    #
+    # @property
+    # def direction(self):
+    #     return self.get_directeurs()
 
     def check(self):
         state = vars(self)
@@ -260,7 +324,7 @@ class StructureRepository(Repository, ABC, metaclass=ABCMeta):
                 return x
         return None
 
-    def get_by_id(self, id: StructureId) -> Optional[Structure]:
+    def get_by_id(self, id: str) -> Optional[Structure]:
         return self.get_by("id", id)
 
     def get_by_old_dn(self, old_dn: str) -> Optional[Structure]:

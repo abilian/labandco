@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumbs :path="path" :title="title"></breadcrumbs>
+    <breadcrumbs :path="path" :title="title" />
 
     <b-card>
       <b-card-title class="p-0 m-0 mb-4">

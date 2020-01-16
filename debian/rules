@@ -1,4 +1,74 @@
-#!/usr/bin/make -f
+#!/usr/bin/python3
 
-%:
-	dh $@ --with python-virtualenv
+import os
+import sys
+from pathlib import Path
+
+g = {
+    "PYTHON_VERSION": "3.7.6",
+}
+
+curdir = os.getcwd()
+target = curdir + "/debian/labster/home/labster"
+
+
+def build_python():
+    if not Path("python-src").exists():
+        os.mkdir("python-src")
+
+
+    if not Path("python-src/python".format(**g)).exists():
+        os.chdir("python-src")
+        url = "https://www.python.org/ftp/python/{PYTHON_VERSION}/Python-{PYTHON_VERSION}.tgz".format(
+            **g
+        )
+        if not Path("Python-{PYTHON_VERSION}.tgz".format(**g)).exists():
+            os.system("wget " + url)
+        os.system("tar -xz --strip-components=1 -f Python-{PYTHON_VERSION}.tgz".format(**g))
+
+        # os.system("./configure --enable-optimizations --with-ensurepip=install")
+        os.system("./configure --prefix={} --with-ensurepip=install".format(target))
+        os.system("make -j8")
+
+    os.chdir(curdir)
+    os.system("cd python-src && make install")
+
+
+def build_requirements():
+    os.system(target + "/bin/pip3 install --upgrade pip wheel")
+    os.system(target + "/bin/pip3 install -r requirements.txt")
+    os.system(target + "/bin/pip3 install .")
+
+
+def build():
+    build_python()
+    build_requirements()
+
+    os.system("find {} -name __pycache__ -print0 | xargs -0 rm -rf".format(target))
+
+
+def binary():
+    os.system("dh_gencontrol")
+    os.system("dh_md5sums")
+    os.system("dh_builddeb")
+
+
+def clean():
+    os.system("dh_clean")
+
+
+def main():
+    if sys.argv[1] == "clean":
+        pass
+        # clean()
+    elif sys.argv[1] == "build":
+        build()
+    elif sys.argv[1] == "binary":
+        binary()
+    elif sys.argv[1] == "install":
+        pass
+    else:
+        print("Unknown arg: ", sys.argv[1])
+
+
+main()

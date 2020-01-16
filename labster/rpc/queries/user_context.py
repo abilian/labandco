@@ -5,11 +5,12 @@ from typing import Any, List
 from jsonrpcserver import method
 from marshmallow import Schema, fields
 
+from labster.domain2.model.notification import Notification
 from labster.domain2.model.profile import Profile
 from labster.domain2.services.demande import get_demande_types_for_user
 from labster.domain2.services.roles import Role
-from labster.domain.models.notifications import Notification
 from labster.menu import get_menu
+from labster.rbac import is_membre_dri, is_membre_drv
 from labster.security import get_current_profile
 from labster.types import JSONDict
 
@@ -19,18 +20,23 @@ from .home_boxes import get_boxes
 
 @method
 def get_user_context() -> JSONDict:
-    current_profile = get_current_profile()
+    user = get_current_profile()
 
-    menus = get_menu(current_profile)
-    types_demandes = list(get_demande_types_for_user(current_profile))
+    menus = get_menu(user)
+    types_demandes = list(get_demande_types_for_user(user))
+
+    is_responsable = user.has_role(Role.RESPONSABLE, "*")
 
     return {
         "menu": [menu.asdict() for menu in menus],
-        "user": UserSchema().dump(current_profile).data,
+        "user": UserSchema().dump(user).data,
         "types_demandes": types_demandes,
         "home_boxes": get_boxes(),
         "archives_boxes": get_boxes(archives=True),
-        "is_admin": current_profile.has_role(Role.ADMIN_CENTRAL),
+        "is_admin": user.has_role(Role.ADMIN_CENTRAL),
+        "is_membre_dri": is_membre_dri(user),
+        "is_membre_drv": is_membre_drv(user),
+        "is_responsable": is_responsable,
     }
 
 

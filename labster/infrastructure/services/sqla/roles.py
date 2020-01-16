@@ -83,7 +83,7 @@ class SqlaRoleService(RoleService):
             self.session.delete(grant)
             self.session.flush()
 
-    def get_grant(self, user, role, context) -> Grant:
+    def get_grant(self, user: Profile, role: Role, context) -> Grant:
         assert isinstance(user, Profile)
         assert isinstance(role, Role)
 
@@ -136,9 +136,12 @@ class SqlaRoleService(RoleService):
 
     def get_users_with_given_role(self, role: Role, context: Structure) -> Set[Profile]:
         assert isinstance(role, Role)
+        assert isinstance(context, Structure)
 
         query = (
-            self.query().filter_by(role_name=role.name).filter_by(context_id=context.id)
+            self.query()
+            .filter(Grant.role_name == role.name)
+            .filter(Grant.context_id == context.id)
         )
         grants = query.all()
         return {grant.user for grant in grants}

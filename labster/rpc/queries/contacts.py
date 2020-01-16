@@ -6,8 +6,7 @@ from jsonrpcserver import method
 
 from labster.di import injector
 from labster.domain2.model.profile import ProfileRepository
-from labster.domain2.model.structure import Structure, StructureId, \
-    StructureRepository
+from labster.domain2.model.structure import Structure, StructureRepository
 from labster.domain2.services.contacts import ContactService, ContactType
 from labster.ldap.constants import DRI_ET_DRV_DNS
 from labster.types import JSON
@@ -19,7 +18,7 @@ contact_service = injector.get(ContactService)
 
 @method
 def get_contacts(structure_id) -> JSON:
-    structure = structure_repo.get_by_id(StructureId(structure_id))
+    structure = structure_repo.get_by_id(structure_id)
     assert structure
     return make_contacts_dto(structure)
 

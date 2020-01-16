@@ -27,6 +27,7 @@ import DemandeView from "../pages/demandes/DemandeView";
 import NouvelleDemande from "../pages/forms/NouvelleDemande";
 
 import BiHome from "../pages/bi/BiHome";
+import DemandesAValider from "../pages/home/DemandesAValider";
 
 Vue.use(Router);
 
@@ -46,6 +47,10 @@ const router = new Router({
     {
       path: "/tasks",
       component: Tasks,
+    },
+    {
+      path: "/demandes_a_valider",
+      component: DemandesAValider,
     },
     {
       path: "/demandes",

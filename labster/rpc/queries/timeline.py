@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from marshmallow import Schema, fields
 
 from labster.di import injector
-from labster.domain.models.notifications import Notification
+from labster.domain2.model.notification import Notification
 from labster.rpc.registry import context_for
 from labster.security import get_current_profile
 from labster.types import JSONDict

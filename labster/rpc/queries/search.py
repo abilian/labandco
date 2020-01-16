@@ -7,52 +7,27 @@ import whoosh
 import whoosh.query as wq
 from abilian.web.search.views import BOOTSTRAP_MARKUP_HIGHLIGHTER, \
     RESULTS_FRAGMENTER
-from flask import current_app, request
+from flask import current_app
+from flask_sqlalchemy import SQLAlchemy
+from jsonrpcserver import method
 from marshmallow import Schema, fields
 from whoosh.qparser import DisMaxParser
 
-from labster.domain.models.demandes import Demande
+from labster.di import injector
+from labster.domain2.model.demande import Demande
 from labster.domain.models.faq import FaqEntry
-from labster.domain.models.roles import RoleType
-from labster.rbac import has_read_access
-from labster.security import get_current_user
-
-from . import route
+from labster.rbac import has_read_access, is_membre_dri
+from labster.security import get_current_profile
+from labster.types import JSONDict
 
 PAGE_SIZE = 25
 
-
-class FaqEntrySchema(Schema):
-    id = fields.String()
-    title = fields.String()
-    # body = fields.String()
-    # category = fields.String()
+db = injector.get(SQLAlchemy)
 
 
-class OrgUnitSchema(Schema):
-    id = fields.String()
-    nom = fields.String()
-
-
-class UserSchema(Schema):
-    id = fields.String()
-    full_name = fields.String()
-
-
-class DemandeSchema(Schema):
-    id = fields.String()
-    nom = fields.String()
-    created_at = fields.DateTime()
-    type = fields.String()
-    porteur = fields.Nested(UserSchema)
-    gestionnaire = fields.Nested(UserSchema)
-    laboratoire = fields.Nested(OrgUnitSchema)
-
-
-@route("/search")
-def search_api() -> Dict[str, str]:
-    page = int(request.args.get("page", 1))
-    q = request.args.get("q", "").strip()
+@method
+def search_api(q: str, page=1) -> JSONDict:
+    q = q.strip()
 
     if q:
         results = search_results(q, page)
@@ -84,11 +59,39 @@ def search_results(q, page):
 
     demande_ids = [hit["id"] for hit in groups.get(True, [])]
     faq_ids = [hit["id"] for hit in groups.get(False, [])]
-    demandes = Demande.query.filter(Demande.id.in_(demande_ids)).all()
+    demandes = db.session.query(Demande).filter(Demande.id.in_(demande_ids)).all()
     demandes = filter_demandes_by_visibility(demandes)
+
     faqs = FaqEntry.query.filter(FaqEntry.id.in_(faq_ids)).all()
 
     return {"demandes": demandes, "faqs": faqs}
+
+
+class FaqEntrySchema(Schema):
+    id = fields.String()
+    title = fields.String()
+    # body = fields.String()
+    # category = fields.String()
+
+
+class OrgUnitSchema(Schema):
+    id = fields.String()
+    nom = fields.String()
+
+
+class UserSchema(Schema):
+    id = fields.String()
+    full_name = fields.String()
+
+
+class DemandeSchema(Schema):
+    id = fields.String()
+    nom = fields.String()
+    created_at = fields.DateTime()
+    type = fields.String()
+    porteur = fields.Nested(UserSchema)
+    gestionnaire = fields.Nested(UserSchema)
+    laboratoire = fields.Nested(OrgUnitSchema)
 
 
 def filter_demandes_by_visibility(demandes):
@@ -111,17 +114,20 @@ def search(q, **search_args):
     query = parser.parse(q)
 
     # security access filter
-    user = get_current_user()
-    if not user.has_role("dgrtt"):
-        roles = {f"user:{user.id}", "all"}
-        for role in user.get_roles():
-            if role.type in [RoleType.DIRECTION.value, RoleType.GDL.value]:
-                structure = role.context
-                structures = [structure] + structure.descendants()
-                roles |= {f"org:{s.id}" for s in structures}
+    user = get_current_profile()
 
-        terms = [wq.Term("allowed_roles_and_users", role) for role in roles]
-        query &= wq.Or(terms)
+    if not is_membre_dri(user):
+        pass
+        # TODO
+        # roles = {f"user:{user.id}", "all"}
+        # for role in user.get_roles():
+        #     if role.type in [RoleType.DIRECTION.value, RoleType.GDL.value]:
+        #         structure = role.context
+        #         structures = [structure] + structure.descendants()
+        #         roles |= {f"org:{s.id}" for s in structures}
+        #
+        # terms = [wq.Term("allowed_roles_and_users", role) for role in roles]
+        # query &= wq.Or(terms)
 
     with index.searcher(closereader=False) as searcher:
         # 'closereader' is needed, else results cannot by used outside 'with'

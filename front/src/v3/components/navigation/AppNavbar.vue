@@ -17,7 +17,7 @@
             />
             <div class="input-group-append">
               <button class="btn btn-navbar" type="submit" @click="onSearch">
-                <i class="far fa-search"></i>
+                <i class="far fa-search" />
               </button>
             </div>
           </div>
@@ -26,7 +26,7 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
           <b-nav-item v-if="user" to="/contacts" title="Mes contacts">
-            <i class="far fa-lg fa-heart"></i>
+            <i class="far fa-lg fa-heart" />
           </b-nav-item>
 
           <b-nav-item
@@ -34,7 +34,7 @@
             to="/demandes_en_retard"
             title="Mes demandes en retard"
           >
-            <i class="far fa-lg fa-exclamation-triangle"></i>
+            <i class="far fa-lg fa-exclamation-triangle" />
             <span
               v-if="user.nb_taches_retard"
               class="badge badge-danger navbar-badge"
@@ -42,8 +42,8 @@
             >
           </b-nav-item>
 
-          <b-nav-item v-if="user" href="#" title="Mes tâches">
-            <i class="far fa-lg fa-check-square"></i>
+          <b-nav-item v-if="user" to="/tasks" href="#" title="Mes tâches">
+            <i class="far fa-lg fa-check-square" />
             <span
               v-if="user.nb_taches"
               class="badge badge-warning navbar-badge"
@@ -57,7 +57,7 @@
               title="Mes notifications"
               class="nav-link"
             >
-              <i class="far fa-lg fa-bullhorn"></i>
+              <i class="far fa-lg fa-bullhorn" />
               <span
                 v-if="user.nb_notifications_non_vues"
                 class="badge badge-success navbar-badge"
@@ -69,7 +69,7 @@
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
             <template v-if="user" slot="button-content"
-              ><i class="far far-user"></i> {{ user.prenom }} {{ user.nom }}
+              ><i class="far far-user" /> {{ user.prenom }} {{ user.nom }}
             </template>
 
             <b-dropdown-item
@@ -82,7 +82,7 @@
               >Préférences</b-dropdown-item
             >
 
-            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-divider />
 
             <b-dropdown-item v-if="user && user.is_admin" href="/switch"
               >Changer d'utilisateur</b-dropdown-item
@@ -109,9 +109,7 @@ export default {
 
   computed: {
     user() {
-      const user = this.$storage.get("user_context").user;
-      console.log("user=", user);
-      return user;
+      return this.$storage.get("user_context").user;
     },
   },
 

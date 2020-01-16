@@ -1,15 +1,19 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from datetime import date, datetime
 from decimal import Decimal
 from enum import Enum, unique
 from typing import Any, Collection, Dict, List, Optional, Type
 
 import dateutil
+import sqlalchemy as sa
+from abilian.app import db
 from abilian.core.models.blob import Blob
 from flask_sqlalchemy import SQLAlchemy
 from iso8601 import iso8601
+from sqlalchemy import JSON, Boolean, Column, Date, DateTime, ForeignKey, \
+    Integer, String
+from sqlalchemy.orm import relationship
 
 from labster.domain2.model.base import Repository
 from labster.domain2.model.profile import Profile
@@ -18,7 +22,6 @@ from labster.domain2.model.util import parse_date
 from labster.domain2.services.calculs_couts import cout_total_charge
 from labster.domain2.services.workflow import EN_EDITION, LabsterWorkflow
 from labster.lib.workflow import State
-from labster.types import JSONDict, JSONList
 
 
 @unique
@@ -33,55 +36,117 @@ class DemandeType(Enum):
     ILLEGAL = "Should not happen"
 
 
-class DemandeId(int):
-    pass
+types_demande = [x.value for x in DemandeType]
 
 
-@dataclass
-class Demande:
+class Demande(db.Model):
+    __tablename__ = "v3_demandes"
+
     _type: DemandeType = DemandeType.ILLEGAL
 
-    id: Optional[DemandeId] = None
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    id = Column(Integer, primary_key=True)
+    old_id = Column(Integer)
+    type = Column(
+        sa.Enum(*types_demande, name="type_demande"), nullable=False, index=True,
+    )
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
+    #
+    nom = Column(String)
+    name = Column(String)
+    active = Column(Boolean)
+    editable = Column(Boolean)
+    no_infolab = Column(String)
+    no_eotp = Column(String)
 
-    nom: str = ""
-    name: str = ""
-    no_infolab: str = ""
-    no_eotp: str = ""
+    # Relations
+    contact_labco_id = Column(String(36), ForeignKey(Profile.id))
+    gestionnaire_id = Column(String(36), ForeignKey(Profile.id))
+    porteur_id = Column(String(36), ForeignKey(Profile.id))
+    structure_id = Column(String(36), ForeignKey(Structure.id))
 
-    # type = Column(Enum(*TYPE_ENUM, name="demande_type"), nullable=False, index=True)
+    #
+    data = Column(JSON)
+    past_versions = Column(JSON)
+    form_state = Column(JSON)
+    attachments = Column(JSON)
+    feuille_cout = Column(JSON)
+    documents_generes = Column(JSON)
 
-    data: JSONDict = field(default_factory=dict)
-
-    past_versions: JSONList = field(default_factory=list)
-    form_state: JSONDict = field(default_factory=dict)
-    attachments: JSONDict = field(default_factory=dict)
-    feuille_cout: JSONDict = field(default_factory=dict)
-    documents_generes: JSONList = field(default_factory=list)
-
+    # Workflow
+    # wf_state = Column(WF_ENUM, default=EN_EDITION.id, nullable=False, index=True)
+    wf_state = Column(String)
+    wf_date_derniere_action = Column(DateTime)
+    wf_retard = Column(Integer)
+    wf_history = Column(JSON)
+    wf_data = Column(JSON)
     #: Date de validation par la hiérarchie
-    date_effective: Optional[date] = None
+    date_effective = Column(Date, nullable=True)
 
-    #: Seules les demandes actives apparaissent dans le workflow.
-    #: Les autres sont considérées comme archivées.
-    active: bool = field(default_factory=lambda: True)
-    editable: bool = field(default_factory=lambda: True)
+    contact_labco = relationship(
+        Profile, foreign_keys=lambda: [Demande.contact_labco_id]
+    )
+    porteur = relationship(Profile, foreign_keys=lambda: [Demande.porteur_id])
+    gestionnaire = relationship(Profile, foreign_keys=lambda: [Demande.gestionnaire_id])
+    structure = relationship(Structure)
 
-    # Les acteurs de la demande:
-    porteur: Optional[Profile] = None
-    gestionnaire: Optional[Profile] = None
-    contact_labco: Optional[Profile] = None
+    __mapper_args__ = {"polymorphic_identity": "", "polymorphic_on": type}
 
-    # Structures liées
-    structure: Optional[Structure] = None
+    # wf_stage_id = Column(Integer, ForeignKey(OrgUnit.id), index=True, nullable=True)
+    # wf_stage = relationship(
+    #     OrgUnit, primaryjoin=remote(Entity.id) == foreign(wf_stage_id)
+    # )
+    #
+    # #: id de la personne responsable de la tâche en cours
+    # wf_current_owner_id = Column(
+    #     Integer, ForeignKey(Profile.id), index=True, nullable=True
+    # )
+    # #: la personne responsable de la tâche en cours
+    # wf_current_owner = relationship(
+    #     Profile, primaryjoin=remote(Entity.id) == foreign(wf_current_owner_id)
+    # )
 
-    # Variables liées au workflow [TODO]
-    wf_state: str = EN_EDITION.id
-    wf_date_derniere_action: Optional[datetime] = None
-    wf_retard: int = 0
-    wf_history: List[Dict[str, Any]] = field(default_factory=list)
-    wf_data: JSONDict = field(default_factory=dict)
-    wf_current_owner: Optional[Profile] = None
+    # id: Optional[DemandeId] = None
+    # created_at: datetime = field(default_factory=datetime.utcnow)
+    #
+    # nom: str = ""
+    # name: str = ""
+    # no_infolab: str = ""
+    # no_eotp: str = ""
+    #
+    # # type = Column(Enum(*TYPE_ENUM, name="demande_type"), nullable=False, index=True)
+    #
+    # data: JSONDict = field(default_factory=dict)
+    #
+    # past_versions: JSONList = field(default_factory=list)
+    # form_state: JSONDict = field(default_factory=dict)
+    # attachments: JSONDict = field(default_factory=dict)
+    # feuille_cout: JSONDict = field(default_factory=dict)
+    # documents_generes: JSONList = field(default_factory=list)
+    #
+    # #: Date de validation par la hiérarchie
+    # date_effective: Optional[date] = None
+    #
+    # #: Seules les demandes actives apparaissent dans le workflow.
+    # #: Les autres sont considérées comme archivées.
+    # active: bool = field(default_factory=lambda: True)
+    # editable: bool = field(default_factory=lambda: True)
+    #
+    # # Les acteurs de la demande:
+    # porteur: Optional[Profile] = None
+    # gestionnaire: Optional[Profile] = None
+    # contact_labco: Optional[Profile] = None
+    #
+    # # Structures liées
+    # structure: Optional[Structure] = None
+    #
+    # # Variables liées au workflow [TODO]
+    # wf_state: str = EN_EDITION.id
+    # wf_date_derniere_action: Optional[datetime] = None
+    # wf_retard: int = 0
+    # wf_history: List[Dict[str, Any]] = field(default_factory=list)
+    # wf_data: JSONDict = field(default_factory=dict)
+    # wf_current_owner: Optional[Profile] = None
 
     # TODO:
     # wf_stage: a remplacer
@@ -113,15 +178,15 @@ class Demande:
     #
     # __mapper_args__ = {"polymorphic_identity": "", "polymorphic_on": type}
 
-    def __post_init__(self):
-        if not hasattr(self, "porteur"):
-            self.porteur = None
-        if not hasattr(self, "gestionnaire"):
-            self.gestionnaire = None
+    def __init__(self, **kw):
+        # if not hasattr(self, "porteur"):
+        #     self.porteur = None
+        # if not hasattr(self, "gestionnaire"):
+        #     self.gestionnaire = None
 
         # assert self.porteur or self.gestionnaire
-        if self.porteur:
-            self.structure = self.porteur.structure
+        # if self.porteur:
+        #     self.structure = self.porteur.structure
 
         self.data = {}
         self.attachments = {}
@@ -133,6 +198,8 @@ class Demande:
         if not self.created_at:
             self.created_at = datetime.utcnow()
         self.wf_date_derniere_action = self.created_at
+
+        super().__init__(**kw)
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} with id={self.id}>"
@@ -309,7 +376,7 @@ class Demande:
     def get_errors(self) -> List[Any]:
         errors = []
         form_state = self.form_state
-        fields = form_state["fields"]
+        fields = form_state.get("fields", [])
         for field_name, field_value in self.data.items():
             if field_name not in fields:
                 continue
@@ -400,10 +467,10 @@ class Demande:
 # Concrete classes
 #
 class DemandeRH(Demande):
-    _type = DemandeType.RECRUTEMENT
-    # __mapper_args__ = {"polymorphic_identity": RECRUTEMENT}
-
+    _type = DemandeType.RECRUTEMENT.value
     icon_class = "far fa-user"
+
+    __mapper_args__ = {"polymorphic_identity": _type}
 
     def update_nom(self) -> None:
         prenom = self.data.get("prenom") or "(prénom inconnu)"
@@ -458,10 +525,10 @@ class DemandeRH(Demande):
 
 
 class DemandeConvention(Demande):
-    _type = DemandeType.CONVENTION
-    # __mapper_args__ = {"polymorphic_identity": CONVENTION}
-
+    _type = DemandeType.CONVENTION.value
     icon_class = "far fa-briefcase"
+
+    __mapper_args__ = {"polymorphic_identity": _type}
 
     @property
     def date_debut(self):
@@ -553,10 +620,10 @@ class DemandeConvention(Demande):
 
 
 class DemandeAvenantConvention(DemandeConvention):
-    _type = DemandeType.AVENANT_CONVENTION
-    # __mapper_args__ = {"polymorphic_identity": AVENANT_CONVENTION}
-
+    _type = DemandeType.AVENANT_CONVENTION.value
     icon_class = "far fa-briefcase"
+
+    __mapper_args__ = {"polymorphic_identity": _type}
 
     def update_nom(self):
         nom_ou_acronyme = self.data.get("nom_projet")
@@ -607,10 +674,10 @@ class DemandePiMixin:
 
 # Concrete
 class DemandePiLogiciel(Demande, DemandePiMixin):
-    _type = DemandeType.PI_LOGICIEL
-    # __mapper_args__ = {"polymorphic_identity": PI_LOGICIEL}
-
+    _type = DemandeType.PI_LOGICIEL.value
     icon_class = "far fa-save"
+
+    __mapper_args__ = {"polymorphic_identity": _type}
 
     @property
     def intitule(self):
@@ -622,10 +689,10 @@ class DemandePiLogiciel(Demande, DemandePiMixin):
 
 
 class DemandePiInvention(Demande, DemandePiMixin):
-    _type = DemandeType.PI_INVENTION
-    # __mapper_args__ = {"polymorphic_identity": PI_INVENTION}
-
+    _type = DemandeType.PI_INVENTION.value
     icon_class = "far fa-rocket"
+
+    __mapper_args__ = {"polymorphic_identity": _type}
 
     @property
     def titre(self):
@@ -633,11 +700,11 @@ class DemandePiInvention(Demande, DemandePiMixin):
 
 
 class DemandeAutre(Demande):
-    _type = DemandeType.AUTRE
-    # __mapper_args__ = {"polymorphic_identity": AUTRE}
-
+    _type = DemandeType.AUTRE.value
     commentaire = ""
     icon_class = "far fa-folder-open"
+
+    __mapper_args__ = {"polymorphic_identity": _type}
 
     @property
     def titre(self):

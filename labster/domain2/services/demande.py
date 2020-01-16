@@ -40,9 +40,13 @@ def get_demande_types_for_user(user: Profile) -> Set[str]:
     roles = role_service.get_roles_for_user(user)
     structures = roles.get(Role.PORTEUR, set()) | roles.get(Role.GESTIONNAIRE, set())
 
-    result = {"autre", "faq"}
+    # Cf. https://trello.com/c/UM96aY5s
+    result = {"faq"}
+
+    if structures:
+        result |= {"autre"}
+
     for s in structures:
-        # Cf. https://trello.com/c/UM96aY5s
         if not contact_service.get_mapping_for(s):
             continue
 

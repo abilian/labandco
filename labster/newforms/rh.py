@@ -99,9 +99,7 @@ contrat = FieldSet(  #
         BooleanField("co_finance", "Ce recrutement est-il co-financé&nbsp;?"),
         Select2Field("financement2", "Financement 2", choices=CHOICES4, required=True),
         StringField("numero_de_financement2", "Numéro du financement"),
-        StringField(
-            "structure_financeuse", "Structure finançant le recrutement [TODO]"
-        ),
+        StringField("structure_financeuse", "Structure"),
     ],
 )
 

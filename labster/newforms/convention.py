@@ -5,9 +5,6 @@ from __future__ import annotations
 from labster.newforms.base import HTML, BooleanField, DateField, FieldSet, \
     Form, IntegerField, ListePartenaires, Select2Field, StringField, \
     TextAreaField, TriStateField
-#
-# Fieldsets
-#
 from labster.newforms.common import contributeurs, laboratoire, \
     structures_concernees
 
@@ -177,8 +174,11 @@ commentaires = FieldSet(  #
     [
         HTML(
             """
-<p>Vous pouvez indiquer dans ce champs des éléments complémentaires nécessaires à l’instruction de votre demande.</p>
-<p><em>Par exemple : besoin de recruter dès le démarrage du projet ; ce nouveau contrat s’inscrit-il dans un MTA et NDA existant, etc.</em></p>"""
+<p>Vous pouvez indiquer dans ce champs des éléments complémentaires
+nécessaires à l’instruction de votre demande.</p>
+
+<p><em>Par exemple : besoin de recruter dès le démarrage du projet ;
+ce nouveau contrat s’inscrit-il dans un MTA et NDA existant, etc.</em></p>"""
         ),
         TextAreaField("commentaires", "Commentaires"),
     ],

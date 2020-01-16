@@ -1,10 +1,11 @@
 <template>
   <div>
-    <breadcrumbs title="Mes demandes en retard" />
+    <breadcrumbs title="Mes tâches" />
+
     <box-demandes
-      title="Mes demandes"
-      id="mes_demandes"
-      scope="mes demandes en retard"
+      title="Demandes à valider"
+      id="demandes_a_valider"
+      scope="demandes à valider"
     />
   </div>
 </template>

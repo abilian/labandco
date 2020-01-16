@@ -10,32 +10,38 @@ from werkzeug.exceptions import Forbidden, MethodNotAllowed, NotFound
 
 from labster.di import injector
 from labster.domain2.model.demande import Demande, demande_factory
-from labster.rpc.queries.demande import cleanup_model, get_demandeur, \
-    get_gestionnaire, get_porteur
+from labster.domain2.model.profile import Profile
 from labster.security import get_current_profile
-
-from ..util import ensure_role
 
 db = injector.get(SQLAlchemy)
 
 
 @method
 def create_demande(model, form):
+    user = get_current_profile()
     # TODO
     # ensure_role("alc")
 
     model = cleanup_model(model, form)
 
     form_type = form["name"]
-    porteur = get_porteur()
 
-    demande = demande_factory(
-        type=form_type,
-        demandeur=get_demandeur(),
-        porteur=porteur,
-        gestionnaire=get_gestionnaire(),
-        data=model,
-    )
+    porteur_id = model.get("porteur")
+    if porteur_id:
+        porteur = db.session.query(Profile).get(porteur_id)
+    else:
+        porteur = None
+
+    if user != porteur:
+        gestionnaire = user
+    else:
+        gestionnaire = None
+
+    # porteur = get_porteur()
+
+    demande = demande_factory(type=form_type, demandeur=user, data=model,)
+    demande.porteur = porteur
+    demande.gestionnaire = gestionnaire
 
     demande.form_state = form
 
@@ -56,16 +62,14 @@ def create_demande(model, form):
 
 @method
 def update_demande(id, model, form):
-    # TODO
-    # ensure_role("alc")
-    current_profile = get_current_profile()
-
     model = cleanup_model(model, form)
+
+    user = get_current_profile()
 
     # TODO: replace
     demande = db.session.query(Demande).get(id)
     assert demande
-    if not demande.is_editable_by(current_profile):
+    if not demande.is_editable_by(user):
         raise MethodNotAllowed()
 
     new_data = model
@@ -128,6 +132,26 @@ def update_feuille_de_cout(model, html):
 
 def make_pdf(model):
     pass
+
+
+#
+# Utility functions
+#
+def cleanup_model(model, form):
+    """Remove values for fields that are not visible."""
+    new_model = {}
+    fields = form["fields"]
+    for key, value in model.items():
+        if key not in fields:
+            continue
+        if key.startswith("html-"):
+            continue
+        field = fields[key]
+        if not field.get("visible") and value:
+            value = None
+        new_model[key] = value
+
+    return new_model
 
     # return url_for(demande)
     #

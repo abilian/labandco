@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import traceback
 from datetime import date, timedelta
-from pprint import pprint
 from typing import List, Optional
 
 from flask_sqlalchemy import SQLAlchemy
@@ -16,6 +15,7 @@ from labster.domain2.model.demande import Demande
 from labster.domain2.model.profile import Profile
 from labster.domain2.services.contacts import ContactService
 from labster.domain2.services.roles import Role, RoleService
+from labster.domain2.services.workflow import EN_VALIDATION
 from labster.rbac import get_drv_membership, is_membre_dri, is_membre_drv
 from labster.security import get_current_profile
 from labster.types import JSON, JSONDict, JSONList
@@ -109,6 +109,18 @@ class MesTachesTableView(TableView):
         return mes_taches(user)
 
 
+class DemandesAValiderTableView(TableView):
+    scope = "demandes à valider"
+
+    def is_visible_for(self, user: Profile):
+        return True
+
+    def get_demandes_for(self, user: Profile):
+        demandes = mes_taches(user)
+        demandes = [d for d in demandes if d.wf_state == EN_VALIDATION.id]
+        return demandes
+
+
 def mes_demandes(
     user: Profile, archived: bool = False, all: bool = False
 ) -> List[Demande]:
@@ -129,10 +141,8 @@ def mes_demandes(
 def mes_taches(user: Profile) -> List[Demande]:
     """Retourne la liste des demandes pour lesquels l'utilisateur a une
     action à réaliser."""
-    return []
-    # FIXME
-    # query = QUERY.filter(Demande.active == True).order_by(Demande.created_at.desc())
-    #
+    query = QUERY.filter(Demande.active == True).order_by(Demande.created_at.desc())
+
     # if user.has_role("directeur"):
     #     assert user.stucture_dont_je_suis_le_directeur
     #     ma_structure = user.stucture_dont_je_suis_le_directeur
@@ -149,15 +159,17 @@ def mes_taches(user: Profile) -> List[Demande]:
     # else:
     #     return []
     #
-    # demandes = query.all()
-    #
-    # def is_task(demande):
-    #     workflow = demande.get_workflow(user)
-    #     state = workflow.current_state()
-    #     return user in state.task_owners(workflow)
-    #
-    # demandes = [d for d in demandes if is_task(d)]
-    # return demandes
+
+    demandes = query.all()
+
+    def is_task(demande):
+        workflow = demande.get_workflow(user)
+        state = workflow.current_state()
+        owners = state.task_owners(workflow)
+        return user.id in {o.id for o in owners}
+
+    demandes = [d for d in demandes if is_task(d)]
+    return demandes
 
 
 def mes_taches_en_retard(user: Profile) -> List[Demande]:
@@ -172,7 +184,7 @@ def mes_taches_en_retard(user: Profile) -> List[Demande]:
 #
 class PorteurTableView(TableView):
     scope = "porteur"
-    title = "Mes demandes comme porteur"
+    title = "Demandes dont je suis porteur"
 
     def is_visible_for(self, user: Profile):
         return user.has_role(Role.PORTEUR, "*")
@@ -188,7 +200,7 @@ class PorteurTableView(TableView):
 
 class GestionnaireTableView(TableView):
     scope = "gestionnaire"
-    title = "Mes demandes comme gestionnaire"
+    title = "Demandes dont je suis gestionnaire"
 
     def is_visible_for(self, user: Profile):
         return user.has_role(Role.GESTIONNAIRE, "*")
@@ -204,7 +216,7 @@ class GestionnaireTableView(TableView):
 
 class MesStructuresTableView(TableView):
     scope = "mes structures"
-    title = "Les demandes de mes structures"
+    title = "Demandes des structures dont je suis un responsable/gestionnaire"
 
     def is_visible_for(self, user: Profile):
         return user.has_role(Role.GESTIONNAIRE, "*") or user.has_role(
@@ -239,7 +251,7 @@ class ArchivesGestionnaireTableView(GestionnaireTableView):
 
 
 class ArchivesMesStructuresTableView(MesStructuresTableView):
-    title = "Demandes archivées de mes structures"
+    title = "Demandes archivées des structures dont je suis un responsable/gestionnaire"
     archives = True
 
 
@@ -248,7 +260,7 @@ class ArchivesMesStructuresTableView(MesStructuresTableView):
 #
 class DriTableView(TableView):
     scope = "dri"
-    title = "Toutes les demandes à la DR&I et dans les DRV"
+    title = "Demandes en cours à la DR&I et dans les DRV"
 
     def is_visible_for(self, user: Profile):
         return is_membre_dri(user)
@@ -264,7 +276,7 @@ class DriTableView(TableView):
 
 class DrvTableView(TableView):
     scope = "drv"
-    title = "Toutes les demandes dans ma DRV"
+    title = "Demandes en cours dans ma DRV"
 
     def is_visible_for(self, user: Profile):
         return is_membre_drv(user)
@@ -297,14 +309,14 @@ class DrvTableView(TableView):
 
 class ContactTableView(TableView):
     scope = "contact"
-    title = "Mes demandes comme contact Lab&Co"
+    title = "Demandes dont je suis contact"
 
     def is_visible_for(self, user: Profile):
         return is_membre_dri(user) or is_membre_drv(user)
 
     def get_demandes_for(self, user: Profile):
         return (
-            QUERY.filter(Demande.contact == user)
+            QUERY.filter(Demande.contact_labco == user)
             .filter_by(active=(not self.archives))
             .order_by(Demande.created_at.desc())  # type: ignore
             .all()
@@ -313,7 +325,7 @@ class ContactTableView(TableView):
 
 class MesStructuresDriOuDrvTableView(TableView):
     scope = "mes structures dri"
-    title = "Les demandes de mes structures"
+    title = "Demandes des structures dont je suis un contact Lab&Co"
 
     def is_visible_for(self, user: Profile):
         contact_service = injector.get(ContactService)
@@ -323,12 +335,10 @@ class MesStructuresDriOuDrvTableView(TableView):
     def get_demandes_for(self, user: Profile):
         contact_service = injector.get(ContactService)
         mapping = contact_service.get_mapping()
-        structures = {s for s, d in mapping.items() if user in d.items()}
-        for s in set(structures):
-            structures |= s.descendants
-
+        structures = {s for s, d in mapping.items() if user in d.values()}
+        structure_ids = {s.id for s in structures}
         return (
-            QUERY.filter(Demande.structure_id.in_({s.id for s in structures}))  # type: ignore
+            QUERY.filter(Demande.structure_id.in_(structure_ids))  # type: ignore
             .filter_by(active=(not self.archives))
             .order_by(Demande.created_at.desc())  # type: ignore
             .all()
@@ -354,7 +364,7 @@ class ArchivesContactTableView(ContactTableView):
 
 
 class ArchivesMesStructuresDriOuDrvTableView(MesStructuresDriOuDrvTableView):
-    title = "Demandes archivées de mes structures"
+    title = "Demandes archivées des structures dont je suis un contact"
     archives = True
 
 

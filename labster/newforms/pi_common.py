@@ -11,7 +11,8 @@ from labster.newforms.base import Boolean2Field, BooleanField, FieldSet, \
 # Mail
 # Nationalité / Nationality
 # Adresse personnelle (n°, rue, bâtiment, CP, ville, pays) / personal address
-# "Part contributive en % / Contributive share - représente le pourcentage de participation à la création, qui conditionne le futur intéressement des contributeurs"
+# "Part contributive en % / Contributive share - représente le pourcentage
+# de participation à la création, qui conditionne le futur intéressement des contributeurs"
 # Période à laquelle vous avez contribué à l'œuvre / period in which you contributed to the work
 # Indiquer la nature de la contribution à l'œuvre / Please indicate the contribution to the work
 interlocuteur_privilegie = FieldSet(

@@ -83,15 +83,17 @@ const components = {
 
 function fieldTypeToWidgetName(fieldType) {
   const type = fieldType;
+
   if (type === "BooleanField") {
     return "yes-no-widget";
-  }
-  if (type === "Boolean2Field") {
+  } else if (type === "Boolean2Field") {
     return "boolean-widget";
-  }
-  if (type === "Select2Field") {
+  } else if (type === "Select2Field") {
+    return "select-widget";
+  } else if (type === "MultipleSelect2Field") {
     return "select-widget";
   }
+
   let name = _.kebabCase(type);
   if (name.endsWith("-field")) {
     name = name.slice(0, -"-field".length);

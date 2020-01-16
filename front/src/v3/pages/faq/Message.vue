@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumbs title="Poser une question"></breadcrumbs>
+    <breadcrumbs title="Poser une question" />
 
     <div class="card">
       <div class="card-header">

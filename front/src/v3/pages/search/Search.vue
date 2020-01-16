@@ -63,13 +63,7 @@
 </template>
 
 <script>
-import axios from "axios";
-
-const URL = "/v3/api/search";
-
 export default {
-  name: "Search",
-
   props: {
     q: String,
   },
@@ -93,10 +87,10 @@ export default {
 
   methods: {
     update() {
-      axios.get(URL, { params: { q: this.q } }).then(response => {
-        const data = response.data;
-        this.faqs = data.faqs;
-        this.demandes = data.demandes;
+      const args = { q: this.q, page: 1 };
+      this.$root.rpc("search_api", args).then(result => {
+        this.faqs = result.faqs;
+        this.demandes = result.demandes;
       });
     },
   },
