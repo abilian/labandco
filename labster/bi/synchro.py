@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from functools import singledispatch
 
+from tqdm import tqdm
+
 from labster.domain2.model.demande import Demande, DemandeAvenantConvention, \
     DemandeConvention, DemandeRH
 from labster.domain2.services.calculs_couts import get_ctx_for_demande
@@ -14,8 +16,14 @@ def sync_all():
     StatsLine.query.delete()
 
     demandes = Demande.query.all()
-    for demande in demandes:
-        line = sync(demande)
+
+    for demande in tqdm(demandes, disable=None):
+        try:
+            line = sync(demande)
+        except ValueError:
+            print(f"Error on demande: {demande.id}")
+            line = None
+
         if line:
             db.session.add(line)
 
@@ -51,15 +59,11 @@ def sync(demande):
     structure = demande.structure
     if structure:
         data["structure_id"] = structure.id
-        data["equipe_id"] = get_id(structure.equipe)
-        data["departement_id"] = get_id(structure.departement)
-        data["labo_id"] = get_id(structure.laboratoire)
-        data["ufr_id"] = get_id(structure.ufr)
-        data["pole_id"] = get_id(structure.pole)
+        path = list(reversed(structure.ancestors)) + [structure]
+        for i, node in enumerate(path):
+            data[f"l{i+1}"] = node.id
 
     update_data = sync_specific(demande)
-    # if update_data is None:
-    #     return None
 
     data.update(update_data)
     line = StatsLine(**data)
@@ -106,27 +110,6 @@ def _2(demande):
     data["cout_total_mensuel"] = ctx["cout_total"]
 
     return data
-
-
-# # TODO
-# @sync_specific.register(DemandePiLogiciel)
-# def _3(demande):
-#     data = {}
-#     return data
-#
-#
-# # TODO
-# @sync_specific.register(DemandePiInvention)
-# def _4(demande):
-#     data = {}
-#     return data
-#
-#
-# # TODO
-# @sync_specific.register(DemandeAutre)
-# def _5(demande):
-#     data = {}
-#     return data
 
 
 def pick_integer(demande, field_name):

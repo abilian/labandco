@@ -17,7 +17,7 @@
 
             <td style="text-align: right;">
               <button
-                v-if="ou.editable"
+                v-if="ou.permissions.P2"
                 class="btn btn-danger btn-sm"
                 @click="deleteEdge(parent.id, ou.id)"
               >
@@ -27,7 +27,10 @@
           </tr>
         </b-table-simple>
 
-        <div v-if="ou && ou.editable && parentsOptions.length > 0" class="mb-4">
+        <div
+          v-if="ou && ou.permissions.P2 && parentsOptions.length > 0"
+          class="mb-4"
+        >
           <b-button
             class="btn-default btn-sm"
             @click="$bvModal.show('add-parent')"
@@ -42,9 +45,12 @@
             <div class="d-block">
               <h2>Choisir une structure</h2>
 
-              <b-form-select v-model="parentSelected" :options="parentsOptions">
-              </b-form-select>
+              <b-form-select
+                v-model="parentSelected"
+                :options="parentsOptions"
+              />
             </div>
+
             <b-button class="mt-3" block @click="submitModal('add-parent')"
               >Valider
             </b-button>
@@ -69,7 +75,7 @@
 
             <td style="text-align: right;">
               <button
-                v-if="ou.editable"
+                v-if="ou.permissions.P2"
                 class="btn btn-danger btn-sm"
                 @click="deleteEdge(ou.id, child.id)"
               >
@@ -79,7 +85,10 @@
           </tr>
         </b-table-simple>
 
-        <div v-if="ou && ou.editable" class="mb-4">
+        <div
+          v-if="ou && ou.permissions.P2 && typeOptions.length > 0"
+          class="mb-4"
+        >
           <b-button
             class="btn-default btn-sm"
             @click="$bvModal.show('add-child')"
@@ -171,6 +180,10 @@ export default {
 
   methods: {
     fetchData() {
+      if (!this.ou) {
+        return;
+      }
+
       this.$root.rpc("sg_get_parents_options", [this.ou.id]).then(result => {
         this.parentsOptions = result;
       });

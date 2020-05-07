@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import List
 
 import structlog
@@ -28,7 +29,8 @@ role_service = injector.get(RoleService)
 #
 @route("/backdoor")
 def backdoor(app: Flask, request: Request):
-    if not (app.config.get("ALLOW_BACKDOOR") or app.testing):
+    allow_backdoor = app.config.get("ALLOW_BACKDOOR") or os.getenv("ALLOW_BACKDOOR")
+    if not (allow_backdoor or app.testing):
         raise Unauthorized()
 
     login = request.args.get("login", "poulainm")
@@ -101,7 +103,7 @@ def do_switch(args):
 def get_users_by_login(logins) -> List[Profile]:
     users = (
         db.session.query(Profile)
-        .filter(Profile.login.in_(logins))  # type: ignore
+        .filter(Profile.login.in_(logins))
         .filter(Profile.active == True)
         .order_by(Profile.login)
         .all()

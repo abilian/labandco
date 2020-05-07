@@ -1,18 +1,19 @@
 <small>
+  {% if config.NAME != "PRODUCTION" %}
   <p>
     Veuillez ne pas répondre à ce message. Les messages reçus à cette adresse ne
     sont pas lus et ne reçoivent donc aucune réponse. Pour nous contacter,
     utilisez vos contacts DR&I dont les coordonnées sont situées dans le menu
-{#    FIXME#}
-{#    <a href="{{ url_for("main.contacts", _external=True) }}">Contacts</a>,#}
-{#    ou bien le menu #}
-{#    <a href="{{ url_for("faq.home", _external=True) }}">Questions &amp;#}
-{#    suggestions</a>.#}
+    <a href="{{ url_for("main.home", _anchor='/mes_contacts', _external=True) }}">Contacts</a>,
+    ou bien le menu
+    <a href="{{ url_for("main.home", _anchor='/faq', _external=True) }}">Questions &amp;
+    suggestions</a>.
   </p>
+  {% endif %}
 
-  <p> FIXME
-{#    Vous pouvez modifier vos préférences de réception de mail dans le menu <a#}
-{#      href="{{ url_for("directory.preferences", _external=True) }}">préférences</a>#}
-{#    de l'application.#}
+  <p>
+    Vous pouvez modifier vos préférences de réception de mail dans le menu <a
+      href="{{ url_for("main.home", _anchor='/preferences', _external=True) }}">préférences</a>
+    de l'application.
   </p>
 </small>

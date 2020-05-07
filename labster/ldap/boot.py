@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pprint import pprint
 from typing import Dict, Optional
 
 from labster.di import injector
@@ -17,6 +18,7 @@ def import_from_ldap():
     records = parse_ldif_file("annuaire/extraction-personnels.ldif")
 
     count = 0
+
     for _dn, entry in records:
         profile = make_profile(entry)
         if not profile:

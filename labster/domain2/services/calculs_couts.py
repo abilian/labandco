@@ -31,7 +31,10 @@ def POINT_INDICE() -> Decimal:
 
 
 def get_ctx_for_demande(demande):
-    locale = get_locale()
+    try:
+        locale = get_locale()
+    except RuntimeError:
+        locale = "fr"
     constants = get_constants()
     cst = constants["recrutement"]
     ctx = {
@@ -44,12 +47,6 @@ def get_ctx_for_demande(demande):
         return format_currency(amount, "EUR", locale=locale)
 
     with localcontext(ExtendedContext):
-        signataire = demande.laboratoire.signataire
-        # if not signataire:
-        #     # Le "vrai" directeur en premier.
-        #     directeur = demande.laboratoire.get_directeurs()[0]
-        ctx["directeur"] = signataire
-
         salaire_brut_mensuel = demande.data.get("salaire_brut_mensuel", "")
         if salaire_brut_mensuel:
             salaire_brut = ctx["salaire_brut"] = Decimal(

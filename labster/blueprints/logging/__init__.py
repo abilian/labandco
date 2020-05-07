@@ -1,4 +1,4 @@
-"""Blueprint (and internat service) for logs"""
+"""Blueprint (and internal service) for logs"""
 
 from __future__ import annotations
 

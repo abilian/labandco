@@ -1,8 +1,17 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr-FR">
 
 <head>
-  <title></title>
+  <title>Lab&Co - Sorbonne Université</title>
+
+  <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content="">
+  <meta name="author" content="Abilian SAS for Sorbonne Université">
+
+  <link rel="shortcut icon" type="image/png" href="{{ app.config['FAVICO_URL'] | string }}"/>
+  <link rel="apple-touch-icon" type="image/png" href="{{ app.config['FAVICO_URL'] | string }}"/>
+
   {% for url in g.assets.css %}
     <link href="{{ url }}" rel="stylesheet" type="text/css">
   {% endfor %}
@@ -11,7 +20,12 @@
   <link rel="stylesheet" type="text/css"
       href="https://unpkg.com/vue-multiselect@2.1.6/dist/vue-multiselect.min.css">
 
-  <script>const DEBUG = true;</script>
+  <script>
+    var DEBUG = false;
+    var CTX = {};
+    CTX.version = "{{ g.labster_version }}";
+  </script>
+
 </head>
 
 <body class="labster sidebar-mini">

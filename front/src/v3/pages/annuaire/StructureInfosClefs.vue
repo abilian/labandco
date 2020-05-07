@@ -93,7 +93,7 @@
       <button class="btn btn-danger" @click="cancel">Annuler</button>
     </template>
     <button
-      v-else-if="ou.editable"
+      v-else-if="ou.permissions.P1"
       class="btn btn-default"
       @click="makeEditable"
     >
@@ -119,7 +119,7 @@ export default {
   },
   methods: {
     makeEditable() {
-      if (!this.ou.editable) {
+      if (!this.ou.permissions.P1) {
         return;
       }
       this.model.nom = this.ou.nom;
@@ -143,9 +143,8 @@ export default {
       const msg = "Structure mise à jour.";
       this.$root.rpc("sg_update_structure", args, msg).then(result => {
         EventBus.$emit("refresh-structure");
+        this.editing = false;
       });
-
-      // this.editing = false;
     },
   },
 };

@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 import os
+import shutil
 import sys
 from pathlib import Path
 from pprint import pprint
+from typing import List
 
 import click
 import structlog
@@ -12,19 +14,24 @@ from abilian.services import audit_service, index_service
 from flask import current_app
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
+from pampy import match
 
 from labster.bi.synchro import sync_all
+from labster.blueprints.notifications.mails import send_notification_to, \
+    send_recap_to
 from labster.di import injector
-from labster.domain2.model.profile import ProfileRepository
+from labster.domain2.model.demande import Demande
+from labster.domain2.model.profile import DAILY, WEEKLY, Profile, \
+    ProfileRepository
 from labster.domain2.model.structure import StructureRepository
-from labster.domain2.services.roles import RoleService
-from labster.domain.models.demandes import Demande
+from labster.domain2.services.roles import Role, RoleService
 from labster.ldap import sync
 
 logger = structlog.get_logger()
 
 profile_repository = injector.get(ProfileRepository)
 db = injector.get(SQLAlchemy)
+role_service = injector.get(RoleService)
 
 
 #
@@ -32,14 +39,19 @@ db = injector.get(SQLAlchemy)
 #
 @click.command()
 @click.option("--server", default="flask")
+@click.option("--coverage")
 @with_appcontext
-def devserver(server):
+def devserver(server, coverage=False):
     if server == "flask":
-        web_cmd = "flask run"
+        if coverage:
+            flask = shutil.which("flask")
+            web_cmd = f"coverage run {flask} run --no-reload"
+        else:
+            web_cmd = "flask run"
     elif server == "gunicorn":
-        web_cmd = "gunicorn -w1 --timeout 300 --bind 0.0.0.0:5000 'app:app'"
+        web_cmd = "gunicorn -w1 --timeout 300 --bind 0.0.0.0:5000 'wsgi:app'"
     elif server == "uvicorn":
-        web_cmd = "uvicorn --host 0.0.0.0 --port 5000 --wsgi 'app:app'"
+        web_cmd = "uvicorn --host 0.0.0.0 --port 5000 --wsgi 'wsgi:app'"
     else:
         raise click.BadParameter("No such server")
 
@@ -154,7 +166,6 @@ def update_roles(max):
 def show_roles():
     users = list(profile_repository.get_all())
     users.sort(key=lambda x: (x.nom, x.prenom))
-    role_service = injector.get(RoleService)
     for user in users:
         print(user)
         roles = role_service.get_roles_for_user(user)
@@ -164,26 +175,89 @@ def show_roles():
 
 @click.command()
 @with_appcontext
-def daily():
-    print("# syncing LDAP")
-    ldap_sync()
-    print("# updating syncing BI data")
-    syncbi()
-    print("# updating 'retards'")
-    update_retard()
-
-
-@click.command()
-@with_appcontext
 def syncbi():
+    print("# updating syncing BI data")
     sync_all()
 
 
 @click.command()
 @with_appcontext
 def update_retard():
+    print("# updating 'retards'")
     demandes = Demande.query.all()
     for demande in demandes:
         demande.update_retard()
 
     db.session.commit()
+
+
+@click.command()
+@click.option("-v", "--verbose", is_flag=True)
+@with_appcontext
+def send_recap(verbose):
+    users = Profile.query.filter_by(active=True).order_by(Profile.nom).all()
+    for user in users:
+        status = send_recap_to(user)
+        if status and verbose:
+            print(f"recap sent to {user.login}")
+
+    db.session.commit()
+
+
+@click.command()
+@click.argument("frequency", required=True, type=str)
+@click.option("-v", "--verbose", is_flag=True)
+@with_appcontext
+def send_notifications(frequency, verbose=False):
+    # fmt: off
+    preference = match(
+        frequency,
+        "daily", DAILY,
+        "weekly", WEEKLY,
+    )
+    # fmt: on
+    users = (
+        Profile.query.filter(Profile.active == True)
+        .filter(Profile.preferences_notifications == preference)
+        .order_by(Profile.nom)
+        .all()
+    )
+
+    for user in users:
+        if verbose:
+            print(f"Sending notification to {user.login}")
+        send_notification_to(user)
+
+    db.session.commit()
+
+
+@click.command()
+@with_appcontext
+def grant_mnp():
+    user = db.session.query(Profile).filter(Profile.login == "poulainm").one()
+    role_service.grant_role(user, Role.ADMIN_CENTRAL)
+
+    db.session.commit()
+
+
+@click.command()
+@with_appcontext
+def fix():
+    pass
+    # from labster.domain.models.profiles import Profile as OldProfile
+    #
+    # new_profiles: List[Profile] = db.session.query(Profile).filter(
+    #     Profile.active == True
+    # ).all()
+    # old_profiles: List[OldProfile] = db.session.query(OldProfile).all()
+    # assert old_profiles
+    #
+    # for new_profile in tqdm(new_profiles):
+    #     old_profile = db.session.query(OldProfile).get(new_profile.old_id)
+    #     if not old_profile:
+    #         continue
+    #     new_profile.preferences_notifications = (
+    #         old_profile.preferences_notifications or 0
+    #     )
+    #
+    # db.session.commit()

@@ -46,6 +46,10 @@
         <b-tab title="Historique">
           <tab-historique :demande="demande" />
         </b-tab>
+
+        <!--        <b-tab title="Debug">-->
+        <!--          <pre>{{ demande }}</pre>-->
+        <!--        </b-tab>-->
       </b-tabs>
     </b-card>
   </div>
@@ -89,17 +93,31 @@ export default {
   },
 
   created() {
-    const args = [this.id];
-    this.$root.rpc("get_demande", args).then(result => {
-      _.assign(this, result);
-      this.ready = true;
-      this.title = this.demande.name;
-    });
+    this.refresh();
   },
 
   methods: {
-    goToTab(n) {
-      this.tabIndex = n;
+    goToTab(arg) {
+      if (Number.isInteger(arg)) {
+        this.tabIndex = arg;
+        return;
+      }
+      const tabs = this.$children[3].tabs;
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].title === arg) {
+          this.tabIndex = i;
+          return;
+        }
+      }
+    },
+
+    refresh() {
+      const args = [this.id];
+      this.$root.rpc("get_demande", args).then(result => {
+        _.assign(this, result);
+        this.ready = true;
+        this.title = this.demande.name;
+      });
     },
   },
 };

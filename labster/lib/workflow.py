@@ -3,13 +3,12 @@ from __future__ import annotations
 
 from datetime import datetime
 from html import escape
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Set
 
 from inflection import humanize, underscore
-from wtforms import Form
 
-from labster.domain.services.notifications import send_notification
-from labster.forms.workflow import WorkflowForm
+from labster.domain2.services.notifications import send_notification
+from labster.types import JSONList
 
 if TYPE_CHECKING:
     from labster.domain2.model.profile import Profile
@@ -62,9 +61,9 @@ class State:
     def on_leave(self, workflow: Workflow) -> None:
         """Callback (override in subclasses)."""
 
-    def task_owners(self, workflow: Workflow) -> List[Profile]:
+    def task_owners(self, workflow: Workflow) -> Set[Profile]:
         """Override in subclasses."""
-        return []
+        return set()
 
 
 class Transition:
@@ -72,7 +71,6 @@ class Transition:
     category = "primary"
     from_states: List[State] = []
     to_state: Optional[State] = None
-    form = WorkflowForm
     message = (
         "Transition de l'état '{old_state}' vers l'état "
         "'{new_state}' initiée par l'utilisateur {actor}."
@@ -108,13 +106,11 @@ class Transition:
         if self.to_state and not self.to_state == workflow.state:
             self.to_state.enter(workflow)
 
-    def get_users_to_notify(
-        self, workflow: Workflow, old_state: State
-    ) -> List[Profile]:
-        return []
+    def get_users_to_notify(self, workflow: Workflow, old_state: State) -> Set[Profile]:
+        return set()
 
-    def get_form(self, workflow: Workflow, **kw) -> Form:
-        return self.form(**kw)
+    def get_form(self, workflow: Workflow, **kw) -> JSONList:
+        return []
 
 
 class Workflow:
@@ -150,7 +146,7 @@ class Workflow:
                 return state
         raise WorkflowException(f"Object is in an unknown state: {self.case.wf_state}")
 
-    def current_owners(self) -> List[Profile]:
+    def current_owners(self) -> Set[Profile]:
         return self.current_state().task_owners(self)
 
     def possible_transitions(self) -> List[Transition]:

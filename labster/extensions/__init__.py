@@ -7,12 +7,16 @@ from flask_smorest import Api
 from werkzeug.exceptions import abort
 
 from .mail import Mail
+from .whoosh import Whoosh
 
 logger = structlog.get_logger()
 
 redis = FlaskRedis()
 mail = Mail()
 api = Api()
+whoosh = Whoosh()
+
+db = db
 
 # Ensure that these import are not removed by PyCharm
 assert db

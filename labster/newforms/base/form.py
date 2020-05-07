@@ -4,17 +4,20 @@ from copy import deepcopy
 from typing import Any, List
 
 from flask import json
+from flask_sqlalchemy import SQLAlchemy
 
 from labster.di import injector
 from labster.domain2.model.structure import StructureRepository
-from labster.domain.models.roles import RoleType
-from labster.domain.services.constants import get_constants
+from labster.domain2.model.type_structure import DE, EQ
+from labster.domain2.services.constants import get_constants
+from labster.domain2.services.roles import Role, RoleService
 from labster.types import JSONDict
 
-from ...domain2.model.type_structure import DE, EQ
 from .fields import Field, FieldSet
 
 structure_repo = injector.get(StructureRepository)
+role_service = injector.get(RoleService)
+db = injector.get(SQLAlchemy)
 
 
 class Form:
@@ -41,9 +44,6 @@ class Form:
         elif laboratoire:
             self.set_membres_du_labo(laboratoire)
 
-        # More (refactor later)
-        self.set_structures_concernees_choices()
-
         if model is None:
             self.model = self.empty_model()
         elif isinstance(model, dict):
@@ -52,20 +52,29 @@ class Form:
             raise RuntimeError("Unimplemented")
 
     def post_init(self):
+        pass
+
+    def update_choices(self):
         """Override in subclasses."""
 
-    def set_porteurs_possibles(self, gestionnaire):
-        roles = gestionnaire.get_roles(RoleType.GDL)
-        membres = set()
-        for role in roles:
-            org = role.context
-            porteurs_org = [x for x in org.get_membres() if x.has_role("porteur")]
-            membres.update(porteurs_org)
+        self.set_structures_concernees_choices()
+        self.set_contributeurs_choices()
 
-        porteurs_du_labo = sorted(membres, key=lambda x: x.nom)
-        field = self.get_field("porteur")
-        if field:
-            field.choices = [(m.uid, f"{m.nom} {m.prenom}") for m in porteurs_du_labo]
+    def set_porteurs_possibles(self, gestionnaire):
+        return
+
+        # TODO
+        # roles = gestionnaire.get_roles(RoleType.GDL)
+        # membres = set()
+        # for role in roles:
+        #     org = role.context
+        #     porteurs_org = [x for x in org.get_membres() if x.has_role("porteur")]
+        #     membres.update(porteurs_org)
+        #
+        # porteurs_du_labo = sorted(membres, key=lambda x: x.nom)
+        # field = self.get_field("porteur")
+        # if field:
+        #     field.choices = [(m.uid, f"{m.nom} {m.prenom}") for m in porteurs_du_labo]
 
     def set_membres_du_labo(self, labo):
         membres_du_labo = sorted(labo.membres, key=lambda x: x.nom)
@@ -88,6 +97,7 @@ class Form:
             "csrf_token": "",
             "mode": self.mode,
             "constants": get_constants(),
+            "conditions": self.conditions,
         }
 
     def to_json(self) -> str:
@@ -133,9 +143,22 @@ class Form:
 
         structures = structure_repo.get_all()
         choices = [
-            (s.id, f"{s.type}: {s.nom} ({s.sigle})")
+            {"value": s.id, "label": f"{s.type}: {s.nom} ({s.sigle})"}
             for s in structures
             if s.type not in {DE, EQ}
         ]
-        choices.sort(key=lambda t: t[1])
+        choices.sort(key=lambda t: t["label"])
+        field.choices = choices
+
+    def set_contributeurs_choices(self):
+        field = self.get_field("contributeurs")
+        if not field:
+            return
+
+        profiles = role_service.get_users_with_role(Role.PORTEUR, "*")
+        profiles = [p for p in profiles if p.active]
+        profiles.sort(key=lambda p: (p.nom, p.prenom))
+
+        choices = [{"value": p.id, "label": f"{p.nom}, {p.prenom}"} for p in profiles]
+        choices.sort(key=lambda t: t["label"])
         field.choices = choices

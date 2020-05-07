@@ -4,43 +4,68 @@ import traceback
 from datetime import date, timedelta
 from typing import List, Optional
 
+import ramda as r
 from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
-from werkzeug.exceptions import Forbidden
 
 from labster.di import injector
-from labster.domain2.model.demande import Demande
+from labster.domain2.model.demande import Demande, DemandeAutre, \
+    DemandeAvenantConvention, DemandeConvention, DemandePiMixin, DemandeRH
 from labster.domain2.model.profile import Profile
 from labster.domain2.services.contacts import ContactService
 from labster.domain2.services.roles import Role, RoleService
-from labster.domain2.services.workflow import EN_VALIDATION
+from labster.domain2.services.workflow.states import EN_EDITION, EN_VALIDATION
 from labster.rbac import get_drv_membership, is_membre_dri, is_membre_drv
+from labster.rpc.util import owner_sorter
 from labster.security import get_current_profile
 from labster.types import JSON, JSONDict, JSONList
 from labster.util import url_for
 
-db = injector.get(SQLAlchemy)
 
-QUERY = db.session.query(Demande).options(
-    joinedload(Demande.structure),
-    joinedload(Demande.contact_labco),
-    joinedload(Demande.gestionnaire),
-    joinedload(Demande.porteur),
-)
+def base_query():
+    db = injector.get(SQLAlchemy)
+
+    return db.session.query(Demande).options(
+        joinedload(Demande.structure),
+        joinedload(Demande.contact_labco),
+        joinedload(Demande.gestionnaire),
+        joinedload(Demande.porteur),
+    )
 
 
 @method
-def get_demandes(scope="all", archives=False) -> JSONList:
+def get_demandes(scope="all", archives=False, tag="") -> JSONList:
     archives = bool(archives)
     profile = get_current_profile()
 
     view = get_table_view(scope, profile, archives)
     if not view:
-        raise Forbidden()
+        return []
 
     demandes: List[Demande] = view.get_demandes_for(profile)
+
+    def make_pred(tag):
+        def pred(demande):
+            if tag == "rh":
+                return isinstance(demande, DemandeRH)
+            elif tag == "conventions":
+                return isinstance(
+                    demande, (DemandeConvention, DemandeAvenantConvention)
+                )
+            elif tag == "pi":
+                return isinstance(demande, DemandePiMixin)
+            elif tag == "autres":
+                return isinstance(demande, DemandeAutre)
+            else:
+                raise RuntimeError()
+
+        return pred
+
+    if tag:
+        demandes = r.filter(make_pred(tag), demandes)
+
     demandes.sort(key=lambda d: d.created_at, reverse=True)
     return demandes_to_json(demandes, profile)
 
@@ -109,6 +134,16 @@ class MesTachesTableView(TableView):
         return mes_taches(user)
 
 
+class MesDemandesEnRetardTableView(TableView):
+    scope = "mes demandes en retard"
+
+    def is_visible_for(self, user: Profile):
+        return True
+
+    def get_demandes_for(self, user: Profile):
+        return mes_taches_en_retard(user)
+
+
 class DemandesAValiderTableView(TableView):
     scope = "demandes à valider"
 
@@ -125,7 +160,8 @@ def mes_demandes(
     user: Profile, archived: bool = False, all: bool = False
 ) -> List[Demande]:
     query = (
-        QUERY.filter(
+        base_query()
+        .filter(
             or_(
                 (Demande.porteur == user),
                 (Demande.contact_labco == user),
@@ -133,7 +169,7 @@ def mes_demandes(
             )
         )
         .filter_by(active=(not archived))
-        .order_by(Demande.created_at.desc())  # type: ignore
+        .order_by(Demande.created_at.desc())
     )
     return query.all()
 
@@ -141,24 +177,9 @@ def mes_demandes(
 def mes_taches(user: Profile) -> List[Demande]:
     """Retourne la liste des demandes pour lesquels l'utilisateur a une
     action à réaliser."""
-    query = QUERY.filter(Demande.active == True).order_by(Demande.created_at.desc())
-
-    # if user.has_role("directeur"):
-    #     assert user.stucture_dont_je_suis_le_directeur
-    #     ma_structure = user.stucture_dont_je_suis_le_directeur
-    #     mes_structures = [ma_structure] + ma_structure.descendants()
-    #     ids = [l.id for l in mes_structures]
-    #     query = query.filter(Demande.structure_id.in_(ids))
-    #
-    # elif user.has_role("porteur"):
-    #     query = query.filter(Demande.porteur == user)
-    #
-    # elif user.has_role("gestionnaire"):
-    #     query = query.filter(Demande.gestionnaire == user)
-    #
-    # else:
-    #     return []
-    #
+    query = (
+        base_query().filter(Demande.active == True).order_by(Demande.created_at.desc())
+    )
 
     demandes = query.all()
 
@@ -166,7 +187,7 @@ def mes_taches(user: Profile) -> List[Demande]:
         workflow = demande.get_workflow(user)
         state = workflow.current_state()
         owners = state.task_owners(workflow)
-        return user.id in {o.id for o in owners}
+        return user.id in (o.id for o in owners)
 
     demandes = [d for d in demandes if is_task(d)]
     return demandes
@@ -174,7 +195,11 @@ def mes_taches(user: Profile) -> List[Demande]:
 
 def mes_taches_en_retard(user: Profile) -> List[Demande]:
     demandes = mes_taches(user)
-    demandes = list(filter(lambda d: d.wf_retard > 0, demandes))
+
+    def en_retard(d) -> bool:
+        return (d.wf_retard or 0) > 0
+
+    demandes = list(filter(en_retard, demandes))
     demandes = sorted(demandes, key=lambda d: d.wf_retard, reverse=True)
     return demandes
 
@@ -190,11 +215,33 @@ class PorteurTableView(TableView):
         return user.has_role(Role.PORTEUR, "*")
 
     def get_demandes_for(self, user: Profile):
-        return (
-            QUERY.filter(Demande.porteur == user)
+        demandes_comme_porteur = (
+            base_query()
+            .filter(Demande.porteur == user)
             .filter_by(active=(not self.archives))
-            .order_by(Demande.created_at.desc())  # type: ignore
+            .order_by(Demande.created_at.desc())
             .all()
+        )
+        toutes_les_demandes = (
+            base_query()
+            .filter_by(active=(not self.archives))
+            .order_by(Demande.created_at.desc())
+            .all()
+        )
+
+        demandes_comme_contributeur = []
+        for demande in toutes_les_demandes:
+            contributeurs_raw = demande.data.get("contributeurs", [])
+            for dd in contributeurs_raw:
+                contributeur_id = dd["value"]
+                if contributeur_id == user.id:
+                    demandes_comme_contributeur += [demande]
+
+        def sorter(d):
+            return d.created_at
+
+        return sorted(
+            set(demandes_comme_porteur + demandes_comme_contributeur), key=sorter
         )
 
 
@@ -207,9 +254,10 @@ class GestionnaireTableView(TableView):
 
     def get_demandes_for(self, user: Profile):
         return (
-            QUERY.filter(Demande.gestionnaire == user)
+            base_query()
+            .filter(Demande.gestionnaire == user)
             .filter_by(active=(not self.archives))
-            .order_by(Demande.created_at.desc())  # type: ignore
+            .order_by(Demande.created_at.desc())
             .all()
         )
 
@@ -229,12 +277,28 @@ class MesStructuresTableView(TableView):
         structures = set(roles[Role.GESTIONNAIRE]) | set(roles[Role.RESPONSABLE])
         for s in set(structures):
             structures |= s.descendants
-        return (
-            QUERY.filter(Demande.structure_id.in_({s.id for s in structures}))  # type: ignore
+
+        structure_ids = {s.id for s in structures}
+
+        toutes_les_demandes = (
+            base_query()
             .filter_by(active=(not self.archives))
-            .order_by(Demande.created_at.desc())  # type: ignore
+            .order_by(Demande.created_at.desc())
             .all()
         )
+
+        result = []
+        for demande in toutes_les_demandes:
+            if demande.structure_id in structure_ids:
+                result.append(demande)
+                continue
+
+            for d in demande.data.get("structures_concernees", []):
+                structure_id = d["value"]
+                if structure_id in structure_ids:
+                    result.append(demande)
+
+        return result
 
 
 #
@@ -267,11 +331,12 @@ class DriTableView(TableView):
 
     def get_demandes_for(self, user: Profile):
         query = (
-            QUERY.filter_by(active=(not self.archives))
+            base_query()
+            .filter_by(active=(not self.archives))
             .filter(Demande.contact_labco != None)
-            .order_by(Demande.created_at.desc())  # type: ignore
+            .order_by(Demande.created_at.desc())
         )
-        return query.all()
+        return filter_on_state_for_dri(query.all())
 
 
 class DrvTableView(TableView):
@@ -283,28 +348,28 @@ class DrvTableView(TableView):
 
     def get_demandes_for(self, user: Profile):
         query = (
-            QUERY.filter_by(active=(not self.archives))
+            base_query()
+            .filter_by(active=(not self.archives))
             .filter(Demande.contact_labco != None)
-            .order_by(Demande.created_at.desc())  # type: ignore
+            .order_by(Demande.created_at.desc())
         )
         demandes = query.all()
 
         drv = get_drv_membership(user)
-        if drv:
-            fac = drv.parent
-            assert fac
-            structures_possibles = {fac} | fac.descendants
-            ids_structures_possibles = {s.id for s in structures_possibles}
+        if not drv:
+            return []
 
-            demandes = [
-                demande
-                for demande in demandes
-                if demande.structure
-                and demande.structure.id in ids_structures_possibles
-            ]
-            return demandes
+        fac = drv.parent
+        assert fac
+        structures_possibles = {fac} | fac.descendants
+        ids_structures_possibles = {s.id for s in structures_possibles}
 
-        return []
+        demandes = [
+            demande
+            for demande in demandes
+            if demande.structure and demande.structure.id in ids_structures_possibles
+        ]
+        return filter_on_state_for_dri(demandes)
 
 
 class ContactTableView(TableView):
@@ -315,10 +380,11 @@ class ContactTableView(TableView):
         return is_membre_dri(user) or is_membre_drv(user)
 
     def get_demandes_for(self, user: Profile):
-        return (
-            QUERY.filter(Demande.contact_labco == user)
+        return filter_on_state_for_dri(
+            base_query()
+            .filter(Demande.contact_labco == user)
             .filter_by(active=(not self.archives))
-            .order_by(Demande.created_at.desc())  # type: ignore
+            .order_by(Demande.created_at.desc())
             .all()
         )
 
@@ -337,10 +403,12 @@ class MesStructuresDriOuDrvTableView(TableView):
         mapping = contact_service.get_mapping()
         structures = {s for s, d in mapping.items() if user in d.values()}
         structure_ids = {s.id for s in structures}
-        return (
-            QUERY.filter(Demande.structure_id.in_(structure_ids))  # type: ignore
+        return filter_on_state_for_dri(
+            base_query()
+            .filter(Demande.structure_id.in_(structure_ids))
+            .filter(Demande.contact_labco != None)
             .filter_by(active=(not self.archives))
-            .order_by(Demande.created_at.desc())  # type: ignore
+            .order_by(Demande.created_at.desc())
             .all()
         )
 
@@ -366,6 +434,22 @@ class ArchivesContactTableView(ContactTableView):
 class ArchivesMesStructuresDriOuDrvTableView(MesStructuresDriOuDrvTableView):
     title = "Demandes archivées des structures dont je suis un contact"
     archives = True
+
+
+#
+# Util
+#
+def filter_on_state_for_dri(demandes: List[Demande]) -> List[Demande]:
+    result = []
+    for demande in demandes:
+        wf_states = {
+            state["new_state"] for state in demande.wf_history if "new_state" in state
+        }
+
+        if wf_states != {EN_EDITION.id}:
+            result.append(demande)
+
+    return result
 
 
 #
@@ -444,11 +528,16 @@ def demande_to_json(demande: Demande, user: Profile) -> JSONDict:
     state = demande.get_state()
     row["etat"] = state.label_short
     row["prochaine_action"] = state.next_action
-    owners = workflow.current_owners()
+    owners = list(workflow.current_owners())
+    owners.sort(key=owner_sorter)
     if owners:
         row["owner"] = f"{owners[0].nom}, {owners[0].prenom}"
     else:
         row["owner"] = ""
+
+    row["owners"] = [
+        {"name": f"{owner.nom}, {owner.prenom}", "id": owner.id,} for owner in owners
+    ]
 
     return row
 

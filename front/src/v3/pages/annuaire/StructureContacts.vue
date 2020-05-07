@@ -6,6 +6,7 @@
           <th class="w-30">Bureau</th>
           <th class="w-70">Correspondant</th>
         </tr>
+
         <tr v-for="contact in contacts">
           <td>{{ contact.type_value }}</td>
           <td>
@@ -20,7 +21,7 @@
               v-model="selected[contact.type_name]"
             >
               <option value="">(Aucun)</option>
-              <option v-for="m of membresDgrtt" :value="m.uid">
+              <option v-for="m of membresDri" :value="m.uid">
                 {{ m.nom }}, {{ m.prenom }}
               </option>
             </select>
@@ -33,14 +34,16 @@
       <button class="btn btn-primary mr-3" @click="save">Enregistrer</button>
       <button class="btn btn-danger" @click="cancel">Annuler</button>
     </template>
+
     <button
-      v-else-if="ou.editable"
+      v-else-if="ou.permissions.P6"
       class="btn btn-default"
       @click="makeEditable"
     >
       Modifier
     </button>
   </div>
+
   <div v-else>Chargement en cours...</div>
 </template>
 
@@ -56,7 +59,7 @@ export default {
     return {
       editing: false,
       contacts: [],
-      membresDgrtt: [],
+      membresDri: [],
       selected: {},
     };
   },
@@ -68,6 +71,10 @@ export default {
 
   methods: {
     fetchData() {
+      if (!this.ou) {
+        return;
+      }
+
       this.$root.rpc("get_contacts", [this.ou.id]).then(result => {
         this.contacts = result;
 
@@ -75,17 +82,17 @@ export default {
           this.$set(this.selected, contact.type_name, contact.uid);
         }
       });
+
+      this.$root.rpc("get_membres_dri", []).then(result => {
+        this.membresDri = result;
+      });
     },
 
     // Edit
     makeEditable() {
-      if (!this.ou.editable) {
-        return;
-      }
-      this.$root.rpc("get_membres_dri", []).then(result => {
-        this.membresDgrtt = result;
+      if (this.ou.permissions.P6) {
         this.editing = true;
-      });
+      }
     },
 
     cancel() {
@@ -95,16 +102,10 @@ export default {
     save() {
       const args = [this.ou.id, this.selected];
       const msg = "Contacts mis à jour";
-      this.$root
-        .rpc(
-          "update_contacts",
-          args,
-
-          msg
-        )
-        .then(result => {
-          EventBus.$emit("refresh-structure");
-        });
+      this.$root.rpc("update_contacts", args, msg).then(result => {
+        EventBus.$emit("refresh-structure");
+        this.editing = false;
+      });
     },
   },
 };

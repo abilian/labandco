@@ -1,21 +1,18 @@
 from __future__ import annotations
 
-from typing import Dict
-
 import toolz
-import whoosh
-import whoosh.query as wq
 from abilian.web.search.views import BOOTSTRAP_MARKUP_HIGHLIGHTER, \
     RESULTS_FRAGMENTER
-from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 from marshmallow import Schema, fields
 from whoosh.qparser import DisMaxParser
+from whoosh.searching import ResultsPage
 
 from labster.di import injector
 from labster.domain2.model.demande import Demande
 from labster.domain.models.faq import FaqEntry
+from labster.extensions import whoosh
 from labster.rbac import has_read_access, is_membre_dri
 from labster.security import get_current_profile
 from labster.types import JSONDict
@@ -50,15 +47,16 @@ def search_results(q, page):
 
     results.formatter = BOOTSTRAP_MARKUP_HIGHLIGHTER
     results.fragmenter = RESULTS_FRAGMENTER
-    results = whoosh.searching.ResultsPage(results, page, PAGE_SIZE)
+    results = ResultsPage(results, page, PAGE_SIZE)
 
     def is_demande(hit):
-        return hit["object_type"].startswith("labster.domain.models.demandes")
+        return hit["cls"] == "Demande"
 
     groups = toolz.groupby(is_demande, results)
 
     demande_ids = [hit["id"] for hit in groups.get(True, [])]
     faq_ids = [hit["id"] for hit in groups.get(False, [])]
+
     demandes = db.session.query(Demande).filter(Demande.id.in_(demande_ids)).all()
     demandes = filter_demandes_by_visibility(demandes)
 
@@ -74,7 +72,7 @@ class FaqEntrySchema(Schema):
     # category = fields.String()
 
 
-class OrgUnitSchema(Schema):
+class StructureSchema(Schema):
     id = fields.String()
     nom = fields.String()
 
@@ -89,9 +87,12 @@ class DemandeSchema(Schema):
     nom = fields.String()
     created_at = fields.DateTime()
     type = fields.String()
+    wf_state = fields.String()
+    icon_class = fields.String()
+
     porteur = fields.Nested(UserSchema)
     gestionnaire = fields.Nested(UserSchema)
-    laboratoire = fields.Nested(OrgUnitSchema)
+    structure = fields.Nested(StructureSchema)
 
 
 def filter_demandes_by_visibility(demandes):
@@ -106,8 +107,7 @@ def search(q, **search_args):
         :meth:`whoosh.searching.Search.search`. This includes `limit`,
         `groupedby` and `sortedby`
     """
-    service = current_app.extensions["indexing"]
-    index = service.indexes["default"]
+    index = whoosh.index
 
     fields = {"name": 1.5, "text": 1.0}
     parser = DisMaxParser(fields, index.schema)

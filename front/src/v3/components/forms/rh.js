@@ -1,4 +1,5 @@
 import _ from "lodash";
+import fp from "lodash/fp";
 
 export default function update_rh(form, model) {
   function get_fieldset_by_name(name) {
@@ -12,32 +13,32 @@ export default function update_rh(form, model) {
     form.constants.recrutement.salaire_brut_mensuel_indicatif;
 
   if (nature_du_recrutement === "CDD") {
-    const l = [
+    const choices = [
       "Contrat initial",
       "Renouvellement",
       "Modification du contrat en cours",
     ];
-    form.fields.type_de_demande.choices = _.map(l, x => [x, x]);
-    if (!_.includes(l, model.type_de_demande)) {
-      model.type_de_demande = l[0];
+    form.fields.type_de_demande.choices = choices;
+    if (!_.includes(choices, model.type_de_demande)) {
+      model.type_de_demande = choices[0];
     }
   } else if (nature_du_recrutement === "Doctorant") {
-    const l = [
+    const choices = [
       "Contrat doctoral initial",
       "Prolongation par avenant d'un contrat doctoral en cours",
       "Prolongation par CDD d'un doctorat en cours (cas particulier)",
       "Thèse medico-scientifique",
       "Modification du contrat en cours",
     ];
-    form.fields.type_de_demande.choices = _.map(l, x => [x, x]);
-    if (!_.includes(l, model.type_de_demande)) {
-      model.type_de_demande = l[0];
+    form.fields.type_de_demande.choices = choices;
+    if (!_.includes(choices, model.type_de_demande)) {
+      model.type_de_demande = choices[0];
     }
   } else {
-    const l = ["Contrat initial"];
-    form.fields.type_de_demande.choices = _.map(l, x => [x, x]);
-    if (!_.includes(l, model.type_de_demande)) {
-      model.type_de_demande = l[0];
+    const choices = ["Contrat initial"];
+    form.fields.type_de_demande.choices = choices;
+    if (!_.includes(choices, model.type_de_demande)) {
+      model.type_de_demande = choices[0];
     }
   }
   const type_de_demande = model.type_de_demande;
@@ -60,6 +61,15 @@ export default function update_rh(form, model) {
   } else {
     form.fields.financement2.note = "";
     form.fields.numero_de_financement2.visible = show_financement2;
+  }
+
+  form.fields.structure_financeuse.visible =
+    model.structures_concernees.length > 0;
+  if (model.structures_concernees.length > 0) {
+    const l = model.structures_concernees;
+    const choices = fp.map(x => x, l);
+    choices.unshift(model.laboratoire);
+    form.fields.structure_financeuse.choices = choices;
   }
 
   const show_similar_experience =
@@ -112,7 +122,7 @@ export default function update_rh(form, model) {
     form.fields.porteur.label = "Directeur de thèse";
     form.fieldsets[id_responsable].label = "Directeur de thèse";
 
-    form.fields.quotite_de_travail.choices = [["100%", "100%"]];
+    form.fields.quotite_de_travail.choices = ["100%"];
     form.fields.quotite_de_travail.editable = false;
   } else {
     form.fieldsets[id_responsable].label =
@@ -120,12 +130,12 @@ export default function update_rh(form, model) {
     form.fields.porteur.label =
       "Responsable scientifique de la personne recrutée";
     form.fields.quotite_de_travail.choices = [
-      ["100%", "100%"],
-      ["90%", "90%"],
-      ["80%", "80%"],
-      ["70%", "70%"],
-      ["60%", "60%"],
-      ["50%", "50%"],
+      "100%",
+      "90%",
+      "80%",
+      "70%",
+      "60%",
+      "50%",
     ];
     form.fields.quotite_de_travail.editable = true;
   }

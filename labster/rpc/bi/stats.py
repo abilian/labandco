@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List
+from typing import Dict, List
 
 import dateutil.parser
 import pandas as pd
@@ -12,11 +12,12 @@ from werkzeug.exceptions import Forbidden
 from labster.bi.model import StatsLine
 from labster.di import injector
 from labster.domain2.model.demande import DemandeType
+from labster.domain2.model.profile import Profile
 from labster.domain2.model.structure import Structure
 from labster.domain2.services.roles import Role
-from labster.domain2.services.workflow import ALL_STATES
+from labster.domain2.services.workflow.states import ALL_STATES
 from labster.rpc.registry import context_for
-from labster.security import get_current_user
+from labster.security import get_current_profile, get_current_user
 
 from .form import get_selectors
 from .util import mes_structures
@@ -32,7 +33,7 @@ db = injector.get(SQLAlchemy)
 def get_bi_context():
     check_permission()
 
-    user = get_current_user()
+    user = get_current_profile()
     ctx = get_stats2(user)
     ctx["selectors"] = get_selectors()
     return ctx
@@ -48,11 +49,13 @@ def get_stats(**args):
             continue
         if isinstance(arg_value, List):
             value = r.map(lambda x: x["value"], arg_value)
-        else:
+        elif isinstance(arg_value, Dict):
             value = arg_value["value"]
+        else:
+            value = arg_value
         args2[arg_name] = value
 
-    user = get_current_user()
+    user = get_current_profile()
     return get_stats2(user, **args2)
 
 
@@ -73,7 +76,7 @@ def check_permission():
 
 
 def get_stats2(
-    user,
+    user: Profile,
     periode_debut=None,
     periode_fin=None,
     type_demande=None,
@@ -104,14 +107,13 @@ def get_stats2(
         query = query.filter(StatsLine.porteur_id == porteur_id)
 
     if structure_id not in ("", "None", None):
-        structure_id = int(structure_id)
-        if user.has_role("recherche"):
+        if not user.has_role(Role.ADMIN_CENTRAL):
             structures = mes_structures(user)
             if structure_id not in {s.id for s in structures}:
                 raise Forbidden()
 
         structure = db.session.query(Structure).get(structure_id)
-        descendant_ids = [s.id for s in structure.descendants()]
+        descendant_ids = [s.id for s in structure.descendants]
         query = query.filter(
             StatsLine.structure_id.in_([structure_id] + descendant_ids)
         )

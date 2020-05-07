@@ -21,6 +21,8 @@ import Search from "../pages/search/Search";
 import Timeline from "../pages/tools/Timeline";
 import Contacts from "../pages/tools/Contacts";
 import Preferences from "../pages/tools/Preferences";
+import MesContacts from "../pages/tools/MesContacts";
+import CalculetteRH from "../pages/tools/CalculetteRH";
 
 import DemandeView from "../pages/demandes/DemandeView";
 
@@ -28,6 +30,10 @@ import NouvelleDemande from "../pages/forms/NouvelleDemande";
 
 import BiHome from "../pages/bi/BiHome";
 import DemandesAValider from "../pages/home/DemandesAValider";
+
+import FaqAdmin from "../pages/admin/FaqAdmin";
+import ConstantsEditor from "../pages/admin/ConstantsEditor";
+import GlobalRoles from "../pages/admin/GlobalRoles";
 
 Vue.use(Router);
 
@@ -49,8 +55,9 @@ const router = new Router({
       component: Tasks,
     },
     {
-      path: "/demandes_a_valider",
+      path: "/demandes_a_valider/:tag",
       component: DemandesAValider,
+      props: true,
     },
     {
       path: "/demandes",
@@ -125,8 +132,16 @@ const router = new Router({
       component: Contacts,
     },
     {
+      path: "/mes_contacts",
+      component: MesContacts,
+    },
+    {
       path: "/preferences",
       component: Preferences,
+    },
+    {
+      path: "/calculette_rh",
+      component: CalculetteRH,
     },
     {
       path: "/search",
@@ -139,6 +154,21 @@ const router = new Router({
       name: "bi",
       path: "/bi",
       component: BiHome,
+    },
+
+    // Admin
+    {
+      name: "faq_admin",
+      path: "/admin/faq",
+      component: FaqAdmin,
+    },
+    {
+      path: "/admin/constants",
+      component: ConstantsEditor,
+    },
+    {
+      path: "/admin/roles",
+      component: GlobalRoles,
     },
   ],
 

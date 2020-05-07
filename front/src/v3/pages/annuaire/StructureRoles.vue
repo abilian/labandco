@@ -90,6 +90,7 @@ export default {
         this.roles = result;
         this.ready = true;
       });
+
       this.$root.rpc("get_role_selectors", args).then(result => {
         this.selectors = result;
       });
@@ -115,6 +116,8 @@ export default {
       const args = [this.ou.id, values];
       const msg = "Rôles mis à jour";
       this.$root.rpc("update_roles", args, msg).then(result => {
+        this.ready = false;
+        this.editing = false;
         EventBus.$emit("refresh-structure");
       });
     },

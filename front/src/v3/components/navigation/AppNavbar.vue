@@ -25,7 +25,7 @@
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <b-nav-item v-if="user" to="/contacts" title="Mes contacts">
+          <b-nav-item v-if="user" to="/mes_contacts" title="Mes contacts">
             <i class="far fa-lg fa-heart" />
           </b-nav-item>
 
@@ -99,21 +99,26 @@
 
 <script>
 import axios from "axios";
+import EventBus from "../../../event-bus";
 
 export default {
   data() {
     return {
       q: "",
+      user: null,
     };
   },
 
-  computed: {
-    user() {
-      return this.$storage.get("user_context").user;
-    },
+  created() {
+    this.updateUser();
+    EventBus.$on("user-updated", this.updateUser);
   },
 
   methods: {
+    updateUser() {
+      this.user = this.$storage.get("user_context").user;
+    },
+
     onSearch() {
       this.$router.push({ path: "/search", query: { q: this.q } });
     },

@@ -44,7 +44,7 @@ class Notification(IdMixin, db.Model):
     demande_id = Column(Integer, ForeignKey(Demande.id))
     demande = relationship(Demande, foreign_keys=[demande_id])
 
-    sent = Column(Boolean)
+    sent = Column(Boolean, default=False)
 
     @property
     def created_at_tz(self):

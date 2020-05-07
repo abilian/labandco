@@ -19,37 +19,6 @@ from labster.infrastructure.repositories.sqla.structure_repository import \
     SqlaStructureRepository
 from labster.infrastructure.services.sqla.contacts import SqlaContactService
 from labster.infrastructure.services.sqla.roles import SqlaRoleService
-from labster.persistence import Persistence, SqlaPersistence
-
-# def configure_for_prod(binder):
-#     binder.bind(ProfileRepository, to=SqlaProfileRepository, scope=singleton)
-#     binder.bind(StructureRepository, to=SqlaStructureRepository, scope=singleton)
-#     binder.bind(RoleService, to=SqlaRoleService, scope=singleton)
-#     binder.bind(ContactService, to=SqlaContactService, scope=singleton)
-#     binder.bind(DemandeRepository, to=SqlaDemandeRepository, scope=singleton)
-#
-#     binder.bind(Persistence, to=SqlaPersistence, scope=singleton)
-#     binder.bind(SQLAlchemy, to=db, scope=singleton)
-#     binder.bind(Mapper, scope=singleton)
-#
-#
-# def configure_for_testing(binder):
-#     # binder.bind(ProfileRepository, to=InmemoryProfileRepository, scope=singleton)
-#     # binder.bind(StructureRepository, to=InmemoryStructureRepository, scope=singleton)
-#     # binder.bind(RoleService, to=InmemoryRoleService, scope=singleton)
-#     # binder.bind(ContactService, to=InmemoryContactService, scope=singleton)
-#
-#     binder.bind(ProfileRepository, to=SqlaProfileRepository, scope=singleton)
-#     binder.bind(StructureRepository, to=SqlaStructureRepository, scope=singleton)
-#     binder.bind(RoleService, to=SqlaRoleService, scope=singleton)
-#     binder.bind(ContactService, to=SqlaContactService, scope=singleton)
-#
-#     binder.bind(DemandeRepository, to=SqlaDemandeRepository, scope=singleton)
-#
-#     binder.bind(Persistence, to=NoPersistence, scope=singleton)
-#     binder.bind(SQLAlchemy, to=db, scope=singleton)
-#     binder.bind(Mapper, scope=singleton)
-#     binder.bind(Session, to=db.session, scope=singleton)
 
 
 def configure(binder):
@@ -59,7 +28,6 @@ def configure(binder):
     binder.bind(ContactService, to=SqlaContactService, scope=singleton)
     binder.bind(DemandeRepository, to=SqlaDemandeRepository, scope=singleton)
 
-    binder.bind(Persistence, to=SqlaPersistence, scope=singleton)
     binder.bind(SQLAlchemy, to=db, scope=singleton)
     # binder.bind(Mapper, scope=singleton)
     binder.bind(Session, to=db.session, scope=singleton)
@@ -67,10 +35,5 @@ def configure(binder):
     binder.bind(Mail, to=mail, scope=singleton)
     binder.bind(AuthContext, scope=singleton)
 
-
-# if hasattr(sys, "_called_from_test"):
-#     modules = [configure_for_testing, configure_flask_globals]
-# else:
-#     modules = [configure_for_prod, configure_flask_globals]
 
 injector = Injector(modules=[configure])

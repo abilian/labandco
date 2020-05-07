@@ -1,0 +1,105 @@
+<html>
+<body>
+
+{% macro format_demande(demande) %}
+  <li>Demande de {{ demande.porteur.full_name }}
+  concernant
+  <a href="{{ url_for(demande, _external=True) }}">{{ demande.nom }}</a>
+  du {{ demande.created_at|dateformat("medium") }}.
+{% endmacro %}
+
+
+{% if demandes %}
+  <h3>Demandes à valider</h3>
+  <p>
+    Vous avez {{ demandes|length }} demande(s) à valider.
+  </p>
+
+  {% if demandes_convention %}
+    <h4>Conventions</h4>
+
+    <ul>
+      {% for demande in demandes_convention %}
+        {{ format_demande(demande) }}
+      {% endfor %}
+    </ul>
+
+    <div>
+      <a href="{{ url_for("main.demandes_a_valider", type='convention', _external=True) }}">Voir
+        les demandes</a>.
+    </div>
+  {% endif %}
+
+  {% if demandes_recrutement %}
+    <h4>Recrutements</h4>
+
+    <ul>
+      {% for demande in demandes_recrutement %}
+        {{ format_demande(demande) }}
+      {% endfor %}
+    </ul>
+
+    <div>
+      <a href="{{ url_for("main.demandes_a_valider", type='rh', _external=True) }}">Voir
+        les demandes</a>.
+    </div>
+  {% endif %}
+
+  {% if demandes_pi %}
+    <h4>PI</h4>
+
+    <ul>
+      {% for demande in demandes_pi %}
+        {{ format_demande(demande) }}
+      {% endfor %}
+    </ul>
+
+    <div>
+      <a href="{{ url_for("main.demandes_a_valider", type='pi', _external=True) }}">Voir
+        les demandes</a>.
+    </div>
+  {% endif %}
+{% endif %}
+
+{% if tasks %}
+  {% if demandes %}
+    <h3>Autres tâches</h3>
+  {% else %}
+    <h3>Tâches</h3>
+  {% endif %}
+
+  <p>
+    Vous avez {{ tasks|length }} tâche(s) à accomplir.
+  </p>
+
+  <ul>
+    {% for demande in tasks %}
+      <li>
+        {{ demande.get_state().next_action }} pour la demande de
+        {% if demande.porteur %}
+          {{ demande.porteur.full_name }}
+        {% else %}
+          (pas de porteur identifié à ce stade)
+        {% endif %}
+        concernant <a
+          href="{{ url_for(demande, _external=True) }}">{{ demande.nom }}</a>
+        du {{ demande.created_at|dateformat("medium") }}.
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% if config.NAME != 'PRODUCTION' %}
+  <p>
+    <em>Ceci est un mail de test. Nous vous remercions de réaliser l’action
+      demandée par ce mail afin de finaliser le test.<br> Si vous avez des
+      questions, contactez Marie-Noëlle Poulain par mail <a
+          href="mailto:marie-noelle.poulain@upmc.fr">marie-noelle.poulain@upmc.fr</a>
+      ou par téléphone au 01 44 27 60 43. </em>
+  </p>
+{% endif %}
+
+{% include "emails/_footer.html" %}
+
+</body>
+</html>

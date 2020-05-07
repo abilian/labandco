@@ -13,7 +13,7 @@ from werkzeug.utils import import_string
 from labster.util import url_for
 
 from . import search
-from .bus import register_callback
+# from .bus import register_callback
 from .security import get_current_user, login_user
 
 BLUEPRINTS = [
@@ -21,6 +21,8 @@ BLUEPRINTS = [
     "labster.blueprints.v3",
     "labster.blueprints.main",
     "labster.blueprints.auth",
+    "labster.blueprints.backup",
+    "labster.blueprints.notifications",
 ]
 
 
@@ -37,9 +39,9 @@ def init_web(app: Flask) -> None:
 
     app.jinja_env.filters.update(datetime=lambda x: x.strftime("%d/%m/%y %H:%M"))
 
-    search.register(app)
-
-    register_callback()
+    # TODO
+    # search.register(app)
+    # register_callback()
 
 
 def register_blueprints(app: Flask) -> None:
@@ -64,11 +66,12 @@ def inject_debug_info() -> None:
 
     g.debug_info = debug_info
 
-    version = "???"
-    for distribution in pkg_resources.working_set:
-        if distribution.project_name != "labster":
-            continue
-        version = distribution.version
+    try:
+        ws = pkg_resources.working_set
+        version = ws.by_key["labster"]._version  # type: ignore
+    except:
+        version = "???"
+
     g.labster_version = version
 
 

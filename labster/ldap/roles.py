@@ -19,7 +19,7 @@ class RolesUpdater:
         print("nbre de profils", len(profiles))
         if max:
             profiles = list(profiles)[0:max]
-        for profile in tqdm(profiles):
+        for profile in tqdm(profiles, disable=None):
             if not profile.active:
                 continue
             self.update_roles_for(profile)

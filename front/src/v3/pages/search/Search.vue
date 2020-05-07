@@ -25,30 +25,50 @@
 
             <div v-for="demande in demandes" class="search-result">
               <div class="search-title">
+                <i :class="demande.icon_class" />&nbsp;
                 <router-link
                   :to="{ name: 'demande', params: { id: demande.id } }"
                   >{{ demande.nom }}</router-link
                 >
-                [{{ demande.type }}]
               </div>
 
               <div class="metadata">
                 <span v-if="demande.porteur">
-                  <i>Porteur:</i> {{ demande.porteur.full_name }}.
+                  <i>Porteur:</i>&nbsp;
+                  <router-link
+                    :to="{ name: 'user', params: { id: demande.porteur.id } }"
+                    >{{ demande.porteur.full_name }}</router-link
+                  >.
                 </span>
 
                 <span v-if="demande.gestionnaire">
-                  {{ demande.gestionnaire.full_name }}.
+                  <i>Gestionnaire:</i>&nbsp;
+                  <router-link
+                    :to="{
+                      name: 'user',
+                      params: { id: demande.gestionnaire.id },
+                    }"
+                    >{{ demande.gestionnaire.full_name }}</router-link
+                  >.
                 </span>
 
-                <span v-if="demande.laboratoire">
-                  <i>Laboratoire:</i>
-                  {{ demande.laboratoire.nom }}.
+                <span v-if="demande.structure">
+                  <i>Structure:</i>&nbsp;
+                  <router-link
+                    :to="{
+                      name: 'structure',
+                      params: { id: demande.structure.id },
+                    }"
+                    >{{ demande.structure.nom }}</router-link
+                  >.
+                </span>
+
+                <span v-if="demande.wf_state">
+                  <i>Etat:</i>&nbsp; {{ demande.wf_state }}.
                 </span>
 
                 <i>Créée le:</i>
-                <!--                {{ demande.created_at | dateformat("medium") }}.-->
-                {{ demande.created_at }}.
+                {{ demande.created_at | moment("DD MMMM YYYY") }}.
               </div>
             </div>
           </template>

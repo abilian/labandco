@@ -1,33 +1,68 @@
 from __future__ import annotations
 
+import re
 from datetime import datetime
+from pathlib import Path
 
 from abilian.core.models.blob import Blob
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
-from weasyprint import HTML
-from werkzeug.exceptions import Forbidden, MethodNotAllowed, NotFound
+from sqlalchemy import func
+from toolz import first
+from weasyprint import CSS, HTML
+from werkzeug.exceptions import Forbidden, NotFound
 
 from labster.di import injector
 from labster.domain2.model.demande import Demande, demande_factory
 from labster.domain2.model.profile import Profile
+from labster.domain2.model.structure import StructureRepository
+from labster.extensions import whoosh
+from labster.rbac import check_can_add_pj, check_read_access, \
+    check_write_access, feuille_cout_editable
 from labster.security import get_current_profile
 
 db = injector.get(SQLAlchemy)
+structure_repo = injector.get(StructureRepository)
+
+
+PRINT_CSS = """
+.print .feuille-cout {
+    input {
+        display: none;
+    }
+
+    select {
+        display: none;
+    }
+
+    .no-print {
+        display: none;
+    }
+
+    .only-print {
+        display: inline;
+    }
+}
+
+.only-print {
+    display: none;
+}
+"""
 
 
 @method
 def create_demande(model, form):
     user = get_current_profile()
-    # TODO
-    # ensure_role("alc")
+    # TODO: check permissions
 
     model = cleanup_model(model, form)
 
     form_type = form["name"]
 
-    porteur_id = model.get("porteur")
-    if porteur_id:
+    porteur_dto = model.get("porteur")
+    if porteur_dto:
+        porteur_id = porteur_dto["value"]
         porteur = db.session.query(Profile).get(porteur_id)
     else:
         porteur = None
@@ -37,13 +72,22 @@ def create_demande(model, form):
     else:
         gestionnaire = None
 
-    # porteur = get_porteur()
+    structure_dto = model.get("laboratoire")
+    if structure_dto:
+        structure_id = structure_dto["value"]
+        structure = structure_repo.get_by_id(structure_id)
+    else:
+        structure = None
 
-    demande = demande_factory(type=form_type, demandeur=user, data=model,)
+    demande = demande_factory(type=form_type, demandeur=user, data=model)
     demande.porteur = porteur
     demande.gestionnaire = gestionnaire
+    demande.structure = structure
 
     demande.form_state = form
+
+    new_id = db.session.query(func.max(Demande.id)).one()[0] + 1
+    demande.id = new_id
 
     db.session.add(demande)
     db.session.commit()
@@ -54,6 +98,8 @@ def create_demande(model, form):
     if not demande.is_valid():
         messages.append(["Attention, votre demande est encore incomplète.", "warning"])
 
+    whoosh.index_object(demande)
+
     return {
         "id": demande.id,
         "messages": messages,
@@ -61,16 +107,27 @@ def create_demande(model, form):
 
 
 @method
+def dupliquer_demande(id):
+    demande = db.session.query(Demande).get(id)
+    check_read_access(demande)
+
+    new_id = db.session.query(func.max(Demande.id)).one()[0] + 1
+    nouvelle_demande = demande.clone()
+    nouvelle_demande.id = new_id
+
+    db.session.add(nouvelle_demande)
+    db.session.commit()
+
+    return nouvelle_demande.id
+
+
+@method
 def update_demande(id, model, form):
     model = cleanup_model(model, form)
 
-    user = get_current_profile()
-
-    # TODO: replace
     demande = db.session.query(Demande).get(id)
-    assert demande
-    if not demande.is_editable_by(user):
-        raise MethodNotAllowed()
+    check_read_access(demande)
+    check_write_access(demande)
 
     new_data = model
     demande.form_state = form
@@ -79,6 +136,7 @@ def update_demande(id, model, form):
     if not demande.has_same_data(new_data):
         demande.update_data(new_data)
         db.session.commit()
+
         messages.append(
             [
                 "Votre demande a été modifiée. La version précédente de la demande a été archivée.",
@@ -91,33 +149,61 @@ def update_demande(id, model, form):
     if not demande.is_valid():
         messages.append(["Attention, votre demande est encore incomplète.", "warning"])
 
+    whoosh.index_object(demande)
+
     return messages
 
 
 @method
+def delete_pj(demande_id, blob_id):
+    demande: Demande = db.session.query(Demande).get(demande_id)
+    check_can_add_pj(demande)
+
+    attachments = demande.attachments.copy()
+    filename = None
+    for filename, v in demande.attachments.items():
+        if v["id"] == blob_id:
+            filename = filename
+            break
+    if filename:
+        del attachments[filename]
+    demande.attachments = attachments
+    db.session.commit()
+
+
+@method
 def update_feuille_de_cout(model, html):
-    current_profile = get_current_profile()
     id = model["id"]
     demande = db.session.query(Demande).get(id)
 
     if not demande:
         raise NotFound()
 
-    # _check_read_access(demande)  # TODO: check write access
-    if not demande.is_editable_by(current_profile):
+    if not feuille_cout_editable(demande):
         raise Forbidden()
 
     demande.feuille_cout = model
+    html = re.sub('id="feuille-cout"', 'id="feuille-cout" class="print"', html)
+    demande.data["fdc_html"] = f'<!DOCTYPE html><html lang="fr-FR">{html}</html>'
     db.session.commit()
 
-    s = HTML(string=html).write_pdf()
+    root = Path(current_app.root_path)
+    static = root / "static"
+    css = static / "css"
+
+    css1 = CSS(filename=str(first(css.glob("chunk*"))))
+    css2 = CSS(filename=str(first(css.glob("app*"))))
+    css3 = CSS(string=PRINT_CSS)
+
+    s = HTML(string=html).write_pdf(stylesheets=[css3, css1, css2, css3])
     assert s
 
     blob = Blob(s)
     db.session.add(blob)
     db.session.flush()
+
     d = {
-        "name": "Feuille de coût",
+        "name": "Feuille de coût.pdf",
         "date": datetime.utcnow().isoformat(),
         "blob_id": blob.id,
     }
@@ -152,85 +238,3 @@ def cleanup_model(model, form):
         new_model[key] = value
 
     return new_model
-
-    # return url_for(demande)
-    #
-    #
-    # form_type = form["name"]
-    # porteur = get_porteur()
-    #
-    # demande = demande_factory(
-    #     type=form_type,
-    #     demandeur=get_demandeur(),
-    #     porteur=porteur,
-    #     gestionnaire=get_gestionnaire(),
-    #     data=model,
-    # )
-    #
-    # demande.form_state = form
-    #
-    # db.session.add(demande)
-    # db.session.commit()
-    #
-    # return demande.id
-    #
-    # # flash("Votre demande a été créée.")
-    # # if not demande.is_valid():
-    # #     flash("Attention, votre demande est encore incomplète.", "warning")
-    # # return url_for(demande)
-
-
-# def demande_edit_post(model, form):
-
-
-# @route("/demandes/post", methods=["POST"])
-# def demande_create_or_edit():
-#     json = request.json
-#     action = json["action"]
-#     model = json["model"]
-#     form = json["form"]
-#     if action == "cancel":
-#         url = demande_cancel_post(model)
-#     elif action == "edit":
-#         url = demande_edit_post(model, form)
-#     elif action == "create":
-#         url = demande_create_post(model, form)
-#     else:
-#         # Should not happen
-#         raise RuntimeError()
-#     return url
-#
-#
-# def demande_create_post(model, form):
-#     model = cleanup_model(model, form)
-#
-#     form_type = form["name"]
-#     porteur = get_porteur()
-#
-#     try:
-#         demande = demande_factory(
-#             type=form_type,
-#             demandeur=get_demandeur(),
-#             porteur=porteur,
-#             gestionnaire=get_gestionnaire(),
-#             data=model,
-#         )
-#
-#         demande.form_state = form
-#
-#         db.session.add(demande)
-#         db.session.commit()
-#
-#         flash("Votre demande a été créée.")
-#         if not demande.is_valid():
-#             flash("Attention, votre demande est encore incomplète.", "warning")
-#         return url_for(demande)
-#
-#     except Exception as e:
-#         traceback.print_exc()
-#         flash(
-#             "La demande n'a pas pu être créée (erreur interne). L'administrateur du site a été notifié.",
-#             "warning",
-#         )
-#         logger.error(f"Error on Demande creation of type {form_type}: {e}")
-#         return url_for(".demande_new")

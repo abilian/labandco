@@ -46,6 +46,7 @@
 <script>
 import FieldSet from "./FieldSet";
 import update_form from "./update_form";
+import EventBus from "../../../event-bus";
 
 export default {
   props: {
@@ -64,6 +65,7 @@ export default {
 
   created() {
     update_form(this.form, this.model, this.salaires_indicatifs);
+    EventBus.$on("model-changed", this.modelUpdated);
   },
 
   methods: {

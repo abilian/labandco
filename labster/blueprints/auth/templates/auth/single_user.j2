@@ -1,0 +1,28 @@
+{#- overrides base template from abilian-core -#}
+{%- set locale = get_locale() -%}
+<!DOCTYPE html>
+<html lang="{{ locale.language }}">
+
+{% include "_head.html" %}
+
+{% from "_macros.html" import flashed_messages %}
+
+<body class="login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="/" style="font-size: 84px;">Lab&amp;Co</a>
+    <br>
+    <img style="width: 100%;" src="/static/img/logo-su.png">
+  </div>
+
+  <div class="login-box-body">
+
+    {{ flashed_messages() }}
+
+    <p class="login-box-msg">L'application est actuellement en maintenance</p>
+  </div>
+</div>
+
+{% include "_foot.html" %}
+</body>
+</html>

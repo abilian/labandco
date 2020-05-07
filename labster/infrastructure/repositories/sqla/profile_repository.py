@@ -5,6 +5,7 @@ from typing import Set
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
 
 from labster.domain2.model.profile import Profile, ProfileId, ProfileRepository
 from labster.infrastructure.repositories.sqla.mappers import Mapper
@@ -37,10 +38,12 @@ class SqlaProfileRepository(ProfileRepository):
 
     def clear(self):
         self.query().delete()
-        self.session.flush()
 
     def get_by_id(self, id: ProfileId) -> Profile:
-        return self.query().get(id)
+        result = self.query().get(id)
+        if not result:
+            raise NoResultFound
+        return result
 
     def get_by_old_id(self, old_id: int) -> Profile:
         return self.query().filter_by(old_id=old_id).one()

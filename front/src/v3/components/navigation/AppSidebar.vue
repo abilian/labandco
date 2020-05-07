@@ -31,7 +31,7 @@
 
           <li v-for="entry in subMenu.entries" class="nav-item">
             <router-link v-if="entry.to" :to="entry.to" class="nav-link">
-              <i class="nav-icon far" v-bind:class="['fa-' + entry.icon]"></i>
+              <i class="nav-icon far" v-bind:class="['fa-' + entry.icon]" />
               {{ entry.label }}
             </router-link>
             <a
@@ -40,11 +40,11 @@
               target="_blank"
               class="nav-link"
             >
-              <i class="nav-icon far" v-bind:class="['fa-' + entry.icon]"></i>
+              <i class="nav-icon far" v-bind:class="['fa-' + entry.icon]" />
               {{ entry.label }}
             </a>
             <a v-else href="#" class="nav-link"
-              ><i class="nav-icon far" v-bind:class="['fa-' + entry.icon]"></i>
+              ><i class="nav-icon far" v-bind:class="['fa-' + entry.icon]" />
               {{ entry.label }}
             </a>
           </li>
@@ -58,8 +58,13 @@
 export default {
   computed: {
     user() {
-      return this.$storage.get("user_context").user;
+      const user = this.$storage.get("user_context").user;
+      if (!user) {
+        window.location.replace("/login");
+      }
+      return user;
     },
+
     menu() {
       return this.$storage.get("user_context").menu;
     },

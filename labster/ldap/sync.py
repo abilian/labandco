@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import glob
+import os
+import sys
+
 import structlog
 
 from .ldif import parse_ldif_file, update_users_from_records
@@ -21,23 +25,19 @@ def sync_users():
 
 
 def get_ldif_file():
-    fn = "annuaire/lab-co.ldif"
-    return fn
+    files = glob.glob("annuaire/export-Lab-Co.*.ldif")
+    files.sort()
+    if not files:
+        logger.error("Error: not LDIF file found in annuaire/")
+        sys.exit(-1)
+    ldif_file = files[-1]
 
-    # # TODO later
-    # files = glob.glob("annuaire/extraction-personnels.ldif")
-    # files.sort()
-    # if not files:
-    #     logger.error("Error: not LDIF file found in annuaire/")
-    #     sys.exit(-1)
-    # ldif_file = files[-1]
-    #
-    # # Remove old files
-    # for file_to_remove in files[0:-1]:
-    #     logger.info(f"removing {file_to_remove}")
-    #     os.unlink(file_to_remove)
-    #
-    # return ldif_file
+    # Remove old files
+    for file_to_remove in files[0:-1]:
+        logger.info(f"removing {file_to_remove}")
+        os.unlink(file_to_remove)
+
+    return ldif_file
 
 
 def update_roles(max=0):

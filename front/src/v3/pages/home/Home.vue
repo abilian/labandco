@@ -2,11 +2,13 @@
   <div class="pt-3">
     <message-dgrtt />
 
-    <bloc-deposer-demande />
+    <template v-if="user.is_responsable">
+      <bloc-demandes-a-valider />
+    </template>
 
-    <bloc-demandes-a-valider
-      v-if="user.is_responsable && !(user.is_membre_dri || user.is_membre_drv)"
-    />
+    <template v-if="user.is_porteur || user.is_gestionnaire">
+      <bloc-deposer-demande />
+    </template>
 
     <box-demandes
       v-for="(box, index) in boxes"
@@ -15,10 +17,6 @@
       :scope="box.scope"
       :archives="box.archives"
       :key="index"
-    />
-
-    <bloc-demandes-a-valider
-      v-if="user.is_responsable && (user.is_membre_dri || user.is_membre_drv)"
     />
   </div>
 </template>

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-import sys
 from copy import deepcopy
 
 from flask_sqlalchemy import SQLAlchemy
@@ -21,10 +20,9 @@ from labster.newforms.common import laboratoire, structures_concernees
 
 db = injector.get(SQLAlchemy)
 
-CHOICES1_ = ["CDD", "Doctorant", "Bourse Marie Curie"]
-CHOICES1 = [[x, x] for x in CHOICES1_]
+CHOICES1 = ["CDD", "Doctorant", "Bourse Marie Curie"]
 
-CHOICES2_ = [
+CHOICES2 = [
     "Contrat initial",
     "Renouvellement",
     "Modification du contrat en cours",
@@ -33,7 +31,6 @@ CHOICES2_ = [
     "Prolongation par CDD d'un doctorat en cours (cas particulier)",
     "Thèse medico-scientifique",
 ]
-CHOICES2 = [[x, x] for x in CHOICES2_]
 
 nature = FieldSet(
     "nature",
@@ -85,10 +82,9 @@ responsable_scientifique = FieldSet(  #
     ],
 )
 
-CHOICES3 = ["eOTP", "No DR&I", "Notification de financement"]
-# CHOICES3 = [[x, x] for x in CHOICES3]
+CHOICES3 = ["eOTP", "№ DR&I", "Notification de financement"]
 
-CHOICES4 = ["eOTP", "No DR&I", "1/2 allocation IFD", "Notification de financement"]
+CHOICES4 = ["eOTP", "№ DR&I", "1/2 allocation IFD", "Notification de financement"]
 
 contrat = FieldSet(  #
     "contrat",
@@ -99,7 +95,7 @@ contrat = FieldSet(  #
         BooleanField("co_finance", "Ce recrutement est-il co-financé&nbsp;?"),
         Select2Field("financement2", "Financement 2", choices=CHOICES4, required=True),
         StringField("numero_de_financement2", "Numéro du financement"),
-        StringField("structure_financeuse", "Structure"),
+        Select2Field("structure_financeuse", "Structure", choices=[]),
     ],
 )
 

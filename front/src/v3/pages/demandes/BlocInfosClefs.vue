@@ -9,6 +9,10 @@
         <div class="col-md-6">
           <p>
             Type de demande: <b>{{ demande.type }}</b>
+
+            <span v-if="demande.type === 'Demande autre'">
+              ({{ demande.data.type }})</span
+            >
           </p>
 
           <template v-if="demande.type === 'Recrutement'">
@@ -31,6 +35,7 @@
               Date d'embauche:
               <b v-if="demande.date_debut">{{ demande.date_debut }}</b>
             </p>
+
             <p>
               Durée du contrat de travail:
               <b v-if="demande.duree_mois">{{ demande.duree_mois }} mois</b>
@@ -81,7 +86,7 @@
               Intitulé du projet: <b>{{ demande.nom_projet }}</b>
             </p>
             <p>
-              EOTP ou No DR&amp;I: <b>{{ demande.eotp_ou_no_dgrtt }}</b>
+              EOTP ou № DR&amp;I: <b>{{ demande.eotp_ou_no_dgrtt }}</b>
             </p>
             <p>
               L'avenant concerne la modification de:
@@ -105,6 +110,12 @@
               Titre de l'invention: <b>{{ demande.data.titre }}</b>
             </p>
           </template>
+
+          <template v-if="demande.type === 'Demande autre'">
+            <p>
+              Intitulé: <b>{{ demande.nom }}</b>
+            </p>
+          </template>
         </div>
 
         <div class="col-md-6">
@@ -118,16 +129,14 @@
             Prochaine action à réaliser:
             <b>{{ demande.workflow.state.next_action }}</b
             >, par:
-            <b>
-              <span v-for="user in demande.workflow.state.task_owners"
-                >{{ user.full_name }},
-              </span>
 
-              <!--TODO-->
-              <!--              {% for user in workflow.state.task_owners(workflow) %}             -->
-              <!--              <a href="{{ url_for(user) }}">{{ user.full_name }}</a>-->
-              <!--              {%- if not loop.last %} ou {% else %}.{% endif %}-->
-              <!--              {% endfor %}-->
+            <b v-for="(user, index) in demande.workflow.owners">
+              <router-link :to="{ name: 'user', params: { id: user.id } }">{{
+                user.full_name
+              }}</router-link
+              ><span v-if="index !== demande.workflow.owners.length - 1"
+                >,
+              </span>
             </b>
           </p>
 
@@ -161,13 +170,13 @@
             </b>
           </p>
 
-          <p v-if="demande.contributeurs">
+          <p v-if="demande.contributeurs.length > 0">
             Contributeurs:
-            <b v-for="contributeur in demande.contributeurs">
+            <b v-for="(contributeur, index) in demande.contributeurs">
               <router-link
                 :to="{ name: 'user', params: { id: contributeur.id } }"
-                >{{ contributeur.full_name }}
-              </router-link>
+                >{{ contributeur.full_name }}</router-link
+              ><span v-if="index !== demande.contributeurs.length - 1">, </span>
             </b>
           </p>
           <p v-else>Contributeurs: aucun</p>

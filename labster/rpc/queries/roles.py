@@ -8,11 +8,13 @@ from marshmallow import Schema, fields
 
 from labster.di import injector
 from labster.domain2.model.profile import Profile, ProfileRepository
-from labster.domain2.model.structure import StructureId, StructureRepository
-from labster.domain2.model.type_structure import DE, EQ
+from labster.domain2.model.structure import Structure, StructureId, \
+    StructureRepository
+from labster.domain2.model.type_structure import DE, EQ, FA
 from labster.domain2.services.roles import Role, RoleService
+from labster.rbac import get_permissions_for_structure
 from labster.security import get_current_user
-from labster.types import JSON
+from labster.types import JSON, JSONDict
 from labster.util import sort_by_name
 
 structure_repo = injector.get(StructureRepository)
@@ -28,7 +30,11 @@ def get_roles(structure_id: str) -> List[Dict[str, Any]]:
 
     role_to_users = role_service.get_users_with_role_on(structure)
 
-    if structure.is_reelle:
+    if structure.type in {DE, EQ}:
+        roles = [
+            Role.RESPONSABLE,
+        ]
+    else:
         roles = [
             Role.SIGNATAIRE,
             Role.RESPONSABLE,
@@ -36,8 +42,6 @@ def get_roles(structure_id: str) -> List[Dict[str, Any]]:
             Role.GESTIONNAIRE,
             Role.PORTEUR,
         ]
-    else:
-        roles = [Role.ADMIN_LOCAL]
 
     result: List[Dict[str, Any]] = []
     for role in roles:
@@ -55,32 +59,29 @@ def get_role_selectors(structure_id: str) -> JSON:
     structure = structure_repo.get_by_id(StructureId(structure_id))
     assert structure
 
-    # FIXME
-    current_user = get_current_user()
-    if current_user.is_authenticated:
-        profile = current_user.profile
-        is_admin_central = profile.has_role(Role.ADMIN_CENTRAL)
-        is_admin_local = profile.has_role(Role.ADMIN_LOCAL, structure)
+    permissions = get_permissions_for_structure(structure)
+    if "P5" not in permissions:
+        return []
 
-    else:
-        # For tests
-        is_admin_central = True
-        is_admin_local = True
+    is_admin_central = _is_admin_central()
+    is_admin_local = _is_admin_local(structure)
+    is_admin_facultaire = _is_admin_facultaire(structure)
 
     if not (is_admin_central or is_admin_local):
         return []
 
     if structure.type in (DE, EQ):
-        roles = [Role.ADMIN_LOCAL]
-    elif is_admin_local and not is_admin_central:
+        roles = [Role.RESPONSABLE]
+    elif is_admin_central or is_admin_facultaire:
         roles = [
+            Role.SIGNATAIRE,
             Role.RESPONSABLE,
+            Role.ADMIN_LOCAL,
             Role.GESTIONNAIRE,
             Role.PORTEUR,
         ]
     else:
         roles = [
-            Role.SIGNATAIRE,
             Role.RESPONSABLE,
             Role.ADMIN_LOCAL,
             Role.GESTIONNAIRE,
@@ -113,6 +114,7 @@ def get_role_selectors(structure_id: str) -> JSON:
                 .all()
             )
             options = [{"id": m.id, "label": m.name} for m in all_users]
+
         selector_dto = {
             "key": role.name,
             "label": role.value,
@@ -123,6 +125,87 @@ def get_role_selectors(structure_id: str) -> JSON:
         result += [selector_dto]
 
     return result
+
+
+def _is_admin_central() -> bool:
+    current_user = get_current_user()
+    if not current_user.is_authenticated:
+        return True
+
+    profile = current_user.profile
+    return profile.has_role(Role.ADMIN_CENTRAL)
+
+
+def _is_admin_local(structure: Structure) -> bool:
+    current_user = get_current_user()
+    if not current_user.is_authenticated:
+        return True
+
+    profile = current_user.profile
+    for ancestor in [structure] + structure.ancestors:
+        if profile.has_role(Role.ADMIN_LOCAL, ancestor):
+            return True
+
+    return False
+
+
+def _is_admin_facultaire(structure: Structure) -> bool:
+    current_user = get_current_user()
+    if not current_user.is_authenticated:
+        return True
+
+    profile = current_user.profile
+    for ancestor in [structure] + structure.ancestors:
+        if ancestor.type == FA and profile.has_role(Role.ADMIN_LOCAL, ancestor):
+            return True
+
+    return False
+
+
+@method
+def get_global_roles() -> JSONDict:
+    def make_role_dto(role: Role) -> JSONDict:
+        users_with_role = role_service.get_users_with_role(role)
+        return {
+            "key": role.name,
+            "label": role.value,
+            "users": convert_users_to_dto(users_with_role),
+        }
+
+    roles = [
+        make_role_dto(Role.ADMIN_CENTRAL),
+        make_role_dto(Role.FAQ_EDITOR),
+    ]
+
+    all_users = (
+        db.session.query(Profile)
+        .filter_by(active=True)
+        .order_by(Profile.nom, Profile.prenom)
+        .all()
+    )
+    options = [{"id": m.id, "label": m.name} for m in all_users]
+
+    def make_selector(role: Role):
+        users_with_role = role_service.get_users_with_role(role)
+        value = [{"id": u.id, "label": u.name} for u in users_with_role]
+
+        return {
+            "key": role.name,
+            "label": role.value,
+            "value": value,
+            "options": options,
+            "multiple": True,
+        }
+
+    selectors = [
+        make_selector(Role.ADMIN_CENTRAL),
+        make_selector(Role.FAQ_EDITOR),
+    ]
+
+    return {
+        "roles": roles,
+        "selectors": selectors,
+    }
 
 
 #

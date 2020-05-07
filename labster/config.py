@@ -1,32 +1,42 @@
 from __future__ import annotations
 
 import os
+import socket
 from datetime import timedelta
+from typing import Any, Dict
 
 from abilian.web.action import Endpoint
-from celery.schedules import crontab
 from flask.cli import load_dotenv
 
 load_dotenv()
 
+
+HOST_MAP = {
+    "orophin": "TIRETDEV",
+    "tareg": "PREPROD",
+    "zirak": "PRODUCTION",
+}
+
+DEFAULT_SRC = [
+    "'self'",
+    "https://cdn.ckeditor.com/",
+    "https://unpkg.com",
+    "https://maxcdn.bootstrapcdn.com",
+]
+
 CONTENT_SECURITY_POLICY = {
-    "default-src": ["'self'"],
-    "script-src": [
-        "'self'",
+    "default-src": DEFAULT_SRC,
+    "script-src": DEFAULT_SRC
+    + [
         "'unsafe-inline'",
         "'unsafe-eval'",
         "https://sentry.io/",
         "https://browser.sentry-cdn.com/",
-        "https://cdn.ckeditor.com/",
-        "https://unpkg.com",
     ],
-    "style-src": [
-        "'self'",
-        "'unsafe-inline'",
-        "https://cdn.ckeditor.com/",
-        "https://unpkg.com",
-    ],
-    "img-src": ["'self'", "https://cdn.ckeditor.com/", "https://unpkg.com"],
+    "connect-src": DEFAULT_SRC + ["https://sentry.io/",],
+    "style-src": DEFAULT_SRC + ["'unsafe-inline'"],
+    "img-src": DEFAULT_SRC + ["'unsafe-inline'", "data:"],
+    "font-src": DEFAULT_SRC + ["'unsafe-inline'", "data:"],
 }
 
 DEV_CONTENT_SECURITY_POLICY = {"default-src": ["'*'"], "script-src": ["'*'"]}
@@ -51,16 +61,18 @@ class DefaultConfig:
     MAIL_ASCII_ATTACHMENTS = True
     ANTIVIRUS_CHECK_REQUIRED = True
     LOGO_URL = Endpoint("static", filename="img/logo_carre_32px.jpg")
-    FAVICO_URL = Endpoint("static", filename="img/upmc-favicon.png")
-    MAIL_SENDER = "noreply.labandco@upmc.fr"
+    FAVICO_URL = Endpoint("static", filename="img/logo-su-square.png")
 
-    CELERYBEAT_SCHEDULE = {
-        # Executes every day at 6 A.M
-        "add-every-monday-morning": {
-            "task": "tasks.add",
-            "schedule": crontab(hour=6, minute=0),
-        }
-    }
+    MAIL_SENDER = "noreply@sorbonne-universite.fr"
+    MAIL_SUPPRESS_SEND = True
+
+    CELERYBEAT_SCHEDULE: Dict[Any, Any] = {}
+    #     # Executes every day at 6 A.M
+    #     "add-every-monday-morning": {
+    #         "task": "tasks.add",
+    #         "schedule": crontab(hour=6, minute=0),
+    #     }
+    # }
 
     # Babel config
     BABEL_ACCEPT_LANGUAGES = ("fr",)
@@ -96,6 +108,7 @@ class DefaultConfig:
 
 class DevConfig(DefaultConfig):
     NAME = "DEV"
+    SERVER_NAME = "localhost:5000"
 
     # Relax security cookies settings (which are more stringent by default)
     SESSION_COOKIE_SECURE = False
@@ -109,7 +122,6 @@ class DevConfig(DefaultConfig):
     DEBUG_TB_ENABLED = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     DEBUG_TB_PROFILER_ENABLED = False
-    MAIL_SUPPRESS_SEND = True
     DEBUG_TB_PANELS = [
         "flask_debugtoolbar.panels.versions.VersionDebugPanel",
         "flask_debugtoolbar.panels.timer.TimerDebugPanel",
@@ -133,8 +145,10 @@ class DemoConfig(DefaultConfig):
 
     PRODUCTION = True
     PREFERRED_URL_SCHEME = "https"
-    TEST_EMAIL_ADRESS = "labster@abilian.com"
-    ALLOW_BACKDOOR = False
+    SERVER_NAME = "labster-dev.demo.abilian.com"
+
+    MAIL_SUPPRESS_SEND = False
+    TEST_EMAIL_ADRESS = "labandco-test@abilian.net"
 
 
 class PreprodConfig(DefaultConfig):
@@ -142,32 +156,52 @@ class PreprodConfig(DefaultConfig):
 
     PRODUCTION = True
     PREFERRED_URL_SCHEME = "https"
-    TEST_EMAIL_ADRESS = "labster@abilian.com"
+    SERVER_NAME = "labandco-pre.sorbonne-universite.fr"
+
+    MAIL_SUPPRESS_SEND = False
+    TEST_EMAIL_ADRESS = "labandco-test@abilian.net"
+
+
+class TiretDevConfig(DefaultConfig):
+    NAME = "TIRETDEV"
+
+    PRODUCTION = True
+    PREFERRED_URL_SCHEME = "https"
+    SERVER_NAME = "labandco-dev.sorbonne-universite.fr"
+
+    MAIL_SUPPRESS_SEND = False
+    TEST_EMAIL_ADRESS = "labandco-test@abilian.net"
 
 
 class ProdConfig(DefaultConfig):
     NAME = "PRODUCTION"
+    SERVER_NAME = "labandco.sorbonne-universite.fr"
 
     PRODUCTION = True
     PREFERRED_URL_SCHEME = "https"
-    TEST_EMAIL_ADRESS = None
+    MAIL_SUPPRESS_SEND = False
 
     # Debug email
     # EMAIL_CC = ['X']
 
 
 CONFIG_MAP = {
-    "DEMO": DemoConfig,
-    "PREPROD": PreprodConfig,
-    "TIRETDEV": PreprodConfig,
-    "PRODUCTION": ProdConfig,
     "DEV": DevConfig,
+    "DEMO": DemoConfig,
+    "TIRETDEV": TiretDevConfig,
+    "PREPROD": PreprodConfig,
+    "PRODUCTION": ProdConfig,
 }
 
 
 def get_config():
     env = os.environ
     name = env.get("APP_NAME", "DEV")
+
+    # Hack
+    hostname = socket.gethostname()
+    if hostname in HOST_MAP:
+        name = HOST_MAP[hostname]
 
     config_class = CONFIG_MAP.get(name)
     if not config_class:

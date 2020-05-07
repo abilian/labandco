@@ -34,7 +34,7 @@
     <h3>Historique des actions</h3>
 
     <div v-for="entry in workflow_history">
-      <p>{{ entry.date }}: <span v-html="entry.message"></span></p>
+      <p>{{ entry.date }}: <span v-html="entry.message" /></p>
       <blockquote v-if="entry.note">
         {{ entry.note }}
       </blockquote>
@@ -47,7 +47,7 @@
     <h4>Version courante</h4>
 
     <p>
-      Version: <b>{{ demande.past_versions.length + 1 }}</b
+      Version: <b>{{ past_versions.length + 1 }}</b
       >, sauvegardée le
       <b>{{ demande.updated_at | moment("DD MMMM YYYY à h:mm:ss") }}</b
       >.
@@ -71,6 +71,8 @@
 </template>
 
 <script>
+import fp from "lodash/fp";
+
 export default {
   props: { demande: Object },
 
@@ -78,13 +80,14 @@ export default {
     const demande = this.demande;
     const workflow = demande.workflow;
 
-    return {
+    const result = {
       workflow: workflow,
       owners: workflow.owners,
       state: workflow.state,
-      workflow_history: demande.workflow_history, // TODO: reverse
+      workflow_history: fp.reverse(demande.workflow_history), // TODO: reverse
       past_versions: demande.past_versions,
     };
+    return result;
   },
 };
 </script>

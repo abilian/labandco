@@ -4,7 +4,7 @@
       <b-container class="mt-4 mb-2">
         <b-row>
           <b-col lg="6" class="my-1">
-            <b-form-checkbox v-model="filter.montrerSousStructures">
+            <b-form-checkbox v-model="include_ss">
               Montrer les membres des sous-structures.
             </b-form-checkbox>
           </b-col>
@@ -99,7 +99,7 @@
       </b-container>
 
       <button
-        v-if="!editing && !isBusy && ou.editable"
+        v-if="!editing && !isBusy && ou && ou.permissions.P4"
         class="btn btn-default mt-3"
         @click="makeEditable"
       >
@@ -171,14 +171,15 @@ export default {
       // Filtering
       filter: {
         q: "",
-        montrerSousStructures: false,
       },
+      include_ss: false,
     };
   },
 
   watch: {
     $route: "refresh",
     ou: "refresh",
+    include_ss: "refresh",
   },
 
   methods: {
@@ -189,11 +190,12 @@ export default {
     provider(ctx, callback) {
       if (!this.ou) {
         this.totalRows = 0;
-        // const result = [];
-        // callback(result);
+        const membres = [];
+        callback(membres);
+        return;
       }
 
-      const args = [this.ou.id];
+      const args = [this.ou.id, this.include_ss];
       this.$root.rpc("get_membres", args).then(result => {
         this.totalRows = result.length;
         callback(result);
@@ -201,9 +203,6 @@ export default {
     },
 
     myFilter(row, filter) {
-      if (!filter.montrerSousStructures && !row.membre_direct) {
-        return false;
-      }
       if (filter.q) {
         const fn = s => s.toLowerCase().startsWith(filter.q.toLowerCase());
         return fn(row.prenom) || fn(row.nom);
@@ -219,7 +218,7 @@ export default {
 
     // Edit
     makeEditable() {
-      if (!this.ou.editable) {
+      if (!this.ou || !this.ou.permissions.P4) {
         return;
       }
       const args = [this.ou.id];
@@ -238,6 +237,7 @@ export default {
       const msg = "Rattachements mis à jour";
       this.$root.rpc("update_membres_rattaches", args, msg).then(() => {
         EventBus.$emit("refresh-structure");
+        this.editing = false;
       });
     },
   },

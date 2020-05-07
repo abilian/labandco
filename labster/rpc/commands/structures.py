@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from typing import Dict
 
+from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 from werkzeug.exceptions import NotFound
 
@@ -27,46 +28,38 @@ from labster.domain2.model.structure import Structure, StructureId, \
     StructureRepository
 from labster.domain2.model.type_structure import get_type_structure_by_id
 from labster.domain2.services.roles import Role, RoleService
-from labster.persistence import Persistence
+from labster.rbac import check_permission, check_structure_editable
 from labster.rpc.cache import cache
 from labster.types import JSON
 
-from ...rbac import check_structure_editable
 from ..util import ensure_role
 
 structure_repo = injector.get(StructureRepository)
 profile_repo = injector.get(ProfileRepository)
 role_service = injector.get(RoleService)
 auth_context = injector.get(AuthContext)
-persistence = injector.get(Persistence)
+db = injector.get(SQLAlchemy)
 
 
 @method
 def sg_update_structure(id: str, model: Dict[str, JSON]):
-    try:
-        structure = structure_repo.get_by_id(StructureId(id))
-        assert structure
-    except (KeyError, AssertionError):
-        raise NotFound()
-
+    structure = structure_repo.get_by_id(StructureId(id))
     check_structure_editable(structure)
 
     for k, v in model.items():
         setattr(structure, k, v)
 
-    persistence.save()
+    db.session.commit()
     cache.evict("structures")
 
 
 @method
 def sg_create_child_structure(id: str, model: Dict[str, str]):
-    try:
-        parent_structure = structure_repo.get_by_id(StructureId(id))
-        assert parent_structure
-    except (KeyError, AssertionError):
+    parent_structure = structure_repo.get_by_id(StructureId(id))
+    if not parent_structure:
         raise NotFound()
 
-    check_structure_editable(parent_structure)
+    check_permission(parent_structure, "P3")
 
     new_structure = Structure()
     new_structure.nom = model["nom"]
@@ -76,22 +69,21 @@ def sg_create_child_structure(id: str, model: Dict[str, str]):
     parent_structure.add_child(new_structure)
     structure_repo.put(new_structure)
 
-    persistence.save()
+    db.session.commit()
     cache.evict("structures")
 
 
 @method
 def sg_delete_structure(id: str):
-    ensure_role(Role.ADMIN_CENTRAL)
-
     structure = structure_repo.get_by_id(StructureId(id))
-    assert structure
+    if not structure:
+        raise NotFound()
 
-    check_structure_editable(structure)
+    check_permission(structure, "P3")
 
     structure.delete()
 
-    persistence.save()
+    db.session.commit()
     cache.evict("structures")
 
 
@@ -100,11 +92,11 @@ def sg_add_edge(u_id, v_id):
     u = structure_repo.get_by_id(StructureId(u_id))
     v = structure_repo.get_by_id(StructureId(v_id))
 
-    check_structure_editable(u)
+    check_permission(u, "P2")
 
     u.add_child(v)
 
-    persistence.save()
+    db.session.commit()
     cache.evict("structures")
 
 
@@ -113,9 +105,9 @@ def sg_delete_edge(u_id, v_id):
     u = structure_repo.get_by_id(StructureId(u_id))
     v = structure_repo.get_by_id(StructureId(v_id))
 
-    check_structure_editable(u)
+    check_permission(u, "P2")
 
     u.remove_child(v)
 
-    persistence.save()
+    db.session.commit()
     cache.evict("structures")

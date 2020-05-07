@@ -2,21 +2,25 @@
   <div>
     <a :name="'field-' + field.name" />
 
-    <template v-if="field.type[0] === 'HTML'">
+    <template v-if="field.type === 'HTML'">
       <div v-html="field.label" />
     </template>
 
-    <template v-if="field.type[0] !== 'HTML' && !field.scalar">
+    <template v-else-if="!field.scalar">
       <Component :is="subcomponent" :field="field" :model="model" />
     </template>
 
     <div
-      v-if="field.type[0] !== 'HTML' && field.scalar"
+      v-else
       v-show="field.visible"
       :id="'field-' + field.name"
       class="form-group row"
     >
-      <label :for="field.id" class="col-form-label col-sm-4">
+      <label
+        :for="field.id"
+        class="col-form-label col-sm-4"
+        :class="extraClass()"
+      >
         <span v-html="field.label" />&nbsp;<template v-if="field.required">
           (<span class="text-red">*</span>)
         </template>
@@ -91,7 +95,7 @@ function fieldTypeToWidgetName(fieldType) {
   } else if (type === "Select2Field") {
     return "select-widget";
   } else if (type === "MultipleSelect2Field") {
-    return "select-widget";
+    return "multiple-select-widget";
   }
 
   let name = _.kebabCase(type);
@@ -114,8 +118,18 @@ export default {
     const field = this.form.fields[this.fieldName];
     return {
       field: field,
-      subcomponent: fieldTypeToWidgetName(field.type[0]),
+      subcomponent: fieldTypeToWidgetName(field.type),
     };
+  },
+
+  methods: {
+    extraClass() {
+      if (this.field.required && !this.model[this.fieldName]) {
+        return "text-red";
+      } else {
+        return "";
+      }
+    },
   },
 };
 </script>

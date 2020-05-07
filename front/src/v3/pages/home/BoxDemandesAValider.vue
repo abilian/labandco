@@ -1,6 +1,6 @@
 <template>
   <div class="col-md-4">
-    <router-link to="/demandes_a_valider">
+    <router-link :to="`/demandes_a_valider/${tag}`">
       <div class="info-box">
         <span :class="'info-box-icon ' + bgColor"
           ><i class="far fa-briefcase"
@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  props: ["name", "color", "nb"],
+  props: ["name", "color", "nb", "tag"],
 
   computed: {
     bgColor() {

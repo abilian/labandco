@@ -3,8 +3,6 @@ import axios from "axios";
 const DEBUG = true;
 
 export function call(methodName, args, msg = null) {
-  console.log("this (in rpc) = ", this);
-
   let id;
   if (this) {
     id = this.id = (this.id || 0) + 1;

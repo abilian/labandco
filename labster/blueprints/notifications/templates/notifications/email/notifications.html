@@ -1,0 +1,30 @@
+<html>
+<body>
+
+<p>
+Les demandes Lab&amp;Co vous concernant suivantes ont connue une activité
+depuis votre dernier rappel:
+</p>
+
+{% for demande in demandes %}
+  <hr>
+
+  <h3>
+    <a href="{{ url_for(demande, _external=True) }}">{{ demande.nom }}</a>
+  </h3>
+
+  {% set notifs = get_notifications(demande) %}
+
+  {% for notif in notifs %}
+    <p>
+      Le {{ notif.created_at | datetimeformat("d MMM Y à H:mm") }}: {{ notif.body|safe }}
+    </p>
+  {% endfor %}
+{% endfor %}
+
+<hr>
+
+{% include "emails/_footer.html" %}
+
+</body>
+</html>

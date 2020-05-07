@@ -8,18 +8,27 @@
       <div class="row">
         <box-demandes-a-valider
           name="Convention"
-          color="bg-aqua"
+          color="bg-pink"
+          tag="conventions"
           :nb="nb_conventions_a_valider"
         />
         <box-demandes-a-valider
           name="Recrutements"
           color="bg-red"
+          tag="rh"
           :nb="nb_recrutements_a_valider"
         />
         <box-demandes-a-valider
           name="PI et transfert"
           color="bg-green"
+          tag="pi"
           :nb="nb_pi_a_valider"
+        />
+        <box-demandes-a-valider
+          name="Autres"
+          color="bg-green"
+          tag="autres"
+          :nb="nb_autres_a_valider"
         />
       </div>
     </div>
@@ -27,6 +36,8 @@
 </template>
 
 <script>
+import _ from "lodash";
+
 import BoxDemandesAValider from "./BoxDemandesAValider";
 
 export default {
@@ -36,6 +47,7 @@ export default {
       nb_pi_a_valider: 0,
       nb_recrutements_a_valider: 0,
       nb_conventions_a_valider: 0,
+      nb_autres_a_valider: 0,
     };
   },
 

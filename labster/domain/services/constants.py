@@ -209,9 +209,7 @@ def _upgrade_if_needed(config: Config, initial_constants: Dict[str, Any]):
                     "Post-doctorant"
                 ]
             ]
-            if "doctorat-plus-3" in post_doct_names:
-                logger.info("constantes is up to date for 0.3 - doctorat-plus-3.")
-            else:
+            if "doctorat-plus-3" not in post_doct_names:
                 constants["recrutement"]["salaire_brut_mensuel_indicatif"][
                     "Post-doctorant"
                 ].append(
@@ -220,7 +218,7 @@ def _upgrade_if_needed(config: Config, initial_constants: Dict[str, Any]):
                     ][-1]
                 )
 
-        logger.info("--- constants updated for 0.3 - doctorat-plus-3")
+        # logger.info("--- constants updated for 0.3 - doctorat-plus-3")
         constants["version"] = 0.3
         needs_commit = True
 

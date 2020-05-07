@@ -5,7 +5,7 @@ import sys
 import time
 import traceback
 from json import JSONDecodeError
-from pprint import pformat
+from pprint import pformat, pprint
 
 from flask import Blueprint, Flask
 from flask import Request as FlaskRequest
@@ -24,6 +24,7 @@ from werkzeug.exceptions import Forbidden, Unauthorized
 from labster.auth import AuthContext
 from labster.types import JSON
 
+from ..domain2.services.roles import Role
 from .registry import register_submodules
 
 blueprint = Blueprint("rpc", __name__, url_prefix="/rpc")
@@ -43,17 +44,24 @@ def configure(state):
 
 @route("/", methods=["POST"])
 def index(app: Flask, request: FlaskRequest, auth: AuthContext):
+    req = request.get_data(as_text=True)
+    req_json = json.loads(req)
+    if app.debug:
+        pprint(req_json)
+
     user = auth.current_user
     if user and not user.is_authenticated:
         raise Unauthorized()
 
-    req = request.get_data(as_text=True)
     return run(req, app)
 
 
 @route("/debug/<method_name>")
-def debug(method_name: str, app: Flask, request: FlaskRequest):
-    if not app.debug:
+def debug(
+    method_name: str, app: Flask, request: FlaskRequest, auth_context: AuthContext
+):
+    user = auth_context.current_profile
+    if user and not user.has_role(Role.ADMIN_CENTRAL) and not app.debug:
         raise Forbidden()
 
     args = dict(request.args)
@@ -63,9 +71,7 @@ def debug(method_name: str, app: Flask, request: FlaskRequest):
 
 
 def run(req: str, app: Flask) -> Response:
-    debug = app.config["DEBUG"]
-
-    if debug:
+    if app.debug:
         print(78 * "#")
         print("# RPC request:")
         req_json = json.loads(req)

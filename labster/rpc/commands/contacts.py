@@ -9,7 +9,7 @@ from labster.di import injector
 from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.model.structure import StructureRepository
 from labster.domain2.services.contacts import ContactService, ContactType
-from labster.rbac import check_can_edit_roles
+from labster.rbac import check_can_edit_contacts
 
 structure_repo = injector.get(StructureRepository)
 profile_repo = injector.get(ProfileRepository)
@@ -20,7 +20,7 @@ db = injector.get(SQLAlchemy)
 @method
 def update_contacts(structure_id: str, contacts: Dict[str, str]):
     structure = structure_repo.get_by_id(structure_id)
-    check_can_edit_roles(structure)
+    check_can_edit_contacts(structure)
 
     for contact_type_name, uid in contacts.items():
         contact_type = getattr(ContactType, contact_type_name)

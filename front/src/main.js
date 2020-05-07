@@ -4,32 +4,20 @@
 // Fix this later (if you can figure out what it means!):
 /* eslint-disable vue/no-dupe-keys */
 
-import "@fortawesome/fontawesome-pro/css/fontawesome.css";
+import "@fortawesome/fontawesome-pro/css/all.css";
 
+// Remove ?
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
 // import "select2/dist/css/select2.css";
+import "vue-select/dist/vue-select.css";
 
 import "../sass/adminlte.css";
 import "../sass/main.scss";
 
 import Vue from "vue";
 import "./plugins/element";
-
-// import Toasted from "vue-toasted";
-//
-// Vue.use(Toasted, {
-//   position: "top-center",
-//   duration: 5000,
-//   fullWidth: true,
-//   action: {
-//     text: "X",
-//     onClick: (e, toastObject) => {
-//       toastObject.goAway(0);
-//     },
-//   },
-// });
 
 //
 // v3
@@ -41,6 +29,11 @@ import { Vue2Storage } from "vue2-storage";
 import VueMoment from "vue-moment";
 import moment from "moment";
 import accounting from "accounting";
+import vSelect from "vue-select";
+import VueQuillEditor from "vue-quill-editor";
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
 
 //
 // Register plugins & filters
@@ -48,6 +41,7 @@ import accounting from "accounting";
 Vue.use(BootstrapVue);
 
 Vue.component("multiselect", Multiselect);
+Vue.component("v-select", vSelect);
 
 Vue.use(Vue2Storage, {
   prefix: "app_",
@@ -61,6 +55,8 @@ Vue.use(VueMoment, { moment });
 Vue.filter("currency", function(val, symbol) {
   return accounting.formatMoney(val, symbol);
 });
+
+Vue.use(VueQuillEditor);
 
 //
 // Our own components & libraries
@@ -110,6 +106,14 @@ if (document.getElementById("feuille-cout")) {
     },
   });
 }
+
+// if (document.getElementById("constants-editor")) {
+//   new Vue({
+//     el: "#constants-editor",
+//     components: { ConstantsEditor, VueQuillEditor },
+//   });
+//   Vue.use(VueQuillEditor);
+// }
 
 // // Tables & formulaire demande
 // import BoxDemandes from "./grids/box-demandes.vue";

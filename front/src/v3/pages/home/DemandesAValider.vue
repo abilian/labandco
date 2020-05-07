@@ -6,6 +6,7 @@
       title="Demandes à valider"
       id="demandes_a_valider"
       scope="demandes à valider"
+      :tag="tag"
     />
   </div>
 </template>
@@ -14,6 +15,7 @@
 import BoxDemandes from "../../components/grids/box-demandes";
 
 export default {
+  props: ["tag"],
   components: { BoxDemandes },
 };
 </script>

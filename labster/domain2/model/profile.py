@@ -1,16 +1,19 @@
 from __future__ import annotations
 
 from abc import ABC, ABCMeta
+from datetime import datetime
 from typing import TYPE_CHECKING, Any, Set
 from uuid import uuid4
 
 from abilian.app import db
-from sqlalchemy import JSON, Boolean, Column, Integer, String
+from sqlalchemy import JSON, Boolean, Column, DateTime, Integer, String
 
 from labster.domain2.model.base import Repository
+from labster.ldap.constants import DRI_DN
 
 if TYPE_CHECKING:
     from labster.domain2.services.roles import Role
+    from labster.domain2.model.structure import Structure
 
 
 FLUX_TENDU = 0
@@ -26,7 +29,6 @@ class ProfileId(str):
 
 # @attrs(eq=False, order=False, repr=False, auto_attribs=True)
 class Profile(db.Model):
-
     __tablename__ = "v3_profiles"
 
     id = Column(String(36), primary_key=True)
@@ -46,29 +48,10 @@ class Profile(db.Model):
     affectation = Column(String, default="", nullable=False)
     fonctions = Column(JSON, nullable=False)
 
-    #: FLUX_TENDU = 0
-    #: DAILY = 1
-    #: WEEKLY = 2
     preferences_notifications = Column(Integer, default=0, nullable=False)
+    preferences_nb_jours_notifications = Column(Integer, default=0)
 
-    # #: Membre de la gouvernance ?
-    # gouvernance = Column(Boolean)
-    #
-    # #: A vraiment les droits de la gouvernance
-    # gouvernance_vraiment = Column(Boolean)
-    #
-    # #: Membre de la DGRTT
-    # dgrtt = Column(Boolean)
-    # chef_du_bureau = Column(Unicode)
-    #
-    # #: LDAP stuff
-    # fonction_structurelle_principale = Column(Unicode)
-    # #: More LDAP stuff
-    # ldap_entry = Column(String)
-    #
-    # date_derniere_notification_vue = Column(
-    #     DateTime, default=datetime.utcnow, nullable=False)
-    #
+    date_derniere_notification_vue = Column(DateTime, default=datetime.utcnow)
 
     def __init__(self, **kw):
         self.id = str(uuid4())
@@ -101,6 +84,19 @@ class Profile(db.Model):
     def deactivate(self):
         self.active = False
 
+    #
+    # Roles
+    #
+    def structure_d_appartenance(self) -> Structure:
+        from labster.domain2.services.roles import RoleService, Role
+        from labster.di import injector
+
+        role_service = injector.get(RoleService)
+        roles_dict = role_service.get_roles_for_user(self)
+        structures = roles_dict[Role.MEMBRE_AFFECTE]
+        assert len(structures) == 1
+        return list(structures)[0]
+
     def has_role(self, role: Role, context: Any = None) -> bool:
         from labster.domain2.services.roles import RoleService
         from labster.di import injector
@@ -108,54 +104,37 @@ class Profile(db.Model):
         role_service = injector.get(RoleService)
         return role_service.has_role(self, role, context)
 
+    def is_membre_dri(self):
+        from labster.di import injector
+        from labster.domain2.model.structure import StructureRepository
+        from labster.domain2.services.roles import Role
+
+        structure_repo = injector.get(StructureRepository)
+        dri = structure_repo.get_by_dn(DRI_DN)
+        return self.has_role(Role.MEMBRE, dri)
+
 
 class ProfileRepository(Repository, ABC, metaclass=ABCMeta):
-    # @abstractmethod
     def get_all(self) -> Set[Profile]:
         raise NotImplementedError
 
-    # @abstractmethod
     def put(self, profile: Profile):
         raise NotImplementedError
 
-    # @abstractmethod
     def delete(self, profile: Profile):
         raise NotImplementedError
 
-    #
-    # Default (slow) implems
-    #
     def get_by_id(self, id: ProfileId) -> Profile:
-        # assert isinstance(id, ProfileId)
-
-        for user in self.get_all():
-            if user.id == id:
-                return user
-        raise KeyError(id)
+        raise NotImplementedError
 
     def get_by_uid(self, uid: str) -> Profile:
-        for user in self.get_all():
-            if user.uid == uid:
-                return user
-        raise KeyError(uid)
+        raise NotImplementedError
 
     def get_by_old_id(self, old_id: int) -> Profile:
-        all = self.get_all()
-        for x in all:
-            if x.old_id == old_id:
-                return x
-        raise KeyError(old_id)
+        raise NotImplementedError
 
     def get_by_login(self, login: str) -> Profile:
-        all = self.get_all()
-        for x in all:
-            if x.login == login:
-                return x
-        raise KeyError(login)
+        raise NotImplementedError
 
     def get_by_old_uid(self, old_uid: str) -> Profile:
-        all = self.get_all()
-        for x in all:
-            if x.old_uid == old_uid:
-                return x
-        raise KeyError(old_uid)
+        raise NotImplementedError

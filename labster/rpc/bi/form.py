@@ -92,35 +92,20 @@ def get_selectors():
 
 
 def get_structure_choices():
-    equipe_ids = (
-        db.session.query(StatsLine.equipe_id)
-        .filter(StatsLine.equipe_id != None)
-        .distinct()
-        .all()
+    l2_ids = (
+        db.session.query(StatsLine.l2).filter(StatsLine.l2 != None).distinct().all()
     )
-    departement_ids = (
-        db.session.query(StatsLine.departement_id)
-        .filter(StatsLine.departement_id != None)
-        .distinct()
-        .all()
+    l3_ids = (
+        db.session.query(StatsLine.l3).filter(StatsLine.l3 != None).distinct().all()
     )
-    labo_ids = (
-        db.session.query(StatsLine.labo_id)
-        .filter(StatsLine.labo_id != None)
-        .distinct()
-        .all()
+    l4_ids = (
+        db.session.query(StatsLine.l4).filter(StatsLine.l4 != None).distinct().all()
     )
-    ufr_ids = (
-        db.session.query(StatsLine.ufr_id)
-        .filter(StatsLine.ufr_id != None)
-        .distinct()
-        .all()
+    l5_ids = (
+        db.session.query(StatsLine.l5).filter(StatsLine.l5 != None).distinct().all()
     )
-    pole_ids = (
-        db.session.query(StatsLine.pole_id)
-        .filter(StatsLine.pole_id != None)
-        .distinct()
-        .all()
+    l6_ids = (
+        db.session.query(StatsLine.l6).filter(StatsLine.l6 != None).distinct().all()
     )
 
     user = get_current_profile()
@@ -128,28 +113,19 @@ def get_structure_choices():
         structures = mes_structures(user)
 
     else:
-        ids = labo_ids + departement_ids + equipe_ids + ufr_ids + pole_ids
+        ids = l2_ids + l3_ids + l4_ids + l5_ids + l6_ids
         structure_ids = [x[0] for x in ids]
         query = db.session.query(Structure)
         structures = [query.get(id) for id in structure_ids]
 
-    def path(structure):
-        keys = ["pole", "ufr", "laboratoire", "departement", "equipe"]
-        path = []
-        for key in keys:
-            value = getattr(structure, key)
-            if value:
-                path.append(value.nom)
-            else:
-                path.append("")
-        return path
-
-    to_sort = [(path(structure), structure) for structure in structures]
-    to_sort.sort()
+    to_sort = [
+        (structure.path + [structure.nom], structure) for structure in structures
+    ]
+    to_sort.sort(key=lambda x: x[0])
     structures = [t[1] for t in to_sort]
 
     def make_label(structure):
-        prefix = "-" * structure.depth
+        prefix = "+-" * structure.depth
         return f"{prefix}{structure.nom} ({structure.type})"
 
     return [{"value": "", "text": "-"}] + [

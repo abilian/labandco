@@ -8,20 +8,22 @@ from __future__ import annotations
 from collections import Sequence
 from typing import Collection, Dict, List, Tuple
 
+from devtools import debug
 from jsonrpcserver import method
 from marshmallow import Schema, fields
 from marshmallow_sqlalchemy import ModelSchema
 from werkzeug.exceptions import NotFound
 
+from labster import rbac
 from labster.di import injector
 from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.model.structure import Structure, StructureId, \
     StructureRepository
-from labster.domain2.model.type_structure import ALL_TYPES
+from labster.domain2.model.type_structure import ALL_TYPES, DE, EQ
 from labster.domain2.services.roles import Role, RoleService
-from labster.rbac import structure_is_editable
+from labster.rbac import has_permission
 from labster.rpc.cache import cache
-from labster.security import get_current_user
+from labster.security import get_current_profile, get_current_user
 from labster.types import JSON
 from labster.util import sort_by_name
 
@@ -65,74 +67,59 @@ def sg_all_structures() -> JSON:
 
 @method
 def sg_get_structure(structure_id) -> JSON:
-    # current_user = get_current_user()
-    # if current_user.is_authenticated:
-    #     editable =
-    #     editable = current_user.profile.has_role(Role.ADMIN_CENTRAL)
-    # else:
-    #     # Only for tests
-    #     editable = True
-
-    try:
-        structure = structure_repo.get_by_id(StructureId(structure_id))
-        assert structure
-    except (KeyError, AssertionError):
+    structure = structure_repo.get_by_id(StructureId(structure_id))
+    if not structure:
         raise NotFound()
-    editable = structure_is_editable(structure)
 
     ou_dto = FullStructureSchema().dump(structure).data
-    ou_dto["editable"] = editable
-    # FIXME: parents should be ordered
     ou_dto["parents"] = convert_structures_to_dto(list(structure.parents))
     ou_dto["children"] = convert_structures_to_dto(sort_by_name(structure.children))
     ou_dto["ancestors"] = convert_structures_to_dto(structure.ancestors)
-
-    # TODO
-    ou_dto["contributeurs"] = []
-
-    # role_to_users = role_service.get_users_with_role_on(structure)
-    # signataires = role_to_users[Role.SIGNATAIRE]
-    # if signataires:
-    #     [signataire] = list(signataires)
-    #     ou_dto["signataire"] = {"id": signataire.id, "name": signataire.name}
-    # else:
-    #     ou_dto["directeur"] = None
 
     return ou_dto
 
 
 @method
 def sg_structure_can_be_deleted(id: str):
-    try:
-        structure = structure_repo.get_by_id(StructureId(id))
-        assert structure
-    except (KeyError, AssertionError):
+    structure = structure_repo.get_by_id(id)
+    if not structure:
         raise NotFound()
-
-    # TODO
-    return True
+    return has_permission(structure, "P3")
 
 
 @method
 def sg_get_possible_child_types(id: str) -> List[Dict[str, str]]:
-    try:
-        structure = structure_repo.get_by_id(StructureId(id))
-        assert structure
-    except (KeyError, AssertionError):
+    user = get_current_profile()
+
+    structure = structure_repo.get_by_id(id)
+    if not structure:
         raise NotFound()
+
+    if not has_permission(structure, "P3"):
+        return []
 
     result = []
     for candidate_type in ALL_TYPES:
         if candidate_type.reel:
             continue
         if structure.type.can_have_child_of_type(candidate_type):
-            result.append({"value": candidate_type.id, "text": candidate_type.name})
+            if user.has_role(Role.ADMIN_CENTRAL):
+                result.append({"value": candidate_type.id, "text": candidate_type.name})
+            elif candidate_type in [DE, EQ]:
+                result.append({"value": candidate_type.id, "text": candidate_type.name})
+
     return result
 
 
 @method
 def sg_get_parents_options(id):
-    structure = structure_repo.get_by_id(StructureId(id))
+    structure = structure_repo.get_by_id(id)
+    if not structure:
+        raise NotFound()
+
+    if not has_permission(structure, "P2"):
+        return []
+
     result = []
     for s in possible_parents(structure, structure_repo):
         if s.sigle:
@@ -140,13 +127,18 @@ def sg_get_parents_options(id):
         else:
             text = f"{s.type}: {s.name}"
         result.append({"text": text, "value": s.id})
+
     return sorted(result, key=lambda x: x["text"])
 
 
 @method
 def sg_get_children_options(id) -> JSON:
-    structure = structure_repo.get_by_id(StructureId(id))
-    assert structure
+    structure = structure_repo.get_by_id(id)
+    if not structure:
+        raise NotFound()
+
+    if not has_permission(structure, "P2"):
+        return []
 
     result = []
     for s in possible_children(structure, structure_repo):
@@ -155,6 +147,7 @@ def sg_get_children_options(id) -> JSON:
         else:
             text = f"{s.type}: {s.name}"
         result.append({"text": text, "value": s.id})
+
     return sorted(result, key=lambda x: x["text"])
 
 
@@ -186,6 +179,7 @@ class FullStructureSchema(ModelSchema):
     is_reelle = fields.Bool()
     _depth = fields.Integer()
     can_be_deleted = fields.Method("_can_be_deleted")
+    permissions = fields.Method("get_permissions")
 
     class Meta:
         model = Structure
@@ -206,6 +200,9 @@ class FullStructureSchema(ModelSchema):
             return False
 
         return True
+
+    def get_permissions(self, structure: Structure) -> Dict[str, bool]:
+        return {p: True for p in rbac.get_permissions_for_structure(structure)}
 
 
 def convert_structures_to_dto(structures: Sequence[Structure]) -> JSON:

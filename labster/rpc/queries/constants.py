@@ -9,6 +9,4 @@ from labster.types import JSONDict
 
 @method
 def get_constants() -> JSONDict:
-    constants = _get_constants()
-    constants["types"] = TYPES
-    return constants
+    return {"values": _get_constants(), "types": TYPES}

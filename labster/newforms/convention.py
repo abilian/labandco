@@ -83,7 +83,7 @@ partenaires = FieldSet(  #
         HTML(
             "<p>Vous devez saisir au moins un partenaire, sauf s'il s'agit d’un appel à projet, auquel cas la liste des partenaires est à renseigner dans les pièces jointes et non ici.</p>"
         ),
-        ListePartenaires("partenaires", "", required=False),
+        ListePartenaires("partenaires", "Partenaires", required=False),
     ],
 )
 
@@ -115,7 +115,6 @@ apport_upmc = FieldSet(  #
             "<p><em>Quelles sont les résultats antérieurs mis en œuvre dans le projet par votre équipe Sorbonne Université&nbsp;?</em></p>"
         ),
         #
-        HTML("<p><b>Matériel / données</b></p>"),
         TriStateField("materiel_donnees", "Matériel / données", required=True),
         BooleanField("materiel_donnees_propre_upmc", "Propre à Sorbonne Université"),
         BooleanField(
@@ -125,8 +124,8 @@ apport_upmc = FieldSet(  #
         BooleanField("materiel_donnees_humains", "Humains"),
         BooleanField("materiel_donnees_infectieux", "Infectieux"),
         TextAreaField("materiel_donnees_description", "Description"),
+        HTML("<hr>"),
         #
-        HTML("<p><b>Savoir-faire / expertise</b></p>"),
         TriStateField("savoir_faire", "Savoir-faire / expertise", required=True),
         BooleanField("savoir_faire_propre_upmc", "Propre à Sorbonne Université"),
         BooleanField(
@@ -134,8 +133,8 @@ apport_upmc = FieldSet(  #
             "Obtenu lors de précédents contrats",
         ),
         TextAreaField("savoir_faire_description", "Description"),
+        HTML("<hr>"),
         #
-        HTML("<p><b>Logiciel</b></p>"),
         TriStateField("logiciel", "Logiciel", required=True),
         BooleanField("logiciel_propre_upmc", "Propre à Sorbonne Université"),
         BooleanField(
@@ -143,14 +142,15 @@ apport_upmc = FieldSet(  #
         ),
         BooleanField("logiciel_libre", "Libre"),
         TextAreaField("logiciel_description", "Description"),
+        HTML("<hr>"),
         #
-        HTML("<p><b>Brevet</b></p>"),
         TriStateField("brevet", "Brevet", required=True),
         BooleanField("brevet_propre_upmc", "Propre à Sorbonne Université"),
         BooleanField(
             "brevet_obtenu_precedents_contrats", "Obtenu lors de précédents contrats"
         ),
         TextAreaField("brevet_description", "Description"),
+        HTML("<hr>"),
         #
         HTML("<p><b>Types de résultats attendus</b></p>"),
         #
@@ -159,6 +159,7 @@ apport_upmc = FieldSet(  #
         BooleanField("resultats_logiciel", "Logiciel"),
         BooleanField("resultats_autre", "Autre"),
         StringField("resultats_preciser", "Préciser"),
+        HTML("<hr>"),
         #
         HTML("<p><b>À qui vont appartenir les résultats&nbsp;?</b></p>"),
         #

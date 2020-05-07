@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import hashlib
+import uuid
 from typing import List
 
 from flask_babel import format_date
 
-from labster.domain.models.profiles import Profile
+from labster.domain2.model.profile import Profile
 from labster.domain.models.util import parse_date
 from labster.types import JSONDict
 
@@ -15,7 +15,9 @@ class Field:
     visible = True
     hidden = False
     editable = True
+    scalar = True
     note = ""
+    specs: List[List[str]] = []
 
     def __init__(self, name, label, **kw):
         self.name = name
@@ -24,17 +26,17 @@ class Field:
             setattr(self, k, v)
 
     def to_dict(self) -> JSONDict:
-        class_name = self.__class__.__name__
         return {
             "name": self.name,
-            "type": [class_name],
-            "scalar": not class_name.startswith("List"),
+            "type": self.__class__.__name__,
+            "scalar": self.scalar,
             "label": self.label,
             "required": self.required,
             "visible": self.visible,
             "hidden": self.hidden,
             "editable": self.editable,
             "note": self.note,
+            "specs": self.specs,
         }
 
     def get_display_value(self, demande) -> str:
@@ -91,6 +93,10 @@ class TriStateField(Field):
     pass
 
 
+# def make_choices(l: List[str]):
+#     return [{"value": x, "label": x} for x in l]
+
+
 class Select2Field(Field):
     choices: List[str] = []
 
@@ -100,11 +106,15 @@ class Select2Field(Field):
             choices = self.choices()
         else:
             choices = self.choices
-        if choices and isinstance(choices[0], str):
-            d["choices"] = [[x, x] for x in choices]
-        else:
-            d["choices"] = choices
+
+        d["choices"] = choices
         return d
+
+        # if choices and isinstance(choices[0], str):
+        #     d["choices"] = make_choices(choices)
+        # else:
+        #     d["choices"] = choices
+        # return d
 
 
 class MultipleSelect2Field(Field):
@@ -116,10 +126,7 @@ class MultipleSelect2Field(Field):
             choices = self.choices()
         else:
             choices = self.choices
-        if choices and isinstance(choices[0], str):
-            d["choices"] = [[x, x] for x in choices]
-        else:
-            d["choices"] = choices
+        d["choices"] = choices
         return d
 
 
@@ -132,40 +139,72 @@ class HTML(Field):
 
     def __init__(self, text, name=""):
         if not name:
-            name = "html-" + hashlib.md5(text.encode("utf8")).hexdigest()
+            name = "html-" + uuid.uuid4().hex
         super().__init__(name, text)
 
 
-class ListePartenaires(Field):
-    pass
+class ListField(Field):
+    scalar = False
 
 
-class ListePartenairesContactes(Field):
-    pass
+class ListePartenaires(ListField):
+    specs = [
+        ["nom_partenaire", "Nom du partenaire"],
+        ["prenom_nom_contact", "Contact"],
+        ["mail_contact", "Email"],
+        ["telephone_contact", "Téléphone"],
+    ]
 
 
-class ListeDivulgationsPassees(Field):
-    pass
+class ListePartenairesContactes(ListField):
+    specs = [
+        ["contact", "Contact"],
+        ["nom_partenaire", "Nom du partenaire"],
+    ]
 
 
-class ListeDivulgationsFutures(Field):
-    pass
+class ListeDivulgationsPassees(ListField):
+    specs = [
+        ["type_divulgation", "Type de divulgation"],
+        ["titre", "Titre"],
+        ["date_lieu", "Date et lieu"],
+    ]
 
 
-class ListeContrats(Field):
-    pass
+class ListeDivulgationsFutures(ListField):
+    specs = [
+        ["type_divulgation", "Type de divulgation"],
+        ["date", "Date envisagée"],
+    ]
 
 
-class ListeMateriels(Field):
-    pass
+class ListeContrats(ListField):
+    specs = [
+        ["contrat", "Contrat/Partenariat de recherche"],
+        ["date_signature", "Date de signature du contrat"],
+        ["reference", "Référence du contrat"],
+    ]
 
 
-class ListeAutresDeclarations(Field):
-    pass
+class ListeMateriels(ListField):
+    specs = [
+        ["materiel", "Matériel"],
+    ]
 
 
-class ListeLicencesExistantes(Field):
-    pass
+class ListeAutresDeclarations(ListField):
+    specs = [
+        ["type_protection", "Type de protection"],
+        ["organisme", "Organisme ayant fait le dépôt"],
+        ["exploitation", "Exploitation industrielle"],
+    ]
+
+
+class ListeLicencesExistantes(ListField):
+    specs = [
+        ["type_licence", "Type de la licence"],
+        ["nom_version_licence", "Nom et version de la licence"],
+    ]
 
 
 class FieldSet:

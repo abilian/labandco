@@ -14,7 +14,7 @@
 
     <div class="col-md-3 col-sm-6 col-xs-12">
       <!--      <a href="{{ url_for(" main.contacts") }}">-->
-      <a href="#">
+      <a href="/#/mes_contacts">
         <div class="info-box">
           <span class="info-box-icon bg-teal"
             ><i class="far fa-users"></i
@@ -30,15 +30,13 @@
 </template>
 
 <script>
-export default {
-  name: "MessageDgrtt",
+import Vue from "vue";
 
-  data() {
-    return {
-      messageDgrtt: "Test <b>html</b>",
-    };
+export default {
+  computed: {
+    messageDgrtt() {
+      return Vue.$storage.get("user_context").message_dgrtt;
+    },
   },
 };
 </script>
-
-<style scoped></style>

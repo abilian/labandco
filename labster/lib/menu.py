@@ -24,6 +24,10 @@ class Node:
     def is_active(self) -> bool:
         profile = get_current_profile()
         required_roles = self.get("requires_role")
+        precondition = self.get("precondition")
+
+        if precondition:
+            return precondition()
 
         if not required_roles:
             return True
@@ -33,6 +37,9 @@ class Node:
                 return True
 
             if role == "directeur" and profile.has_role(Role.RESPONSABLE, "*"):
+                return True
+
+            if isinstance(role, Role) and profile.has_role(role):
                 return True
 
         return False

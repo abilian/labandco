@@ -108,20 +108,18 @@ description_oeuvre = FieldSet(
     ],
 )
 
-_CHOICES1 = [
+CHOICES1 = [
     "Logiciel (code source)",
     "Logiciel (code objet)",
     "Base de données",
     "Autre",
 ]
-CHOICES1 = [[x, x] for x in _CHOICES1]
 
-_CHOICES_ORIGINALITE = [
+CHOICES_ORIGINALITE = [
     "logiciel premier (logiciel qui a été intégralement développé, sans utilisation de code préexistant)",
     "logiciel composé (logiciel qui incorpore tout ou partie d’un logiciel préexistant)",
     "logiciel dérivé (adaptation d’un logiciel préexistant, par exemple une version d’un programme pour un client spécifique ou portage d’un logiciel d’un environnement à un autre",
 ]
-CHOICES_ORIGINALITE = [[x, x] for x in _CHOICES_ORIGINALITE]
 
 type_oeuvre = FieldSet(
     "type_oeuvre",

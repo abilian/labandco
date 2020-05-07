@@ -39,7 +39,6 @@ class SqlaStructureRepository(StructureRepository):
 
     def clear(self):
         self.query().delete()
-        self.session.flush()
 
     def get_by(self, key: str, value: Any) -> Optional[Structure]:
         return self.query().filter_by(**{key: value}).first()

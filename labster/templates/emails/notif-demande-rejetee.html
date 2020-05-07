@@ -19,11 +19,11 @@
   {{ transition.note }}
 </blockquote>
 
-<p>
-  Si vous souhaitez donner votre avis sur le traitement de cette demande, <a
-    href="{{ url_for("demandes.questionnaire", demande_id=demande.id, _external=True) }}">cliquez
-  ici</a>.
-</p>
+{#<p>#}
+{#  Si vous souhaitez donner votre avis sur le traitement de cette demande, <a#}
+{#    href="{{ url_for("demandes.questionnaire", demande_id=demande.id, _external=True) }}">cliquez#}
+{#  ici</a>.#}
+{#</p>#}
 
 {% include "emails/_footer.html" %}
 

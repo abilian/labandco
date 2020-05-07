@@ -8,7 +8,7 @@ from typing import Any, Dict, Optional, Set
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject
 from sqlalchemy import Column, ForeignKey, String, Table
-from sqlalchemy.orm import mapper, relationship
+from sqlalchemy.orm import joinedload, mapper, relationship
 
 from labster.domain2.model.profile import Profile
 from labster.domain2.model.structure import Structure
@@ -62,7 +62,6 @@ class SqlaRoleService(RoleService):
 
     def clear(self):
         self.query().delete()
-        self.session.flush()
 
     def grant_role(self, user: Profile, role: Role, context: Any = None):
         grant = self.get_grant(user, role, context)
@@ -113,14 +112,17 @@ class SqlaRoleService(RoleService):
     def get_users_with_role(self, role: Role, context: Any = None) -> Set[Profile]:
         assert isinstance(role, Role)
 
-        if context:
-            context_id = context.id
+        query = self.query().filter_by(role_name=role.name)
+        if isinstance(context, Structure):
+            query = query.filter_by(context_id=context.id)
+        elif context is None:
+            query = query.filter_by(context_id=None)
+        elif context == "*":
+            pass
         else:
-            context_id = None
-        query = (
-            self.query().filter_by(role_name=role.name).filter_by(context_id=context_id)
-        )
-        grants = query.all()
+            raise TypeError(f"Illegal argument for context: {context}")
+
+        grants = query.options(joinedload(Grant.user)).all()
         return {grant.user for grant in grants}
 
     def get_users_with_role_on(self, context: Structure) -> Dict[Role, Set[Profile]]:
@@ -138,11 +140,20 @@ class SqlaRoleService(RoleService):
         assert isinstance(role, Role)
         assert isinstance(context, Structure)
 
-        query = (
-            self.query()
-            .filter(Grant.role_name == role.name)
-            .filter(Grant.context_id == context.id)
-        )
+        query = self.query().filter(Grant.context_id == context.id)
+        if role == Role.MEMBRE:
+            query = query.filter(
+                Grant.role_name.in_(
+                    [
+                        Role.MEMBRE.name,
+                        Role.MEMBRE_AFFILIE.name,
+                        Role.MEMBRE_AFFECTE.name,
+                        Role.MEMBRE_RATTACHE.name,
+                    ]
+                )
+            )
+        else:
+            query = query.filter(Grant.role_name == role.name)
         grants = query.all()
         return {grant.user for grant in grants}
 

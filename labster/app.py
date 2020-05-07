@@ -9,6 +9,7 @@ import sqlalchemy.exc
 from abilian.app import Application as BaseApplication
 from abilian.core.celery import FlaskCelery as BaseCelery
 from abilian.core.celery import FlaskLoader as CeleryBaseLoader
+from abilian.i18n import babel
 from flask import Flask
 from flask_injector import FlaskInjector
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -17,7 +18,7 @@ from werkzeug.wsgi import ClosingIterator
 
 from .config import get_config
 from .di import injector
-from .extensions import redis
+from .extensions import redis, whoosh
 from .logging import init_logging
 
 # Set up warnings control
@@ -53,6 +54,12 @@ def create_app(config: Optional[Type] = None) -> Flask:
 
     register_commands(app)
 
+    # Temp
+    from labster.domain import models
+
+    # don't use abilian-core error handlers
+    app.error_handler_spec = {}
+
     return app
 
 
@@ -69,6 +76,10 @@ def init_config(app: Application, config: Optional[Type]):
 def init_extensions(app: Flask) -> None:
     init_sentry(app)
     redis.init_app(app)
+    whoosh.init_app(app)
+
+    # Hack: we want always french
+    babel.locale_selector_func = lambda: "fr"
 
 
 def init_sentry(app: Flask) -> None:
@@ -76,7 +87,11 @@ def init_sentry(app: Flask) -> None:
     if not dsn:
         return
 
-    sentry_sdk.init(dsn=dsn, integrations=[FlaskIntegration(), SqlalchemyIntegration()])
+    sentry_sdk.init(
+        dsn=dsn,
+        integrations=[FlaskIntegration(), SqlalchemyIntegration()],
+        traces_sample_rate=0.25,
+    )
 
 
 # loader to be used by celery workers

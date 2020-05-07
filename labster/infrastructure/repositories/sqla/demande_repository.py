@@ -33,6 +33,4 @@ class SqlaDemandeRepository(DemandeRepository):
         self.session.flush()
 
     def clear(self):
-        for x in self.get_all():
-            self.session.delete(x)
-        self.session.flush()
+        self.query().delete()

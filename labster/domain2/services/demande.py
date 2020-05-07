@@ -43,12 +43,12 @@ def get_demande_types_for_user(user: Profile) -> Set[str]:
     # Cf. https://trello.com/c/UM96aY5s
     result = {"faq"}
 
-    if structures:
-        result |= {"autre"}
-
     for s in structures:
         if not contact_service.get_mapping_for(s):
             continue
+
+        if role_service.has_role(user, Role.PORTEUR, s):
+            result |= {"autre"}
 
         x = MAP[s.type]
         if REC in x:

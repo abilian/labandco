@@ -14,7 +14,7 @@
         >
           Sauver la demande
         </button>
-
+        &nbsp;
         <button
           id="cancel"
           type="submit"
@@ -31,6 +31,7 @@
 <script>
 import FieldSet from "../../components/forms/FieldSet";
 import update_form from "../../components/forms/update_form";
+import EventBus from "../../../event-bus";
 
 export default {
   props: { demande: Object, form: Object },
@@ -55,6 +56,7 @@ export default {
 
   created() {
     this.modelUpdated();
+    EventBus.$on("model-changed", this.modelUpdated);
   },
 
   methods: {
@@ -80,6 +82,7 @@ export default {
           });
         }
 
+        this.$parent.$parent.$parent.refresh();
         this.$parent.$parent.$parent.goToTab(0);
       });
 

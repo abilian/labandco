@@ -16,13 +16,12 @@ from labster.types import JSON, JSONDict
 
 role_service = injector.get(RoleService)
 contact_service = injector.get(ContactService)
+profile_repo = injector.get(ProfileRepository)
+structure_repo = injector.get(StructureRepository)
 
 
 @context_for("user")
 def get_user(id: str) -> JSONDict:
-    profile_repo = injector.get(ProfileRepository)
-    structure_repo = injector.get(StructureRepository)
-
     user = profile_repo.get_by_id(ProfileId(id))
     if not user:
         user = profile_repo.get_by_old_uid(id)
@@ -91,7 +90,7 @@ def get_roles_dto_for_user(
     else:
         ancestors = set()
 
-    def get_roles_dto(structure):
+    def get_roles_list(structure):
         role_list: List[str] = []
         for role, structures in roles_for_user.items():
             if role == Role.MEMBRE:
@@ -110,12 +109,17 @@ def get_roles_dto_for_user(
             if structure in structures:
                 role_list.append(role.value)
 
+        role_set = set(role_list)
+        if Role.MEMBRE_AFFECTE.value in role_set:
+            role_set.discard(Role.MEMBRE_AFFILIE.value)
+        role_list = list(role_set)
+
         role_list.sort()
         return role_list
 
     roles_dto = []
     for structure in list_structures:
-        role_list = get_roles_dto(structure)
+        role_list = get_roles_list(structure)
         if not role_list:
             continue
 

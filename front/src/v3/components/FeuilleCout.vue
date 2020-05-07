@@ -1,6 +1,6 @@
 <!-- suppress OverlyComplexArithmeticExpressionJS -->
 <template>
-  <div class="m-3">
+  <div class="m-3 feuille-cout">
     <h1>
       Estimation des coûts complets de la recherche
       <span v-if="!model.id">(calculette)</span>
@@ -45,7 +45,10 @@
       <tbody>
         <tr v-for="(line, index) in model.t1.lines">
           <td>
-            <button class="btn btn-danger" @click="removeLine('t1', line)">
+            <button
+              class="btn btn-danger no-print"
+              @click="removeLine('t1', line)"
+            >
               -
             </button>
           </td>
@@ -56,6 +59,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.nom }}</span>
           </td>
 
           <td>
@@ -65,6 +69,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.prenom }}</span>
           </td>
 
           <td>
@@ -74,6 +79,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.employeur }}</span>
           </td>
 
           <td>
@@ -90,6 +96,7 @@
                 {{ statut }}
               </option>
             </select>
+            <span class="only-print">{{ line.statut }}</span>
           </td>
 
           <td>{{ line.brut_mensuel | currency("€") }}</td>
@@ -101,6 +108,7 @@
               class="form-control"
               type="number"
             />
+            <span class="only-print">{{ line.duree_mois }}</span>
           </td>
 
           <td>
@@ -110,6 +118,7 @@
               class="form-control"
               type="number"
             />
+            <span class="only-print">{{ line.pc_activite }}</span>
           </td>
 
           <td class="number">
@@ -142,7 +151,11 @@
       </tbody>
     </table>
 
-    <button v-if="!readonly" class="btn btn-default" @click="addLine('t1')">
+    <button
+      v-if="!readonly"
+      class="btn btn-default no-print"
+      @click="addLine('t1')"
+    >
       +
     </button>
 
@@ -175,7 +188,10 @@
       <tbody>
         <tr v-for="line in model.t2.lines">
           <td>
-            <button class="btn btn-danger" @click="removeLine('t2', line)">
+            <button
+              class="btn btn-danger no-print"
+              @click="removeLine('t2', line)"
+            >
               -
             </button>
           </td>
@@ -187,6 +203,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.nom }}</span>
           </td>
 
           <td>
@@ -196,6 +213,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.prenom }}</span>
           </td>
 
           <td>
@@ -205,6 +223,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.employeur }}</span>
           </td>
 
           <td>
@@ -221,6 +240,7 @@
                 {{ statut }}
               </option>
             </select>
+            <span class="only-print">{{ line.statut }}</span>
           </td>
 
           <td>
@@ -230,6 +250,7 @@
               class="form-control"
               type="number"
             />
+            <span class="only-print">{{ line.duree_mois }}</span>
           </td>
 
           <td>
@@ -239,6 +260,7 @@
               class="form-control"
               type="number"
             />
+            <span class="only-print">{{ line.pc_activite }}</span>
           </td>
 
           <td>{{ line.personne_mois }}</td>
@@ -262,7 +284,11 @@
       </tbody>
     </table>
 
-    <button v-if="!readonly" class="btn btn-default" @click="addLine('t2')">
+    <button
+      v-if="!readonly"
+      class="btn btn-default no-print"
+      @click="addLine('t2')"
+    >
       +
     </button>
 
@@ -296,7 +322,10 @@
       <tbody>
         <tr v-for="line in model.t3.lines">
           <td>
-            <button class="btn btn-danger" @click="removeLine('t3', line)">
+            <button
+              class="btn btn-danger no-print"
+              @click="removeLine('t3', line)"
+            >
               -
             </button>
           </td>
@@ -308,6 +337,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.nom }}</span>
           </td>
 
           <td>
@@ -317,6 +347,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.prenom }}</span>
           </td>
 
           <td>
@@ -326,6 +357,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.employeur }}</span>
           </td>
 
           <td>CDD</td>
@@ -336,7 +368,9 @@
               v-model="line.brut_mensuel"
               class="form-control"
               type="number"
+              step="0.01"
             />
+            <span class="only-print">{{ line.brut_mensuel }}</span>
           </td>
 
           <td>
@@ -346,6 +380,7 @@
               class="form-control"
               type="number"
             />
+            <span class="only-print">{{ line.duree_mois }}</span>
           </td>
 
           <td>
@@ -355,6 +390,7 @@
               class="form-control"
               type="number"
             />
+            <span class="only-print">{{ line.pc_activite }}</span>
           </td>
 
           <td>{{ line.personne_mois }}</td>
@@ -396,7 +432,11 @@
       </tbody>
     </table>
 
-    <button v-if="!readonly" class="btn btn-default" @click="addLine('t3')">
+    <button
+      v-if="!readonly"
+      class="btn btn-default no-print"
+      @click="addLine('t3')"
+    >
       +
     </button>
 
@@ -429,7 +469,10 @@
       <tbody>
         <tr v-for="line in model.t4.lines">
           <td>
-            <button class="btn btn-danger" @click="removeLine('t4', line)">
+            <button
+              class="btn btn-danger no-print"
+              @click="removeLine('t4', line)"
+            >
               -
             </button>
           </td>
@@ -441,6 +484,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.nom }}</span>
           </td>
 
           <td>
@@ -450,6 +494,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.prenom }}</span>
           </td>
 
           <td>{{ model.constants.COUT_HORAIRE_STAGE | currency("€") }}</td>
@@ -461,6 +506,7 @@
               class="form-control"
               type="number"
             />
+            <span class="only-print">{{ line.duree_mois }}</span>
           </td>
 
           <td>
@@ -470,6 +516,7 @@
               class="form-control"
               type="number"
             />
+            <span class="only-print">{{ line.pc_activité }}</span>
           </td>
 
           <td>{{ line.personne_mois }}</td>
@@ -501,7 +548,11 @@
       </tbody>
     </table>
 
-    <button v-if="!readonly" class="btn btn-default" @click="addLine('t4')">
+    <button
+      v-if="!readonly"
+      class="btn btn-default no-print"
+      @click="addLine('t4')"
+    >
       +
     </button>
 
@@ -527,7 +578,10 @@
       <tbody>
         <tr v-for="line in model.t5.lines">
           <td>
-            <button class="btn btn-danger" @click="removeLine('t5', line)">
+            <button
+              class="btn btn-danger no-print"
+              @click="removeLine('t5', line)"
+            >
               -
             </button>
           </td>
@@ -539,6 +593,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.designation }}</span>
           </td>
 
           <td>
@@ -547,7 +602,9 @@
               v-model="line.cout_ht"
               class="form-control"
               type="number"
+              step="0.01"
             />
+            <span class="only-print">{{ line.cout_ht }}</span>
           </td>
         </tr>
 
@@ -562,7 +619,11 @@
       </tbody>
     </table>
 
-    <button v-if="!readonly" class="btn btn-default" @click="addLine('t5')">
+    <button
+      v-if="!readonly"
+      class="btn btn-default no-print"
+      @click="addLine('t5')"
+    >
       +
     </button>
 
@@ -589,7 +650,10 @@
       <tbody>
         <tr v-for="line in model.t6.lines">
           <td>
-            <button class="btn btn-danger" @click="removeLine('t6', line)">
+            <button
+              class="btn btn-danger no-print"
+              @click="removeLine('t6', line)"
+            >
               -
             </button>
           </td>
@@ -601,6 +665,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.designation }}</span>
           </td>
 
           <td>
@@ -609,8 +674,10 @@
               v-model="line.cout_ht"
               class="form-control"
               type="number"
+              step="0.01"
             />
           </td>
+          <span class="only-print">{{ line.cout_ht }}</span>
         </tr>
 
         <tr>
@@ -624,7 +691,11 @@
       </tbody>
     </table>
 
-    <button v-if="!readonly" class="btn btn-default" @click="addLine('t6')">
+    <button
+      v-if="!readonly"
+      class="btn btn-default no-print"
+      @click="addLine('t6')"
+    >
       +
     </button>
 
@@ -648,7 +719,10 @@
       <tbody>
         <tr v-for="line in model.t7.lines">
           <td>
-            <button class="btn btn-danger" @click="removeLine('t7', line)">
+            <button
+              class="btn btn-danger no-print"
+              @click="removeLine('t7', line)"
+            >
               -
             </button>
           </td>
@@ -660,10 +734,17 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.designation }}</span>
           </td>
 
           <td>
-            <input v-model="line.cout_ht" class="form-control" type="number" />
+            <input
+              v-model="line.cout_ht"
+              class="form-control"
+              type="number"
+              step="0.01"
+            />
+            <span class="only-print">{{ line.cout_ht }}</span>
           </td>
         </tr>
 
@@ -678,7 +759,11 @@
       </tbody>
     </table>
 
-    <button v-if="!readonly" class="btn btn-default" @click="addLine('t7')">
+    <button
+      v-if="!readonly"
+      class="btn btn-default no-print"
+      @click="addLine('t7')"
+    >
       +
     </button>
 
@@ -702,7 +787,10 @@
       <tbody>
         <tr v-for="line in model.t8.lines">
           <td>
-            <button class="btn btn-danger" @click="removeLine('t8', line)">
+            <button
+              class="btn btn-danger no-print"
+              @click="removeLine('t8', line)"
+            >
               -
             </button>
           </td>
@@ -714,6 +802,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.designation }}</span>
           </td>
 
           <td>
@@ -722,7 +811,9 @@
               v-model="line.cout_ht"
               class="form-control"
               type="number"
+              step="0.01"
             />
+            <span class="only-print">{{ line.cout_ht }}</span>
           </td>
         </tr>
 
@@ -737,7 +828,11 @@
       </tbody>
     </table>
 
-    <button v-if="!readonly" class="btn btn-default" @click="addLine('t8')">
+    <button
+      v-if="!readonly"
+      class="btn btn-default no-print"
+      @click="addLine('t8')"
+    >
       +
     </button>
 
@@ -768,7 +863,10 @@
       <tbody>
         <tr v-for="line in model.t9.lines">
           <td>
-            <button class="btn btn-danger" @click="removeLine('t9', line)">
+            <button
+              class="btn btn-danger no-print"
+              @click="removeLine('t9', line)"
+            >
               -
             </button>
           </td>
@@ -780,6 +878,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.designation }}</span>
           </td>
 
           <td>
@@ -796,6 +895,7 @@
                 {{ categorie }}
               </option>
             </select>
+            <span class="only-print">{{ line.categorie }}</span>
           </td>
 
           <td>
@@ -805,6 +905,7 @@
               class="form-control"
               type="text"
             />
+            <span class="only-print">{{ line.mois_annee_achat }}</span>
           </td>
 
           <td>
@@ -814,6 +915,7 @@
               class="form-control"
               type="number"
             />
+            <span class="only-print">{{ line.pc_utilisation }}</span>
           </td>
 
           <td>{{ line.duree_amortissement }}</td>
@@ -824,7 +926,9 @@
               v-model="line.prix_achat"
               class="form-control"
               type="number"
+              step="0.01"
             />
+            <span class="only-print">{{ line.prix_achat }}</span>
           </td>
 
           <td>{{ line.charge_amortissement | currency("€") }}</td>
@@ -841,7 +945,11 @@
       </tbody>
     </table>
 
-    <button v-if="!readonly" class="btn btn-default" @click="addLine('t9')">
+    <button
+      v-if="!readonly"
+      class="btn btn-default no-print"
+      @click="addLine('t9')"
+    >
       +
     </button>
 
@@ -991,7 +1099,8 @@
             v-model="model.couts_induits"
             type="number"
             style="width: 40px;"
-          />% du coût total)
+          /><span class="only-print">{{ model.couts_induits }}</span
+          >% du coût total)
         </td>
         <td class="currency">
           {{ model.ca10 | currency("€") }}
@@ -1010,7 +1119,8 @@
             v-model="model.preciput_labo"
             type="number"
             style="width: 40px;"
-          />% du coût total - part SU)
+          /><span class="only-print">{{ model.preciput_labo }}</span
+          >% du coût total - part SU)
         </td>
         <td class="currency">
           {{ model.ca11 | currency("€") }}
@@ -1061,9 +1171,7 @@
 
     <p>Le coût complet correspond au montant minimum d'une prestation.</p>
 
-    {{ model.editable }}
-
-    <div v-if="model.id" style="text-align: center;">
+    <div v-if="model.id" class="no-print" style="text-align: center;">
       <button
         v-if="model.editable && !saving"
         class="btn btn-primary m-1"
@@ -1099,8 +1207,7 @@ export default {
       statuts2: ["", "Stagiaire", "Bourse Cifre", "Invité", "Autre"],
       categories: [""].concat(categories),
       saving: false,
-      readonly: true,
-      // readonly: !this.model.editable,
+      readonly: !this.model.editable,
     };
   },
 
@@ -1479,4 +1586,17 @@ h3 {
   margin-top: 1em;
   margin-bottom: 0.5em;
 }
+
+/*@page {*/
+/*  size: A4 landscape;*/
+/*}*/
+
+/*@media print {*/
+/*  .feuille-cout {*/
+/*    font-family: "Arial", sans-serif;*/
+/*    font-size: 9pt;*/
+/*    !* Doesn't work with WeasyPrint *!*/
+/*    hyphens: auto;*/
+/*  }*/
+/*}*/
 </style>

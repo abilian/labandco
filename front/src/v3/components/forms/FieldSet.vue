@@ -10,7 +10,7 @@
         :field-name="field_name"
         :model="model"
         :form="form"
-        :key="field_name"
+        :key="'fg-' + field_name"
       />
 
       <span class="clearfix" />

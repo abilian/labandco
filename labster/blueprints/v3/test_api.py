@@ -13,41 +13,40 @@ from labster.util import url_for
 structure_repo = injector.get(StructureRepository)
 
 
-def test_menu(client: FlaskClient, db_session: scoped_session) -> None:
-    login_as_dgrtt(client, db_session)
+def test_preferences(client: FlaskClient, db_session: scoped_session) -> None:
+    with login_as_dgrtt(client, db_session):
+        r = client.get(url_for("v3.preferences"))
+        assert r.status_code == 200
 
-    r = client.get(url_for("v3.menu"))
-    assert r.status_code == 200
 
-
-# def test_demandes(client, db_session):
+# def test_menu(client: FlaskClient, db_session: scoped_session) -> None:
 #     login_as_dgrtt(client, db_session)
 #
-#     r = client.get(url_for("v3.demandes"))
+#     r = client.get(url_for("v3.menu"))
 #     assert r.status_code == 200
-
-
-def test_structures(client: FlaskClient, db_session: scoped_session) -> None:
-    login_as_dgrtt(client, db_session)
-
-    universite = Structure(
-        nom="Sorbonne Université",
-        type_name=UN.name,
-        sigle="SU",
-        dn="ou=SU,ou=Affectations,dc=chapeau,dc=fr",
-    )
-    fac_sciences = Structure(nom="Faculté des Sciences", type_name=FA.name)
-    structure_repo.put(universite)
-    structure_repo.put(fac_sciences)
-
-    r = client.get(url_for("v3.all_structures"))
-    assert r.status_code == 200
-
-    structure_repo.clear()
-
-
-def test_users(client: FlaskClient, db_session: scoped_session) -> None:
-    login_as_dgrtt(client, db_session)
-
-    r = client.get(url_for("v3.all_users"))
-    assert r.status_code == 200
+#
+#
+# def test_structures(client: FlaskClient, db_session: scoped_session) -> None:
+#     login_as_dgrtt(client, db_session)
+#
+#     universite = Structure(
+#         nom="Sorbonne Université",
+#         type_name=UN.name,
+#         sigle="SU",
+#         dn="ou=SU,ou=Affectations,dc=chapeau,dc=fr",
+#     )
+#     fac_sciences = Structure(nom="Faculté des Sciences", type_name=FA.name)
+#     structure_repo.put(universite)
+#     structure_repo.put(fac_sciences)
+#
+#     r = client.get(url_for("v3.all_structures"))
+#     assert r.status_code == 200
+#
+#     structure_repo.clear()
+#
+#
+# def test_users(client: FlaskClient, db_session: scoped_session) -> None:
+#     login_as_dgrtt(client, db_session)
+#
+#     r = client.get(url_for("v3.all_users"))
+#     assert r.status_code == 200

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Set
 
 from flask import render_template
 from flask_mail import Message
@@ -9,7 +9,7 @@ from flask_mail import Message
 from labster.extensions import db, mail
 
 if TYPE_CHECKING:
-    from labster.domain2.model.profile import Profile
+    from labster.domain2.model.profile import Profile, FLUX_TENDU
     from labster.domain2.model.notification import Notification
     from labster.lib.workflow import Workflow
 
@@ -24,6 +24,7 @@ def send_notification(user: Profile, body: str, workflow: Workflow) -> Notificat
     """
 
     from labster.domain2.model.notification import Notification
+    from labster.domain2.model.profile import FLUX_TENDU
 
     notification = Notification(
         user=user, body=body, demande=workflow.case, actor=workflow.actor
@@ -35,8 +36,9 @@ def send_notification(user: Profile, body: str, workflow: Workflow) -> Notificat
     if app:
         db.session.add(notification)
 
-    if user.preferences_notifications in (0, None):
+    if user.preferences_notifications in (FLUX_TENDU, None):
         send_notification_by_email(notification)
+        notification.sent = True
 
     return notification
 
@@ -55,9 +57,8 @@ def send_notification_by_email(notification: Notification) -> None:
     mail.send(msg)
 
 
-def send_email(recipients, subject, template, context):
-    if not isinstance(recipients, list):
-        recipients = [recipients]
+def send_email(recipients: Set[Profile], subject: str, template, context) -> None:
+    assert isinstance(recipients, set)
 
     recipients = [r.email for r in recipients]
     html = render_template("emails/" + template, **context)

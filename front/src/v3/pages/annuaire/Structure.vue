@@ -139,16 +139,9 @@ export default {
       if (confirm(message)) {
         const args = [this.ou.id];
         const msg = `La structure "${this.ou.nom}" a bien été supprimée.`;
-        this.$root
-          .rpc(
-            "sg_delete_structure",
-            args,
-
-            msg
-          )
-          .then(result => {
-            this.$router.push("/annuaire/structures");
-          });
+        this.$root.rpc("sg_delete_structure", args, msg).then(result => {
+          this.$router.push("/annuaire/structures");
+        });
       }
     },
   },

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from io import BytesIO
-from typing import Any, Collection, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 from attr import attrs
@@ -12,7 +12,8 @@ from tqdm import tqdm
 from labster.di import injector
 from labster.domain2.model.profile import Profile, ProfileRepository
 from labster.domain2.model.structure import StructureRepository
-from labster.ldap.constants import ADMINS_DN, get_parent_dn
+from labster.ldap.constants import ADMINS_DN, PRESIDENCE_DN, SU_DN, \
+    get_parent_dn
 
 logger = structlog.get_logger()
 
@@ -61,6 +62,9 @@ class LdifRecord:
         if affectation in ADMINS_DN:
             affectation = get_parent_dn(affectation)
 
+        if affectation == PRESIDENCE_DN:
+            affectation = SU_DN
+
         return affectation
 
     @property
@@ -95,7 +99,7 @@ def update_users_from_records(records: List[Tuple[str, Dict[str, List[str]]]]):
 
     uids_to_profiles = {p.uid: p for p in profiles}
 
-    for _dn, r in tqdm(records):
+    for _dn, r in tqdm(records, disable=None):
         record = LdifRecord(r)
         if not record.uid:
             continue
@@ -114,7 +118,7 @@ def update_users_from_records(records: List[Tuple[str, Dict[str, List[str]]]]):
 def deactivate_users(deleted_uids):
     logger.info("To be deactivated:", deleted_uids=deleted_uids)
 
-    for uid in tqdm(deleted_uids):
+    for uid in tqdm(deleted_uids, disable=None):
         user = profile_repo.get_by_uid(uid)
         user.deactivate()
 
@@ -138,7 +142,6 @@ def update_profile_from_record(profile: Profile, record: LdifRecord):
         if profile and profile.active:
             profile.affectation = ""
             profile.deactivate()
-            profile.active = False
             # TODO: log
         return
 

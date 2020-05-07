@@ -13,6 +13,7 @@ void: FrozenSet[TypeStructure] = frozenset()
 @attrs(hash=True, auto_attribs=True, frozen=True, str=False, repr=False)
 class TypeStructure:
     name: str
+    can_have_multiple_parents: bool
     reel: bool
     types_parents: FrozenSet[TypeStructure]
 
@@ -72,25 +73,26 @@ def get_type_structure_by_id(id: str) -> TypeStructure:
 
 f = frozenset
 
-UN = TypeStructure("Université", True, void)
-DU = TypeStructure("Direction universitaire", True, f({UN}))
-SU = TypeStructure("Service universitaire", True, f({DU}))
+UN = TypeStructure("Université", False, True, void)
+DU = TypeStructure("Direction universitaire", False, True, f({UN}))
+SU = TypeStructure("Service universitaire", False, True, f({DU}))
 
-FA = TypeStructure("Faculté", True, f({UN}))
-DF = TypeStructure("Direction facultaire", True, f({FA}))
-SF = TypeStructure("Service facultaire", True, f({DF}))
+FA = TypeStructure("Faculté", False, True, f({UN}))
+DF = TypeStructure("Direction facultaire", False, True, f({FA}))
+SF = TypeStructure("Service facultaire", False, True, f({DF}))
 
-CO = TypeStructure("Composante", True, f({FA}))
+CO = TypeStructure("Composante", False, True, f({FA}))
 
-CA = TypeStructure("Carnot", False, f({CO}))
-LX = TypeStructure("Labex", False, f({CO}))
-IN = TypeStructure("Institut", False, f({CO}))
-GRC = TypeStructure("GRC", False, f({CO}))
+CA = TypeStructure("Carnot", True, False, f({CO}))
+LX = TypeStructure("Labex", True, False, f({CO}))
+IN = TypeStructure("Institut", True, False, f({CO}))
+GRC = TypeStructure("GRC", True, False, f({CO}))
+INI = TypeStructure("Initiative", True, False, f({CO}))
 
-ED = TypeStructure("École doctorale", True, f({DU}))
-LA = TypeStructure("Laboratoire", True, f({CO, CA, LX, IN, GRC}))
+ED = TypeStructure("École doctorale", False, True, f({DU}))
+LA = TypeStructure("Laboratoire", False, True, f({CO, CA, LX, IN, GRC}))
 
-DE = TypeStructure("Département", False, f({LA}))
-EQ = TypeStructure("Équipe", False, f({LA, DE}))
+DE = TypeStructure("Département", False, False, f({LA}))
+EQ = TypeStructure("Équipe", False, False, f({LA, DE}))
 
-ALL_TYPES = [UN, FA, DU, CO, SU, DF, LA, SF, ED, DE, EQ, CA, LX, IN, GRC]
+ALL_TYPES = [UN, FA, DU, CO, SU, DF, LA, SF, ED, DE, EQ, CA, LX, IN, GRC, INI]

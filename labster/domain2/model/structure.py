@@ -25,7 +25,7 @@ from __future__ import annotations
 import math
 from abc import ABC, ABCMeta
 from pprint import pformat
-from typing import Any, Collection, List, Optional, Set
+from typing import TYPE_CHECKING, Any, Collection, List, Optional, Set
 from uuid import uuid4
 
 from abilian.app import db
@@ -34,6 +34,11 @@ from sqlalchemy.orm import backref, relationship
 
 from .base import Repository
 from .type_structure import ED, TypeStructure, get_type_structure
+
+if TYPE_CHECKING:
+    from .profile import Profile
+    from labster.domain2.services.roles import Role
+
 
 hierarchy = Table(
     "v3_hierarchy",
@@ -91,8 +96,8 @@ class Structure(db.Model):
     old_dn = Column(String, default="", nullable=False)
     email = Column(String, default="", nullable=False)
     #
-    permettre_reponse_directe = Column(Boolean)
-    permettre_soummission_directe = Column(Boolean)
+    permettre_reponse_directe = Column(Boolean, default=True)
+    permettre_soummission_directe = Column(Boolean, default=False)
 
     children = relationship(
         "Structure",
@@ -142,7 +147,7 @@ class Structure(db.Model):
 
         self.active = True
         self._depth = -1
-        self.permettre_reponse_directe = False
+        self.permettre_reponse_directe = True
         self.permettre_soummission_directe = False
         self.email = ""
         self.sigle = ""
@@ -196,7 +201,7 @@ class Structure(db.Model):
 
     def add_child(self, child: Structure):
         if not self.can_have_child(child):
-            raise ValueError("Forbidden relation")
+            raise ValueError(f"Forbidden relation: {self}->{child}")
 
         child._depth = -1
         # child.parents.add(self)
@@ -208,8 +213,8 @@ class Structure(db.Model):
         # self.children.remove(child)
 
     def can_have_child(self, other: Structure) -> bool:
-        # if other.parents and other.type == EQ:
-        #     return False
+        if other.parents and not other.type.can_have_multiple_parents:
+            return False
 
         my_type = self.type
         other_type = other.type
@@ -262,28 +267,47 @@ class Structure(db.Model):
 
     @property
     def path(self):
-        return []
+        result = []
+        for ancestor in reversed(self.ancestors):
+            result.append(ancestor.name)
+        return result
 
     #
     # Roles
     #
     @property
-    def responsables(self):
+    def responsables(self) -> Set[Profile]:
+        from labster.domain2.services.roles import Role
+
+        return self._get_users_with_role(Role.RESPONSABLE)
+
+    @property
+    def gestionnaires(self) -> Set[Profile]:
+        from labster.domain2.services.roles import Role
+
+        return self._get_users_with_role(Role.GESTIONNAIRE)
+
+    @property
+    def signataire(self) -> Optional[Profile]:
+        from labster.domain2.services.roles import Role
+
+        signataires = self._get_users_with_role(Role.SIGNATAIRE)
+        if signataires:
+            return signataires.pop()
+        else:
+            return None
+
+    def _get_users_with_role(self, role: Role) -> Set[Profile]:
         from labster.di import injector
-        from labster.domain2.services.roles import RoleService, Role
+        from labster.domain2.services.roles import RoleService
 
         role_service = injector.get(RoleService)
-        responsables = role_service.get_users_with_given_role(Role.RESPONSABLE, self)
+        responsables = role_service.get_users_with_given_role(role, self)
         return responsables
 
-    # def get_directeurs(self):
-    #     # TODO
-    #     return []
     #
-    # @property
-    # def direction(self):
-    #     return self.get_directeurs()
-
+    # Misc
+    #
     def check(self):
         state = vars(self)
         try:
@@ -301,6 +325,8 @@ class Structure(db.Model):
             msg = f"Check failed on {self.sigle_ou_nom}. " + pformat(state)
             print(msg)
             raise
+
+    validate = check
 
 
 class StructureRepository(Repository, ABC, metaclass=ABCMeta):

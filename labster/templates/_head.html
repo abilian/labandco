@@ -44,13 +44,6 @@
       );
     </script>
   {%- endif %}
-  {% if g.debug_info %}
-<!--
-DEBUG
-{{ g.debug_info|tojson }}
-/DEBUG
--->
-  {% endif %}
 
   <script>
     // Warning: this is fragile. We must devise a safer way to pass data
@@ -62,6 +55,8 @@ DEBUG
       var FORM = {};
       var MODEL = {};
     {% endif %}
+    var CTX = {};
+    CTX.version = "{{ g.labster_version }}";
   </script>
 
 </head>

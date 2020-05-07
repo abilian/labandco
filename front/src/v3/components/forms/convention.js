@@ -6,11 +6,14 @@ export default function update_convention(form, model) {
   const show_nom_financeur =
     model.type_financeur !== "Commission Européenne" &&
     model.type_financeur !== "ANR";
+
   form.fields.nom_financeur.visible = show_nom_financeur;
 
   form.fields.type_contrat.visible = model.appel_a_projets === "non";
 
-  form.fieldsets[4].visible = model.appel_a_projets === "non";
+  // On cache la section "partenaires" dans le cas d'un appel à projets
+  form.fieldsets[6].visible = model.appel_a_projets === "non";
+
   if (model.appel_a_projets === "oui") {
     form.fields.appel_a_projets.note =
       "Dans le cas d’un appel à projet, la liste des partenaires est à renseigner dans les pièces jointes et n’a pas à être décrite ici.";

@@ -1,11 +1,9 @@
-"""Formulaire Avenant Convention."""
-
+"""
+Champs communs à plusieurs formulaires.
+"""
 from __future__ import annotations
 
-from labster.newforms.base import FieldSet, Select2Field, StringField
-#
-# Fieldsets
-#
+from labster.newforms.base import FieldSet, Select2Field
 from labster.newforms.base.fields import MultipleSelect2Field
 
 laboratoire = FieldSet(  #
@@ -38,8 +36,8 @@ structures_concernees = FieldSet(  #
     ],
 )
 
-contributeurs = FieldSet(
+contributeurs = FieldSet(  #
     "contributeurs",
     "Contributeurs autorisés à prendre la main sur la demande",
-    [Select2Field("contributeurs", "Contributeurs", choices=[])],
+    [MultipleSelect2Field("contributeurs", "Contributeurs", choices=[])],
 )

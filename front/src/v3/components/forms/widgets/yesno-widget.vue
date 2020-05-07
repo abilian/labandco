@@ -2,7 +2,7 @@
   <div>
     <div class="form-check form-check-inline">
       <input
-        :id="field.name"
+        :id="field.name + '-yes'"
         v-model="model[field.name]"
         type="radio"
         :name="field.name"
@@ -17,7 +17,7 @@
 
     <div class="form-check form-check-inline">
       <input
-        :id="field.name"
+        :id="field.name + '-no'"
         v-model="model[field.name]"
         type="radio"
         :name="field.name"

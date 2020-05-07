@@ -4,6 +4,8 @@ from __future__ import annotations
 import logging
 import os
 
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from pytest import fixture
 from sqlalchemy.exc import SQLAlchemyError
 from typeguard import TypeChecker
@@ -31,41 +33,42 @@ class TestConfig:
 
 
 @fixture(scope="session")
-def app():
+def app() -> Flask:
     """We usually only create an app once per session."""
 
     return create_app(TestConfig)
 
 
 @fixture
-def app_context(app):
+def app_context(app: Flask):
     with app.app_context() as ctx:
         yield ctx
 
 
 @fixture
-def db(app):
+def request_context(app: Flask):
+    with app.test_request_context() as ctx:
+        yield ctx
+
+
+@fixture
+def db(app: Flask) -> SQLAlchemy:
     """Return a fresh db for each test."""
 
     with app.app_context():
         cleanup_db(_db)
         _db.create_all()
 
-        # engine = _db.engine
-        # conn = engine.connect()
-        # rows = conn.execute("SELECT * FROM sqlite_master WHERE type='table'").fetchall()
-        # pprint(sorted([row[1] for row in rows]))
-        # sys.stderr.write("\n\n")
-        # sys.stdout.flush()
-
         yield _db
 
         _db.session.remove()
         cleanup_db(_db)
 
+        _db.session.flush()
+
 
 @fixture
-def db_session(db):
+def db_session(db: SQLAlchemy):
     """Kept for historical reasons."""
 
     return db.session
@@ -104,4 +107,5 @@ def cleanup_db(db):
         try:
             db.session.execute(table.delete())
         except SQLAlchemyError:
+            print(f"Failed to delete table {table}")
             pass

@@ -24,7 +24,7 @@ contrat = FieldSet(  #
     [
         HTML("<p>Sur quel contrat porte l’avenant ?</p>"),
         StringField("nom_projet", "Nom ou acronyme du projet", required=True),
-        StringField("eotp_ou_no_dgrtt", "eOTP ou No DR&I", required=True),
+        StringField("eotp_ou_no_dgrtt", "eOTP ou № DR&I", required=True),
         Select2Field(
             "type_financeur", "Type de financeur", required=True, choices=CHOICES2
         ),

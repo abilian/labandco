@@ -205,6 +205,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    tag: {
+      type: String,
+      default: "",
+    },
   },
 
   data: function() {
@@ -376,6 +380,7 @@ export default {
     const args = {
       scope: this.scope,
       archives: this.archives,
+      tag: this.tag,
     };
     this.$root
       .rpc("get_demandes", args)

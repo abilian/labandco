@@ -1,0 +1,16 @@
+<html>
+<body>
+
+<h3>Utilisateurs recevant des notifications</h3>
+
+<ul>
+  {% for user in users %}
+    <li>
+      <a href="{{ url_for(".debug_stream_for", id=user.id) }}">{{ user.full_name }}
+        ({{ user.login }})</a>
+    </li>
+  {% endfor %}
+</ul>
+
+</body>
+</html>

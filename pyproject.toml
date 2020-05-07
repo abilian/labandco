@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "labster"
-version = "2.1.13"
+version = "2.1.64"
 description = ""
 authors = ["Abilian SAS"]
 
@@ -9,11 +9,12 @@ include = [
     "labster/static/**/*",
     "migrations/**/*",
     "etc/**/*",
-    #    "boot/**/*",
     "scripts/**/*",
     "wsgi.py",
     "tasks.py",
-    #    "*.py",
+    "jobs.py",
+    "annuaire/*",
+    "boot/structures.xlsx",
 ]
 
 
@@ -31,6 +32,7 @@ Flask-Redis = "*"
 # Pinned for now
 pandas = "<0.25"
 Flask-Assets = "< 2"
+werkzeug = "<1"
 
 # Seems tricky
 cairocffi = "^1.0.2"
@@ -65,6 +67,7 @@ attrs = "*"
 # Functional libraries (we should stanfdardize on one !).
 toolz = "*"
 ramda = "^0.5.2"
+more-itertools = "*"
 
 # Other
 unidecode = "*"
@@ -80,6 +83,13 @@ invoke = "^1.3"
 diskcache = "^4.1"
 jsonrpcserver = "^4.0"
 webargs = "^5.5"
+dictdiffer = "^0.8.1"
+jsonrpcclient = "^3.3.5"
+email_validator = "*"
+apscheduler = "^3.6.3"
+pampy = "^0.3.0"
+devtools = "^0.5.1"
+
 glom = "^19.2"
 
 xlrd = "^1.2"
@@ -127,8 +137,6 @@ pytest-mock = "*"
 tox = "*"
 typeguard = "*"
 
-Flask-Linktester = "*"
-
 honcho = "*"
 
 # Formatters
@@ -140,13 +148,19 @@ tabulate = "^0.8.3"
 gitchangelog = "^3.0"
 gitignore_parser = "^0.0.5"
 pyinfra = "^0.11"
+selenium = "^3.141.0"
+vulture = "^1.4"
 
 
 [tool.poetry.scripts]
 labster = "labster.cli:cli"
 
 
+[tool.dephell.main]
+
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
 

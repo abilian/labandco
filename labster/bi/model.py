@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from sqlalchemy import Column, Date, Integer, String, Unicode
+from sqlalchemy import Column, Date, ForeignKey, Integer, String, Unicode
 
+from labster.domain2.model.profile import Profile
+from labster.domain2.model.structure import Structure
 from labster.extensions import db
 
 
 class StatsLine(db.Model):
-    __tablename__ = "stats_line"
+    __tablename__ = "v3_stats_line"
 
     demande_id = Column(Integer, primary_key=True)
 
@@ -16,8 +18,10 @@ class StatsLine(db.Model):
     date_soumission = Column(Date, index=True)
     date_finalisation = Column(Date, index=True)
 
-    structure_id = Column(Integer, index=True)
-    porteur_id = Column(Integer, index=True)
+    # structure_id = Column(Integer, index=True)
+    # porteur_id = Column(Integer, index=True)
+    porteur_id = Column(String(36), ForeignKey(Profile.id), index=True)
+    structure_id = Column(String(36), ForeignKey(Structure.id), index=True)
 
     # Champs spécifiques
     financeur = Column(Unicode, index=True)
@@ -26,11 +30,16 @@ class StatsLine(db.Model):
     wf_state = Column(Unicode, index=True)
 
     # Drilldown
-    pole_id = Column(Integer, index=True)
-    ufr_id = Column(Integer, index=True)
-    labo_id = Column(Integer, index=True)
-    departement_id = Column(Integer, index=True)
-    equipe_id = Column(Integer, index=True)
+    l1 = Column(String(36), ForeignKey(Structure.id), index=True)
+    l2 = Column(String(36), ForeignKey(Structure.id), index=True)
+    l3 = Column(String(36), ForeignKey(Structure.id), index=True)
+    l4 = Column(String(36), ForeignKey(Structure.id), index=True)
+    l5 = Column(String(36), ForeignKey(Structure.id), index=True)
+    l6 = Column(String(36), ForeignKey(Structure.id), index=True)
+    l7 = Column(String(36), ForeignKey(Structure.id), index=True)
+    l8 = Column(String(36), ForeignKey(Structure.id), index=True)
+    l9 = Column(String(36), ForeignKey(Structure.id), index=True)
+    l10 = Column(String(36), ForeignKey(Structure.id), index=True)
 
     # Agregations / Demande Conventions
     montant = Column(Integer)

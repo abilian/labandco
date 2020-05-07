@@ -1,0 +1,40 @@
+@page {
+    size: A4 landscape;
+}
+
+@media print {
+    .feuille-cout {
+        font-family: "Arial", sans-serif;
+        font-size: 9pt;
+
+        input {
+            display: none;
+        }
+
+        select {
+            display: none;
+        }
+    }
+}
+
+.print .feuille-cout {
+    input {
+        display: none;
+    }
+
+    select {
+        display: none;
+    }
+
+    .no-print {
+        display: none;
+    }
+
+    .only-print {
+        display: inline;
+    }
+}
+
+.only-print {
+    display: none;
+}

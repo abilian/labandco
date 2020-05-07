@@ -14,10 +14,6 @@ def wf_transition(demande_id, action, data=None):
     user = get_current_profile()
     db = injector.get(SQLAlchemy)
 
-    # id = int(request.form["id"])
-    # action = request.form["action"]
-    # __action = request.form.get("__action", None)
-
     demande = db.session.query(Demande).get(demande_id)
     workflow = demande.get_workflow(user)
 

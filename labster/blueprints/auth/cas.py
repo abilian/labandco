@@ -6,14 +6,15 @@ from urllib.parse import parse_qs, urlencode, urljoin, urlsplit, urlunsplit
 
 import requests
 import structlog
-from flask import Flask, Request, abort, redirect, render_template, session, \
-    url_for
+from devtools import debug
+from flask import Flask, Request, abort, redirect, render_template, request, \
+    session, url_for
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.exceptions import Unauthorized
 
 from labster.di import injector
 from labster.domain2.model.profile import Profile
+from labster.domain2.services.constants import get_constants
 from labster.extensions import login_manager
 from labster.security import get_current_user
 
@@ -39,10 +40,22 @@ def unauthorized(app: Flask, request: Request):
 @route("/login")
 def login():
     current_user = get_current_user()
-    if current_user.is_authenticated:
-        return render_template("auth/redirect.j2")
-    else:
+
+    if not current_user.is_authenticated:
+        if _single_user():
+            return render_template("auth/single_user.j2")
         return render_template("auth/login_cas.j2")
+
+    return render_template("auth/redirect.j2")
+
+
+def _single_user():
+    if "bypass" in request.args:
+        return False
+
+    constants = get_constants()
+    value = str(constants.get("single_user")).lower()
+    return value in {"none", "true", "y"}
 
 
 @route("/login", methods=["POST"])
@@ -146,7 +159,11 @@ def get_user_by_login(login: str) -> Profile:
     # This fixes some nasty "current transaction is aborted" bug
     db.session.commit()
     query = db.session.query(Profile).filter_by(active=True)
+    debug(query.all())
+    for user in query.all():
+        debug(user, user.login, login)
     user = query.filter_by(login=login).first()
+    assert user
     return user
 
 
