@@ -1,7 +1,11 @@
 import nox
 
+PYTHON_VERSIONS = ["3.7", "3.8", "3.9"]
 
-@nox.session
+nox.options.reuse_existing_virtualenvs = True
+
+
+@nox.session(python=PYTHON_VERSIONS)
 def tests(session):
     session.run("poetry", "install", external=True)
     session.run("pytest")
