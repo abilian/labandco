@@ -1,4 +1,3 @@
-
 def pytest_configure(config):
     import sys
 

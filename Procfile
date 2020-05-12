@@ -1,1 +1,2 @@
-web: gunicorn 'labster.app:create_app()' --log-file -
+back: flask run
+front: yarn --cwd front run serve
