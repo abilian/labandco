@@ -37,7 +37,7 @@ class EnValidation(State):
         assert demande
 
         structures_signataires = demande.structures_signataires()
-        signatures = workflow.get_value("signatures", [])
+        signatures = workflow.get_value("signatures") or []
 
         result = set()
         for structure in structures_signataires:

@@ -23,9 +23,8 @@ before_script:
 matrix:
   include:
     - env: SQLALCHEMY_DATABASE_URI=postgresql://postgres@localhost/test
-    # - env: TOXENV=front
+    - env: TOXENV=front
     - env: TOXENV=lint
-    # - env: SQLALCHEMY_DATABASE_URI=
     # - env: TOXENV=e2e (we're not ready for this)
 
 # Run tests

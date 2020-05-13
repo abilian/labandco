@@ -232,4 +232,4 @@ def demandes_a_valider(type=None):
     if type:
         return redirect(f"/#/demandes_a_valider/{type}")
     else:
-        return redirect(f"/#/tasks")
+        return redirect("/#/tasks")

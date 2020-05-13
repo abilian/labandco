@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "labster"
-version = "2.1.64"
+version = "2.1.65"
 description = ""
 authors = ["Abilian SAS"]
 

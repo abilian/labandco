@@ -8,9 +8,9 @@ from flask_sqlalchemy import SQLAlchemy
 from marshmallow import Schema, fields
 
 from labster.di import injector
-from labster.domain.models.demandes import Demande
-from labster.domain.models.profiles import Profile
-from labster.domain.models.unites import OrgUnit
+from labster.domain2.model.demande import Demande
+from labster.domain2.model.profile import Profile
+from labster.domain2.model.structure import Structure
 from labster.signals import model_saved
 
 COLLECTIONS = ["users", "structures", "demandes"]
@@ -104,7 +104,7 @@ def sync_all_objects():
     print("Syncing users")
     sync_objects(Profile)
     print("Syncing structures")
-    sync_objects(OrgUnit)
+    sync_objects(Structure)
     print("Syncing demandes")
     sync_objects(Demande)
 
@@ -140,8 +140,8 @@ def serialize_profile(obj):
     return url, data
 
 
-@serialize.register(OrgUnit)
-def serialize_orgunit(obj):
+@serialize.register(Structure)
+def serialize_structure(obj):
     url = f"structures/{obj.id}"
     schema = OrgUnitSchema()
     result = schema.dump(obj)

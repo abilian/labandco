@@ -273,7 +273,7 @@ class ValiderDir(BaseTransition):
         demande = workflow.case
         actor = workflow.actor
 
-        signatures: Set[str] = set(workflow.get_value("signatures", []))
+        signatures: Set[str] = set(workflow.get_value("signatures") or [])
 
         structures_signataires = demande.structures_signataires()
         for structure in structures_signataires:
@@ -358,7 +358,7 @@ class RequerirModificationDgrtt(BaseTransition):
     def apply(self, workflow, data):
         if data.get("resoumission"):
             workflow.set_value("validee_hierarchie", False)
-            workflow.set_value("signatures", False)
+            workflow.set_value("signatures", [])
 
     def message(self, workflow):
         if workflow.state == EN_VERIFICATION:

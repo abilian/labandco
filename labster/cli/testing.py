@@ -43,7 +43,7 @@ def test_cypress():
     daemons = [
         ("web", "flask run"),
         ("webpack", "yarn --cwd front run serve"),
-        ("test-e2e", f"yarn --cwd front cypress run tests/e2e"),
+        ("test-e2e", "yarn --cwd front cypress run tests/e2e"),
     ]
     run_daemons(daemons)
 
@@ -53,7 +53,7 @@ def test_rpc():
     """Runs functional tests on the RPC endpoints"""
     daemons = [
         ("web", "flask run"),
-        ("rpc-tests", f"pytest rpc_tests"),
+        ("rpc-tests", "pytest rpc_tests"),
     ]
     run_daemons(daemons)
 
@@ -94,7 +94,7 @@ def test_selfcrawl():
 
         client = current_app.test_client()
 
-        client.get(f"/backdoor")
+        client.get("/backdoor")
         client.get(f"/switch?uid={user.uid}")
         res = client.get("/")
         assert res.status_code == 200
