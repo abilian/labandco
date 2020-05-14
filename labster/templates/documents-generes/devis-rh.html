@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+
+  <title>Devis de recrutement
+    de {{ demande.data['prenom'] }} {{ demande.data['nom'] }}</title>
+
+  <style type="text/css">
+    {{ css_rules|safe }}
+  </style>
+</head>
+
+<body class="devis-1">
+
+<table>
+  <thead>
+  <tr>
+    <th rowspan="4">
+      <img id="logo-upmc" style="width: 6cm;" alt=""
+          src="{{ url_for('static', filename='img/upmc-logo.png') }}"/>
+    </th>
+    <th rowspan="2" colspan="5" class="title">DEVIS</th>
+  </tr>
+  <tr></tr>
+  <tr>
+    <th colspan="5">{{ demande.nature_du_recrutement }}</th>
+  </tr>
+  <tr>
+    <th colspan="5" class="title">Coût total du recrutement
+      de: {{ demande.prenom }} {{ demande.data['nom'] }}
+      {%- if demande.email %}
+        <span class="email">({{ demande.email }})</span>
+      {%- endif %}
+    </th>
+  </tr>
+
+  <tr>
+    <th class="text-left">DR&amp;I SAIC</th>
+  </tr>
+
+  <tr>
+    <th class="text-left normal">Contact dans la structure:</th>
+  </tr>
+
+  <tr class="text-left">
+    <th class="normal">
+      {{ demande.contact.full_name }}
+    </th>
+  </tr>
+
+  <tr class="text-left">
+    <th class="normal">
+      {{ demande.contact.email }}
+    </th>
+  </tr>
+
+  <tr class="text-left">
+    <th></th>
+    <th></th>
+    <th class="computed text-right"><b>Date:</b></th>
+    <th colspan="3" class="computed">
+      <b>{{ today | dateformat('d MMM y') }}</b></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <!-- Structure -->
+  <tr>
+    <td class="title">Structure</td>
+  </tr>
+  <tr>
+    <td>Financé par</td>
+    <td colspan="3">
+      {{ structure_financeuse.nom }}
+    </td>
+  </tr>
+  <tr>
+    <td>Directeur</td>
+    <td colspan="3">
+      {% set directeur=structure_financeuse.signataire %}
+      {% if directeur %}
+        {{ directeur.full_name }}
+      {% endif %}
+    </td>
+    <td colspan="2">
+      {% if directeur %}
+        ({{ directeur.email }})
+      {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td>N° EoTP/référence DR&amp;I/Notification de financement</td>
+    <td>{{ demande.numero_de_financement }}</td>
+    <td>Cofinancement</td>
+    <td colspan="2">{{ demande.numero_de_financement2 }}</td>
+  </tr>
+
+  <!-- Structure d'accueil: https://trello.com/c/S8ErrlD6 -->
+  {% if structure_d_accueil != structure_financeuse %}
+  <tr style="margin-top: 0.5em;">
+    <td>Structure d'accueil</td>
+    <td colspan="3">{{ structure_d_accueil.nom }}</td>
+  </tr>
+  {% set directeur=structure_d_accueil.signataire %}
+  <tr style="margin-bottom: 0.5em;">
+    <td>Directeur</td>
+    <td colspan="3">{% if directeur %}{{ directeur.full_name }}{% endif %}</td>
+    <td colspan="2">{% if directeur %}({{ directeur.email }}){% endif %}</td>
+  </tr>
+  {% endif %}
+
+  <tr>
+    <td>Responsable scientifique</td>
+    <td colspan="3">
+      {% if demande.porteur is not none %}
+        {{ demande.porteur.full_name }}
+      {% endif %}
+    </td>
+    <td colspan="2">
+      {% if demande.porteur is not none %}
+        ({{ demande.porteur.email }})
+      {% endif %}
+    </td>
+  </tr>
+
+  <!-- Poste à pourvoir -->
+  <tr>
+    <td class="title">Poste à pourvoir</td>
+    <td colspan="5"></td>
+  </tr>
+
+  <tr>
+    <td>Dates de début et de fin de contrat</td>
+    <td>{% if demande.date_debut %}
+      {{ demande.date_debut | dateformat('d MMM y') }}{% endif %}</td>
+    <td>{% if demande.date_fin %}
+      {{ demande.date_fin | dateformat('d MMM y') }}{% endif %}</td>
+    <td></td>
+    <td class="computed number"><b>
+      {% if nb_jours is defined %}{{ nb_jours }}{% endif %}</b></td>
+    <td class="computed"><b>jours</b></td>
+  </tr>
+
+  <tr>
+    <td>Quotité de travail</td>
+    <td colspan="5">{{ quotite_de_travail }}%</td>
+  </tr>
+
+  <tr>
+    <td>Localisation</td>
+    <td colspan="5">{{ demande.localisation }}</td>
+  </tr>
+
+  <tr>
+    <td>Intitulé de fonction</td>
+    <td colspan="5">{{ demande.fonction_du_poste }}</td>
+  </tr>
+
+  <tr>
+    <td>Statut</td>
+    <td colspan="5" class="computed">Contractuel</td>
+  </tr>
+
+  <tr>
+    <td>Salaire brut mensuel équivalent temps plein</td>
+    <td colspan="5">{{ salaire_brut_etp | currencyformat('EUR') }}</td>
+  </tr>
+
+  {% if not is_doctorant %}
+    <tr id="inm" class="computed">
+      <td>Indice majoré</td>
+      <td>{{ indice_majore | numberformat }}</td>
+    </tr>
+  {% endif %}
+
+  <!-- Cout salarial et charges sociales -->
+  <tr>
+    <td class="title">Coût salarial et charges sociales</td>
+  </tr>
+
+  {#
+Montant du salaire brut mensuel selon quotité
+IR
+Total salaire brut
+transport
+SFT
+Montant des charges
+Coût mensuel charges patronales comprises
+Provision pour risque et charges employeur
+Coût total toutes charges comprises
+Le coût total représente
+ #}
+
+  <tr>
+    <td>Montant du salaire brut mensuel selon quotité</td>
+    <td
+        class="number computed bordered">{{ salaire_brut | currencyformat('EUR') }}</td>
+  </tr>
+  {% if not is_doctorant %}
+    <tr>
+      <td>Indemnité de résidence (IR)</td>
+      <td class="number computed bordered">{{ ir | currencyformat('EUR') }}</td>
+    </tr>
+  {% endif %}
+  <tr>
+    <td>Total salaire brut</td>
+    <td
+        class="number computed  bordered">{{ total_salaire_brut | currencyformat('EUR') }}</td>
+  </tr>
+  <tr>
+    <td>Transport</td>
+    <td
+        class="number computed bordered">{{ cout_transport | currencyformat('EUR') }}</td>
+    {#    <td></td>#}
+    {#    <td colspan="3" class="computed">{{ transport }}</td>#}
+  </tr>
+  <tr>
+    <td>Supplément familial de traitement - SFT</td>
+    <td class="number computed bordered">{{ sft | currencyformat('EUR') }}</td>
+  </tr>
+  <tr>
+    <td>Montant des charges</td>
+    <td
+        class="number computed bordered">{{ montant_charges | currencyformat('EUR') }}</td>
+  </tr>
+  <tr>
+    <td>Coût mensuel charges patronales comprises</td>
+    <td
+        class="number computed bordered">{{ cout_mens_charges_comprises | currencyformat('EUR') }}</td>
+  </tr>
+  <tr>
+    <td>Provision pour risque et charges employeur</td>
+    <td
+        class="number computed bordered">{{ provision_risque | currencyformat('EUR') }}</td>
+  </tr>
+  <tr>
+    <td>Coût total toutes charges comprises</td>
+    <td
+        class="number computed bordered">{{ cout_total | currencyformat('EUR') }}</td>
+  </tr>
+  <tr>
+    <td>Le coût total représente</td>
+    <td
+        class="number computed bordered">{{ cout_total_proportion | numberformat }}</td>
+    <td colspan="4">fois le salaire brut versé</td>
+  </tr>
+
+  <!-- Cout total -->
+  <tr>
+    <td class="title">Coût total du recrutement par période</td>
+    {%- for year in annees_cout_periode %}
+      <td class="title text-right">{{ year }}</td>
+    {%- endfor %}
+    <td class="title text-right">Contrat</td>
+  </tr>
+
+  <tr>
+    <td>Nombre mois</td>
+    {%- for d in cout_periode %}
+      <td class="computed number">{{ d.get('months', '&mdash;'|safe) }}</td>
+    {% endfor %}
+  </tr>
+  <tr>
+    <td>Brut</td>
+    {%- for d in cout_periode %}
+      <td class="computed number">{{ d.get('brut', '&mdash;'|safe) }}</td>
+    {% endfor %}
+  </tr>
+  <tr>
+    <td>Provision pour risques et charges employeur</td>
+    {%- for d in cout_periode %}
+      <td class="computed number">{{ d.get('provision', '&mdash;'|safe) }}</td>
+    {% endfor %}
+  </tr>
+  <tr>
+    <td>Coût total toutes charges comprises</td>
+    {%- for d in cout_periode %}
+      <td class="computed number">{{ d.get('total', '&mdash;'|safe) }}</td>
+    {% endfor %}
+  </tr>
+  <tr>
+    <td colspan="4"></td>
+    <td class="text-right">Arrondi à</td>
+    <td>{{ total_arrondi }}</td>
+  </tr>
+  </tbody>
+
+  <tfoot>
+  <tr>
+    <td class="title frame frame-top">Validation du signataire pour la structure
+    </td>
+    <td></td>
+    <td colspan="4" class="title  frame frame-top">Validation gestion financière
+    </td>
+  </tr>
+  <tr>
+    <td class="frame"> </td>
+    <td></td>
+    <td colspan="4" class="frame"> </td>
+  </tr>
+  <tr>
+    <td class="frame frame-bottom"> </td>
+    <td></td>
+    <td colspan="4" class="frame frame-bottom"> </td>
+  </tr>
+  <tr class="computed">
+    <td>Nota:</td>
+  </tr>
+  <tr class="computed">
+    <td>
+      Le coût présenté dans ce document ne tient pas compte des augmentations de
+      taux de cotisation qui pourraient intervenir sur la durée de vie du
+      contrat.
+    </td>
+  </tr>
+  </tfoot>
+</table>
+
+</body>
+</html>

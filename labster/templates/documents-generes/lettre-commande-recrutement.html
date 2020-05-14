@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+
+  <title>Demande de recrutement
+    de {{ demande.civilite }} {{ demande.prenom }} {{ demande.data['nom'] }}</title>
+
+  <style type="text/css">
+    {% include "documents-generes/lettre_recrutement.css" %}
+  </style>
+
+</head>
+
+<body class="standard">
+
+<div id="letter">
+  <img id="logo-upmc" src="/static/img/upmc-logo.png" alt=""/>
+
+  <div class="header-location">Paris, le
+    {% if demande.date_effective %}
+      {{ demande.date_effective|date(format='d MMMM y') }}
+    {% else %}
+      N/A
+    {% endif %}
+  </div>
+
+  <div class="header-object">Objet : Demande de recrutement
+    de {{ demande.civilite or 'N/A' }} {{ demande.prenom or 'N/A' }} {{ demande.data['nom'] or 'N/A' }}
+  </div>
+
+  <p>
+    <span class="letter-to">Madame, Monsieur,</span>
+
+    Je soussigné(e),
+    {% if signataire %}
+    {{ signataire.prenom }} {{ signataire.nom }}
+    {% else -%}
+    SIGNATAIRE INCONNU
+    {%- endif -%}, directeur de
+    {{ structure_financeuse.nom }}, demande le recrutement en CDD
+    <!-- https://trello.com/c/S8ErrlD6 -->
+    dans la structure {{ structure_d_accueil.nom }},
+    de {{ demande.prenom or 'N/A' }} {{ demande.data['nom'] or 'N/A' }} à
+    compter du
+    {% if demande.date_debut %}
+      {{ demande.date_debut | dateformat('d MMMM y') }}
+    {% else %}
+      N/A
+    {% endif %}
+    au
+    {% if demande.date_fin %}
+      {{ demande.date_fin | dateformat('d MMMM y') }},
+    {% else %}
+      N/A,
+    {% endif %}
+    en qualité de {{ demande.fonction_du_poste or 'N/A' }},
+    à {{ demande.quotite_de_travail or 'N/A' }} du temps, pour la mission
+    suivante: «{{ demande.objet_de_la_mission or 'N/A' }}», pour une
+    rémunération brute mensuelle de {{ demande.salaire_brut_mensuel or 'N/A' }} €
+    {% if indice_majore %}(INM {{ indice_majore | numberformat }}) {% endif %}
+    ainsi que le remboursement partiel des frais de transport.
+  </p>
+
+
+  <p>
+    {% if demande.numero_de_financement %}
+      Cette dépense est à imputer sur le financement
+      {{ demande.numero_de_financement }}.
+    {% else %}
+      Cette dépense est à imputer sur le financement (notification de
+      financement jointe).
+    {% endif %}
+  </p>
+
+  <p>
+    Par la présente, je certifie avoir lu et accepte les principes régissant le
+    recrutement à Sorbonne Université. Je m’engage à respecter les bonnes
+    pratiques en matière de ressources humaines et j’engage la responsabilité
+    financière de ma structure sur la durée de ce contrat.
+  </p>
+
+  {% if signataire %}
+  <p class="signature">{{ signataire.prenom }} {{ signataire.nom }}</p>
+  {% endif %}
+
+  <!-- footer -->
+  <div class="footer">
+    <h4>Les trois principes régissant les contrats de travail de Sorbonne
+      Université</h4>
+
+    <ul>
+      <li>
+        La mobilité après la thèse <br/> Une personne ayant effectué sa thèse
+        dans un laboratoire ne peut pas être accueillie en contrat post-doctoral
+        dans le même laboratoire.
+      </li>
+      <li>
+        Le contrat doctoral de trois ans <br/> Le contrat doctoral, défini par
+        le décret n°2009-464 du 23 avril 2009 relatif aux doctorants
+        contractuels, est un CDD de droit public de trois ans. Il a été mis en
+        place en septembre 2009.
+      </li>
+      <li>
+        Pas plus de trois ans de CDD <br/> Sorbonne Université n’accepte pas de
+        prolonger un CDD au-delà de 3 ans. Ce principe visant à lutter contre la
+        précarité de l’emploi est inscrit dans le décret du Saic n°2002-1347 du
+        7 novembre 2002. Il s’apprécie en incluant les autres employeurs publics
+        partenaires du laboratoire. <br/> Exceptionnellement, dans l’intérêt de
+        la personne recrutée, une prolongation au-delà des trois ans est
+        possible (par exemple, pour attendre une mobilité programmée). Une telle
+        prolongation nécessite un arbitrage de la DR&amp;I et ne peut être
+        obtenue qu’une seule fois.
+      </li>
+    </ul>
+
+    <h4>Ce que l’on ne peut pas ignorer quand on souhaite recruter sur
+      convention de recherche</h4>
+    <ul>
+      <li>
+        Il est illégal de faire travailler une personne sans qu’elle ait signé
+        un contrat de travail. Les risques encourus par le directeur d’unité et
+        le président de l’université sont civils et pénaux.
+      </li>
+      <li>Depuis décembre 2013, la recette générale des finances qui traite les
+        paies pour le compte des universités impose 6 à 8 semaines entre la
+        signature d’un contrat de travail et la première paie ou le premier
+        acompte. Par ailleurs, deux dates de recrutement sont possibles : le 1er
+        ou le 15 de chaque mois.
+      </li>
+      <li>
+        La DR&amp;I ne rédige des contrats de travail que si le dossier est
+        complet. Ceci implique notamment l’existence d’un devis validé par la DR&amp;I
+        et la structure recruteuse. Pour rappel, la validation du devis dépend
+        de l’existence d’une convention de recherche signée permettant de
+        couvrir le salaire de la personne recrutée pendant la durée de son
+        contrat. Des exceptions sont possibles, elles concernent essentiellement
+        la durée de la couverture salariale des contrats doctoraux et nécessite
+        un engagement financier de la structure recruteuse.
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- second page -->
+<div id="instructions">
+  <p class="head">
+    La demande de recrutement doit être faite au minimum huit semaines avant la
+    date souhaitée du début du contrat pour permettre le traitement du dossier
+    dans les temps.
+  </p>
+
+  {% include "documents-generes/adresse_dgrtt.html" %}
+
+  <div class="page-break"></div>
+
+  {% include "documents-generes/pieces_a_joindre.html" %}
+
+</div>
+
+</body>
+</html>

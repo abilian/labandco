@@ -14,7 +14,7 @@ addons:
 
 # Install Python dependencies
 install:
-  - pip install -U pip setuptools wheel tox tox-travis poetry
+  - pip install -U pip\<20 setuptools wheel tox tox-travis poetry
 
 # Create DB
 before_script:
@@ -23,8 +23,8 @@ before_script:
 matrix:
   include:
     - env: SQLALCHEMY_DATABASE_URI=postgresql://postgres@localhost/test
-    # - env: TOXENV=front
-    # - env: TOXENV=lint
+    - env: TOXENV=front
+    - env: TOXENV=lint
     # - env: TOXENV=e2e (we're not ready for this)
 
 # Run tests
