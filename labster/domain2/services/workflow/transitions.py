@@ -503,13 +503,24 @@ class RejeterDgrtt(BaseTransition):
     message = "Demande rejetée / abandonnées par {actor} (contact)."
 
     def precondition(self, workflow):
-        actor: Profile = workflow.actor
-        return actor.is_membre_dri()
+        return workflow.actor_is_contact_labco()
 
-        # injector.get(RoleService)
-        # return False
-        # FIXME
-        # return actor.has_role("dgrtt")
+    # def precondition(self, workflow):
+    #     from labster.rbac import is_membre_dri, is_membre_drv
+    #
+    #     actor: Profile = workflow.actor
+    #     case: Demande = workflow.case
+    #     if is_membre_dri(actor):
+    #         return True
+    #
+    #     if is_membre_drv(actor, case.structure):
+    #         return True
+    #
+    #     for structure in case.get_structure_concernees():
+    #         if is_membre_drv(actor, structure):
+    #             return True
+    #
+    #     return False
 
     def get_users_to_notify(self, workflow, old_state):
         case = workflow.case

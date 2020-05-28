@@ -339,11 +339,11 @@ def get_permissions_for_structure(structure: Structure) -> Set[str]:
 
     # Cas admin local "normal"
     if user.has_role(Role.ADMIN_LOCAL, structure):
-        permissions.update(["P4", "P5"])
+        permissions.update(["P3", "P4", "P5"])
 
     for ancestor in structure.ancestors:
         if user.has_role(Role.ADMIN_LOCAL, ancestor) and ancestor.type == LA:
-            permissions.update(["P1", "P2", "P3", "P5"])
+            permissions.update(["P1", "P2", "P3", "P4", "P5"])
 
     return permissions
 

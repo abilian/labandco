@@ -270,7 +270,7 @@ def test_prendre_la_main_dri(mocker, request_context, injector, db):
     wf.set_actor(x.jules2_dri)
     assert wf.possible_transitions() == [
         PRENDRE_LA_MAIN_DGRTT,
-        REJETER_DGRTT,
+        # REJETER_DGRTT,
         # COMMENTER,
     ]
     assert demande.contact_labco == x.jules_dri
@@ -288,6 +288,6 @@ def test_prendre_la_main_dri(mocker, request_context, injector, db):
     wf.set_actor(x.jules_dri)
     assert wf.possible_transitions() == [
         PRENDRE_LA_MAIN_DGRTT,
-        REJETER_DGRTT,
+        # REJETER_DGRTT,
         # COMMENTER,
     ]

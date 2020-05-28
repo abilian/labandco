@@ -33,7 +33,7 @@ role_service = injector.get(RoleService)
 
 
 @method
-@cache.memoize(tag="structures")
+@cache.memoize(tag="structures", expire=3600)
 def sg_all_structures() -> JSON:
     root = structure_repo.get_root()
     assert root

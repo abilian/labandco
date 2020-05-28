@@ -21,7 +21,7 @@ role_service = injector.get(RoleService)
 
 
 @method
-@cache.memoize(tag="users")
+@cache.memoize(tag="users", expire=3600)
 def get_users(q="", page=0) -> JSONDict:
     page = int(page)
     query = (

@@ -75,7 +75,7 @@
 
             <td style="text-align: right;">
               <button
-                v-if="ou.permissions.P2"
+                v-if="ou.permissions.P3"
                 class="btn btn-danger btn-sm"
                 @click="deleteEdge(ou.id, child.id)"
               >
@@ -86,7 +86,7 @@
         </b-table-simple>
 
         <div
-          v-if="ou && ou.permissions.P2 && typeOptions.length > 0"
+          v-if="ou && ou.permissions.P3 && typeOptions.length > 0"
           class="mb-4"
         >
           <b-button

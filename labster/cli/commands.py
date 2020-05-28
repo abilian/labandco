@@ -26,6 +26,7 @@ from labster.domain2.model.profile import DAILY, WEEKLY, Profile, \
 from labster.domain2.model.structure import StructureRepository
 from labster.domain2.services.roles import Role, RoleService
 from labster.ldap import sync
+from labster.rpc.cache import cache
 
 logger = structlog.get_logger()
 
@@ -146,6 +147,7 @@ def ldap_sync():
     sync.sync_users()
 
     db.session.commit()
+    cache.clear()
 
 
 @click.command()

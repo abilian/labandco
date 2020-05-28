@@ -15,7 +15,7 @@ def run(cmd):
 
 
 print(f"Going to install {APP_NAME}")
-print(f"Press Y to confirm")
+print("Press Y to confirm")
 answ = input()
 if answ.lower() != "y":
     sys.exit()
@@ -48,7 +48,7 @@ if not Path("env").exists():
     print("Creating virtual env")
     cmd = f"{pyenv_root}/versions/{PYTHON_VERSION}/bin/python3.7 -m venv env"
     if run(cmd):
-        print(f"! Couldn't created virtualenv at 'env'")
+        print("! Couldn't created virtualenv at 'env'")
         sys.exit()
 
 else:
@@ -56,16 +56,16 @@ else:
 
 
 print("Installing or updating back-end (Python) dependencies")
-cmd = f"./env/bin/pip install -r requirements.txt ."
+cmd = "./env/bin/pip install -r requirements.txt ."
 if run(cmd):
-    print(f"! Couldn't install back-end dependencies")
+    print("! Couldn't install back-end dependencies")
     sys.exit()
 
 
 print("Installing or updating front-end (JavaScript) dependencies")
-cmd = f"yarn --cwd front"
+cmd = "yarn --cwd front"
 if run(cmd):
-    print(f"! Couldn't install front-end dependencies")
+    print("! Couldn't install front-end dependencies")
     sys.exit()
 
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "labster"
-version = "2.1.65"
+version = "2.1.70"
 description = ""
 authors = ["Abilian SAS"]
 
@@ -89,6 +89,7 @@ email_validator = "*"
 apscheduler = "^3.6.3"
 pampy = "^0.3.0"
 devtools = "^0.5.1"
+loguru = "^0.4.1"
 
 glom = "^19.2"
 
