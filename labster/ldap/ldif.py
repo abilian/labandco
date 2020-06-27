@@ -6,12 +6,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 from attr import attrs
+from flask_sqlalchemy import SQLAlchemy
 from ldif import LDIFParser
 from tqdm import tqdm
 
 from labster.di import injector
 from labster.domain2.model.profile import Profile, ProfileRepository
-from labster.domain2.model.structure import StructureRepository
+from labster.domain2.model.structure import Structure, StructureRepository
 from labster.ldap.constants import ADMINS_DN, PRESIDENCE_DN, SU_DN, \
     get_parent_dn
 
@@ -19,6 +20,7 @@ logger = structlog.get_logger()
 
 profile_repo = injector.get(ProfileRepository)
 structure_repo = injector.get(StructureRepository)
+db = injector.get(SQLAlchemy)
 
 
 def parse_ldif_file(ldif_file: str) -> List[Tuple[str, Dict[str, Any]]]:
@@ -52,13 +54,11 @@ class LdifRecord:
 
     @property
     def affectation(self) -> Optional[str]:
-        affectations = self.raw.get("sorbonneUniversiteEmpAffectation")
-        if not affectations:
+        structure_affectaction = self._get_structure_d_affectation()
+        if not structure_affectaction:
             return None
 
-        # assert len(affectations) == 1
-        affectation = affectations[0]
-
+        affectation = structure_affectaction.dn
         if affectation in ADMINS_DN:
             affectation = get_parent_dn(affectation)
 
@@ -66,6 +66,28 @@ class LdifRecord:
             affectation = SU_DN
 
         return affectation
+
+    def _get_structure_d_affectation(self) -> Optional[Structure]:
+        affectation_principale = self.supannEntiteAffectationPrincipale
+        structure_d_affectation = None
+        if affectation_principale:
+            structure_d_affectation = (
+                db.session.query(Structure)
+                .filter(Structure.supann_code_entite == affectation_principale)
+                .first()
+            )
+            if structure_d_affectation:
+                return structure_d_affectation
+
+        # Old LDIF format
+        affectation = self.sorbonneUniversiteEmpAffectation
+        structure_d_affectation = None
+        if affectation:
+            structure_d_affectation = structure_repo.get_by_dn(affectation)
+            if structure_d_affectation:
+                return structure_d_affectation
+
+        return None
 
     @property
     def fonctions(self):
@@ -82,7 +104,9 @@ class LdifRecord:
 
 def update_users_from_records(records: List[Tuple[str, Dict[str, List[str]]]]):
     profiles = profile_repo.get_all()
-    old_profile_uids = {p.uid for p in profiles if p.uid}
+    old_profile_uids = {
+        profile.uid for profile in profiles if profile.uid and profile.active
+    }
     count0 = len(old_profile_uids)
     print(f"old total: {count0:d}")
     logger.info(f"old total: {count0:d}")
@@ -99,6 +123,7 @@ def update_users_from_records(records: List[Tuple[str, Dict[str, List[str]]]]):
 
     uids_to_profiles = {p.uid: p for p in profiles}
 
+    print("Updating profiles from LDIF dump")
     for _dn, r in tqdm(records, disable=None):
         record = LdifRecord(r)
         if not record.uid:
@@ -134,61 +159,19 @@ def update_profile_from_record(profile: Profile, record: LdifRecord):
     profile.adresse = record.adresse
 
     affectation = record.affectation
-    structure_d_affectation = None
-    if affectation:
-        structure_d_affectation = structure_repo.get_by_dn(affectation)
 
-    if not structure_d_affectation:
+    if not affectation:
         if profile and profile.active:
             profile.affectation = ""
             profile.deactivate()
-            # TODO: log
         return
 
     if not profile.active:
         profile.activate()
 
     if profile.affectation != affectation:
-        # TODO: log
-        # print(profile.affectation, affectation)
-        # logger.info(f"Updating affectation for {record.uid} ({profile.name})")
         profile.affectation = affectation or ""
 
     fonctions = list(record.fonctions)
     if set(profile.fonctions) != set(fonctions):
         profile.fonctions = fonctions
-
-    # parser = SynchronizingUserLDIFParser(open(ldif_file, "rb"))
-    # parser.parse()
-    # users = parser.users
-    # print(f"from ldif: {len(users):d}")
-    # deactivated = 0
-    # reactivated = 0
-    # for p in profile_uids.values():
-    #     if p.active and p.uid not in users:
-    #         p.active = False
-    #         deactivated += 1
-    #     if not p.active and p.uid in users:
-    #         p.active = True
-    #         reactivated += 1
-    # db.session.flush()
-    # print(f"deactivated: {deactivated}")
-    # print(f"reactivated: {reactivated}")
-    # added = 0
-    # for uid, u in users.items():
-    #     if uid not in profile_uids:
-    #         p = Profile(**u)
-    #         p.set_default_roles()
-    #         db.session.add(p)
-    #         added += 1
-    #
-    #     else:
-    #         p = Profile.query.get_by_uid(uid)
-    #         for k, v in u.items():
-    #             if getattr(p, k, None) != v:
-    #                 setattr(p, k, v)
-    # db.session.flush()
-    # print(f"added: {added}")
-    # user_count = Profile.query.count()
-    # print(f"new total: {user_count}")
-    # db.session.commit()

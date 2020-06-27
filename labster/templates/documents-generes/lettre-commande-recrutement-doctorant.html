@@ -113,9 +113,11 @@
 
 
   <div style="border: solid 1px black; padding: 1em;">
-    <p>Je, soussigné-e, <em>{{ signataire.prenom }} {{ signataire.nom }}</em>,
-      directeur de: <em>{{ demande.structure.nom }}</em>, demande le
-      recrutement décrit ci-dessus.</p>
+    <p>
+      Je, soussigné-e, <em>{{ signataire.prenom }} {{ signataire.nom }}</em>,
+      directeur de: <em>{{ structure_financeuse.nom }}</em>, demande le
+      recrutement décrit ci-dessus dans la structure {{ structure_d_accueil.nom }}.
+    </p>
 
     <p>Date:</p>
     <p><br></p>

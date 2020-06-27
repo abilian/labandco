@@ -4,7 +4,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from enum import Enum, unique
 from functools import singledispatch
-from typing import Any, Collection, Dict, List, Optional, Set, Type
+from typing import Any, Collection, Dict, List, Optional, Set, Type, Union
 
 import dateutil
 import sqlalchemy as sa
@@ -327,6 +327,13 @@ class Demande(db.Model):
         result = self.get_structure_concernees()
         if self.structure:
             result.add(self.structure)
+        return result
+
+    def valideurs(self) -> Set[Profile]:
+        structures_signataires = self.structures_signataires()
+        result = set()
+        for structure in structures_signataires:
+            result.update(structure.responsables)
         return result
 
     def get_structure_concernees(self):
@@ -690,6 +697,15 @@ def get_bureau_dri(demande) -> ContactType:
 
 @get_bureau_dri.register
 def get_bureau_dri_convention(demande: DemandeConvention):
+    return _get_bureau_dri_convention(demande)
+
+
+@get_bureau_dri.register
+def get_bureau_dri_avenant_convention(demande: DemandeAvenantConvention):
+    return _get_bureau_dri_convention(demande)
+
+
+def _get_bureau_dri_convention(demande: Demande):
     """Le choix dans cette liste et la case à cocher "Le projet intègre-t-
     il une entreprise ? " pour ANR détermine le destinataire des infos du
     formulaire:

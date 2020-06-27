@@ -21,7 +21,7 @@ class SqlaStructureRepository(StructureRepository):
         self.session = db.session
 
     def query(self):
-        return self.session.query(Structure)
+        return self.session.query(Structure).filter(Structure.active == True)
 
     def get_all(self) -> Set[Structure]:
         return set(self.query().all())

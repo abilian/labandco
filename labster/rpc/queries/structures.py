@@ -186,20 +186,29 @@ class FullStructureSchema(ModelSchema):
         exclude = ["parents", "children"]
 
     def _can_be_deleted(self, structure):
-        # For tests
-        current_user = get_current_user()
-        if current_user.is_authenticated:
-            profile = current_user.profile
-            if not profile.has_role(Role.ADMIN_CENTRAL):
-                return False
-
         if structure.children:
             return False
 
         if role_service.get_users_with_given_role(Role.MEMBRE, structure):
             return False
 
-        return True
+        # For tests
+        current_user = get_current_user()
+        if not current_user.is_authenticated:
+            return True
+
+        profile = current_user.profile
+        if profile.has_role(Role.ADMIN_CENTRAL):
+            return True
+
+        if structure.type in {DE, EQ}:
+            if profile.has_role(Role.ADMIN_LOCAL, structure.parent) or profile.has_role(
+                Role.ADMIN_LOCAL, structure.parent.parent
+            ):
+
+                return True
+
+        return False
 
     def get_permissions(self, structure: Structure) -> Dict[str, bool]:
         return {p: True for p in rbac.get_permissions_for_structure(structure)}

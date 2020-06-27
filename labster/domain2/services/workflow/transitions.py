@@ -155,6 +155,7 @@ class Soumettre(BaseTransition):
 
         if data.get("resoumission"):
             workflow.set_value("validee_hierarchie", False)
+            workflow.set_value("signatures", [])
 
         if workflow.get_value("validee_hierarchie"):
             if workflow.get_value("recevable"):

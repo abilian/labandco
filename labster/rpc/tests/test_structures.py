@@ -28,8 +28,9 @@ def test_structures(structure_repo, db_session: scoped_session):
         "parents": [],
         "permettre_reponse_directe": True,
         "permettre_soummission_directe": False,
-        "sigle": "",
-        "type_name": "Université",
         "permissions": {},
+        "sigle": "",
+        "supann_code_entite": None,
+        "type_name": "Université",
     }
     assert result == expected

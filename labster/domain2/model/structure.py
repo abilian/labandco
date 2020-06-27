@@ -88,14 +88,22 @@ class Structure(db.Model):
     id = Column(String(36), primary_key=True)
     old_id = Column(Integer)
     active = Column(Boolean, default=True, nullable=False)
+    #: Un type (cf. tableau page suivante)
     type_name = Column(String)
-    #
+
+    #: Nom
     nom = Column(String, default="", nullable=False)
+    #: Un acronyme (éventuellement vide)
     sigle = Column(String, default="", nullable=False)
+    #: Un champ LDAP, pour les structures réelles
     dn = Column(String, default="", nullable=False)
+    #: Old DN, in case this comes from the old directory
     old_dn = Column(String, default="", nullable=False)
+    #: Nouvel id LDAP
+    supann_code_entite = Column(String)
+
+    #: Propriétés additionnelles (non-spécifiées)
     email = Column(String, default="", nullable=False)
-    #
     permettre_reponse_directe = Column(Boolean, default=True)
     permettre_soummission_directe = Column(Boolean, default=False)
 
@@ -107,40 +115,6 @@ class Structure(db.Model):
         collection_class=set,
         backref=backref("parents", collection_class=set),
     )
-
-    # id: StructureId = StructureId("")
-    # old_id: Optional[int] = None
-    # active: bool = True
-    #
-    # #: Nom
-    # nom: str = ""
-    #
-    # #: Un acronyme (éventuellement vide)
-    # sigle: str = ""
-    #
-    # #: Un type (cf. tableau page suivante)
-    # type_name: str = ""
-    #
-    # #: Un champ LDAP, pour les structures réelles
-    # dn: str = ""
-    #
-    # #: Old DN, in case this comes from the old directory
-    # old_dn: str = ""
-    #
-    # #: Parents
-    # parents: Set[Structure] = Factory(set)
-    #
-    # #: Enfants
-    # children: Set[Structure] = Factory(set)
-    #
-    # #: Cache
-    # _depth: int = -1
-    #
-    # #: Propriétés additionnelles (non-spécifiées)
-    # permettre_reponse_directe: bool = False
-    # permettre_soummission_directe: bool = False
-    #
-    # email: str = Factory(str)
 
     def __init__(self, **kw):
         self.id = str(uuid4())

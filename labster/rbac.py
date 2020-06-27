@@ -223,6 +223,9 @@ def can_add_pj(demande: Demande) -> bool:
     if is_contributeur(user, demande):
         return True
 
+    if user in demande.valideurs():
+        return True
+
     return False
 
 

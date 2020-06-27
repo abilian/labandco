@@ -92,7 +92,7 @@ def sg_add_edge(u_id, v_id):
     u = structure_repo.get_by_id(StructureId(u_id))
     v = structure_repo.get_by_id(StructureId(v_id))
 
-    check_permission(u, "P2")
+    check_permission(u, "P3")
 
     u.add_child(v)
 
@@ -105,7 +105,7 @@ def sg_delete_edge(u_id, v_id):
     u = structure_repo.get_by_id(StructureId(u_id))
     v = structure_repo.get_by_id(StructureId(v_id))
 
-    check_permission(u, "P2")
+    check_permission(u, "P3")
 
     u.remove_child(v)
 

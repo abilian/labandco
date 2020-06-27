@@ -6,7 +6,6 @@ import shutil
 import sys
 from pathlib import Path
 from pprint import pprint
-from typing import List
 
 import click
 import structlog
@@ -245,21 +244,6 @@ def grant_mnp():
 @click.command()
 @with_appcontext
 def fix():
-    pass
-    # from labster.domain.models.profiles import Profile as OldProfile
-    #
-    # new_profiles: List[Profile] = db.session.query(Profile).filter(
-    #     Profile.active == True
-    # ).all()
-    # old_profiles: List[OldProfile] = db.session.query(OldProfile).all()
-    # assert old_profiles
-    #
-    # for new_profile in tqdm(new_profiles):
-    #     old_profile = db.session.query(OldProfile).get(new_profile.old_id)
-    #     if not old_profile:
-    #         continue
-    #     new_profile.preferences_notifications = (
-    #         old_profile.preferences_notifications or 0
-    #     )
-    #
-    # db.session.commit()
+    from .fixes import fix_ajout_supann_code_entite
+
+    # fix_ajout_supann_code_entite()

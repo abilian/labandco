@@ -25,7 +25,9 @@ def sync_users():
 
 
 def get_ldif_file():
-    files = glob.glob("annuaire/export-Lab-Co.*.ldif")
+    files = glob.glob("annuaire/export-Lab-Co-Dev*.ldif")
+    if not files:
+        files = glob.glob("annuaire/export-Lab-Co.*.ldif")
     files.sort()
     if not files:
         logger.error("Error: not LDIF file found in annuaire/")
