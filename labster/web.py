@@ -13,7 +13,7 @@ from werkzeug.utils import import_string
 from labster.util import url_for
 
 from . import search
-# from .bus import register_callback
+from .bus import register_callback
 from .security import get_current_user, login_user
 
 BLUEPRINTS = [
@@ -39,9 +39,9 @@ def init_web(app: Flask) -> None:
 
     app.jinja_env.filters.update(datetime=lambda x: x.strftime("%d/%m/%y %H:%M"))
 
-    # TODO
-    # search.register(app)
-    # register_callback()
+    search.register(app)
+
+    register_callback()
 
 
 def register_blueprints(app: Flask) -> None:

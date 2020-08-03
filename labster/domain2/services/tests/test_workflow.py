@@ -5,7 +5,7 @@ from labster.domain2.model.profile import Profile, ProfileRepository
 from labster.domain2.model.structure import Structure, StructureRepository
 from labster.domain2.model.type_structure import DU, LA
 from labster.domain2.services.roles import Role, RoleService
-from labster.domain2.services.workflow.states import ABANDONNEE, EN_EDITION, \
+from labster.domain2.services.workflow.states import ABANDONNEE, \
     EN_INSTRUCTION, EN_VALIDATION, EN_VERIFICATION, TRAITEE
 from labster.domain2.services.workflow.transitions import ABANDONNER, \
     ACCUSER_RECEPTION, COMMENTER, CONFIRMER_FINALISATION_DGRTT, \
@@ -13,6 +13,7 @@ from labster.domain2.services.workflow.transitions import ABANDONNER, \
     REJETER_DGRTT, REQUERIR_MODIFICATION_DGRTT, REQUERIR_MODIFICATION_DIR, \
     SOUMETTRE, VALIDER_DIR
 from labster.domain2.services.workflow.workflow import LabsterWorkflow
+from labster.domain.models.workflow import EN_EDITION
 from labster.ldap.constants import DRI_DN
 from labster.lib.workflow import State
 

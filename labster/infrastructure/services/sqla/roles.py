@@ -164,6 +164,9 @@ class SqlaRoleService(RoleService):
         result = defaultdict(set)
         for grant in grants:
             role = getattr(Role, grant.role_name)
-            result[role].add(grant.context)
+            structure = grant.context
+            if structure and not structure.active:
+                continue
+            result[role].add(structure)
 
         return result

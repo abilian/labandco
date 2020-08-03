@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from labster.domain2.model.demande import DemandeType
+from labster.domain.models.demandes import AUTRE, AVENANT_CONVENTION, \
+    CONVENTION, PI_INVENTION, PI_LOGICIEL, RECRUTEMENT
 from labster.newforms.base import Form
 
 from .autre import DemandeAutreForm
@@ -11,12 +12,12 @@ from .pi_logiciel import DemandePiLogicielForm
 from .rh import DemandeRHForm
 
 TYPE_DEMANDE_TO_FORM = {
-    DemandeType.CONVENTION.value: DemandeConventionForm,
-    DemandeType.AVENANT_CONVENTION.value: DemandeAvenantConventionForm,
-    DemandeType.RECRUTEMENT.value: DemandeRHForm,
-    DemandeType.PI_LOGICIEL.value: DemandePiLogicielForm,
-    DemandeType.PI_INVENTION.value: DemandePiInventionForm,
-    DemandeType.AUTRE.value: DemandeAutreForm,
+    CONVENTION: DemandeConventionForm,
+    AVENANT_CONVENTION: DemandeAvenantConventionForm,
+    RECRUTEMENT: DemandeRHForm,
+    PI_LOGICIEL: DemandePiLogicielForm,
+    PI_INVENTION: DemandePiInventionForm,
+    AUTRE: DemandeAutreForm,
 }
 
 

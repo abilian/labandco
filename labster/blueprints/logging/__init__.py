@@ -1,5 +1,4 @@
-"""Blueprint (and internal service) for logs"""
-
+"""Blueprint (and internat service) for logs"""
 from __future__ import annotations
 
 from abilian.app import db

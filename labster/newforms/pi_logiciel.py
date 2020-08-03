@@ -1,5 +1,4 @@
 """Formulaire PI."""
-
 from __future__ import annotations
 
 from labster.domain.services.constants import get_constant

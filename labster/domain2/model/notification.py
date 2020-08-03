@@ -5,8 +5,8 @@ from datetime import datetime
 import pytz
 from abilian.core.models import IdMixin
 from flask_sqlalchemy import BaseQuery
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, \
-    Unicode
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, \
+    String, Unicode
 from sqlalchemy.orm import relationship
 
 from labster.extensions import db

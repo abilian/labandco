@@ -563,8 +563,9 @@ class Commenter(BaseTransition):
         return self._get_stakeholders(workflow)
 
     def _get_stakeholders(self, workflow: Workflow) -> Container:
-        from labster.di import injector
         from flask_sqlalchemy import SQLAlchemy
+
+        from labster.di import injector
         from labster.domain2.model.profile import Profile
 
         db = injector.get(SQLAlchemy)

@@ -10,9 +10,8 @@ from flask_login import AnonymousUserMixin, UserMixin
 from labster.auth import AuthContext
 from labster.di import injector
 from labster.domain2.model.profile import Profile, ProfileRepository
-
-profile_repos = injector.get(ProfileRepository)
-auth_context = injector.get(AuthContext)
+from labster.domain2.services.constants import get_constants
+from labster.domain2.services.roles import Role
 
 
 def login_required(func):
@@ -48,9 +47,6 @@ class AuthenticatedUser(UserMixin):
     def uid(self):
         return self.profile.uid
 
-    def __repr__(self):
-        return f"<{self.__class__.__name__} login={self.profile.login}>"
-
 
 User = Union[AuthenticatedUser, AnonymousUser]
 
@@ -66,10 +62,12 @@ def login_user():
 
     else:
         try:
+            profile_repos = injector.get(ProfileRepository)
             profile = profile_repos.get_by_id(current_user_id)
 
             g.current_profile = profile
             g.current_user = AuthenticatedUser(profile)
+
         except:
             g.current_user = AnonymousUser()
             g.current_profile = None
@@ -78,12 +76,14 @@ def login_user():
 
 
 def get_current_user() -> User:
+    auth_context = injector.get(AuthContext)
     user = auth_context.current_user
     assert user
     return user
 
 
 def get_current_profile() -> Profile:
+    auth_context = injector.get(AuthContext)
     profile = auth_context.current_profile
     assert profile
     return profile

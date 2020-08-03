@@ -1,5 +1,4 @@
 """Modèle un peu simpliste de hiérarchie LDAP + info métiers spécifiques."""
-
 from __future__ import annotations
 
 from abilian.core.entities import Entity

@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 from abilian.core.models.blob import Blob
 from flask import current_app
@@ -16,7 +17,7 @@ from werkzeug.exceptions import Forbidden, NotFound
 from labster.di import injector
 from labster.domain2.model.demande import Demande, demande_factory
 from labster.domain2.model.profile import Profile
-from labster.domain2.model.structure import StructureRepository
+from labster.domain2.model.structure import Structure, StructureRepository
 from labster.extensions import whoosh
 from labster.rbac import check_can_add_pj, check_read_access, \
     check_write_access, feuille_cout_editable
@@ -60,29 +61,15 @@ def create_demande(model, form):
 
     form_type = form["name"]
 
-    porteur_dto = model.get("porteur")
-    if porteur_dto:
-        porteur_id = porteur_dto["value"]
-        porteur = db.session.query(Profile).get(porteur_id)
-    else:
-        porteur = None
-
-    if user != porteur:
-        gestionnaire = user
-    else:
-        gestionnaire = None
-
-    structure_dto = model.get("laboratoire")
-    if structure_dto:
-        structure_id = structure_dto["value"]
-        structure = structure_repo.get_by_id(structure_id)
-    else:
-        structure = None
-
     demande = demande_factory(type=form_type, demandeur=user, data=model)
-    demande.porteur = porteur
-    demande.gestionnaire = gestionnaire
-    demande.structure = structure
+
+    demande.porteur = get_porteur(model)
+    demande.structure = get_structure(model)
+
+    if user != demande.porteur:
+        demande.gestionnaire = user
+    else:
+        demande.gestionnaire = None
 
     demande.form_state = form
 
@@ -107,34 +94,24 @@ def create_demande(model, form):
 
 
 @method
-def dupliquer_demande(id):
-    demande = db.session.query(Demande).get(id)
-    check_read_access(demande)
-
-    new_id = db.session.query(func.max(Demande.id)).one()[0] + 1
-    nouvelle_demande = demande.clone()
-    nouvelle_demande.id = new_id
-
-    db.session.add(nouvelle_demande)
-    db.session.commit()
-
-    return nouvelle_demande.id
-
-
-@method
 def update_demande(id, model, form):
+    user = get_current_profile()
     model = cleanup_model(model, form)
 
     demande = db.session.query(Demande).get(id)
     check_read_access(demande)
     check_write_access(demande)
 
-    new_data = model
     demande.form_state = form
 
     messages = []
-    if not demande.has_same_data(new_data):
-        demande.update_data(new_data)
+    if not demande.has_same_data(model):
+        demande.update_data(model)
+        porteur = get_porteur(model)
+        if porteur != demande.porteur:
+            demande.porteur = porteur
+            demande.gestionnaire = user
+        demande.structure = get_structure(model)
         db.session.commit()
 
         messages.append(
@@ -152,6 +129,41 @@ def update_demande(id, model, form):
     whoosh.index_object(demande)
 
     return messages
+
+
+def get_structure(model: dict) -> Optional[Structure]:
+    structure_dto = model.get("laboratoire")
+    if structure_dto:
+        structure_id = structure_dto["value"]
+        structure = structure_repo.get_by_id(structure_id)
+    else:
+        structure = None
+    return structure
+
+
+def get_porteur(model: dict) -> Optional[Profile]:
+    porteur_dto = model.get("porteur")
+    if porteur_dto:
+        porteur_id = porteur_dto["value"]
+        porteur = db.session.query(Profile).get(porteur_id)
+    else:
+        porteur = None
+    return porteur
+
+
+@method
+def dupliquer_demande(id):
+    demande = db.session.query(Demande).get(id)
+    check_read_access(demande)
+
+    new_id = db.session.query(func.max(Demande.id)).one()[0] + 1
+    nouvelle_demande = demande.clone()
+    nouvelle_demande.id = new_id
+
+    db.session.add(nouvelle_demande)
+    db.session.commit()
+
+    return nouvelle_demande.id
 
 
 @method

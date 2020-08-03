@@ -6,7 +6,6 @@ from urllib.parse import parse_qs, urlencode, urljoin, urlsplit, urlunsplit
 
 import requests
 import structlog
-from devtools import debug
 from flask import Flask, Request, abort, redirect, render_template, request, \
     session, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -159,11 +158,7 @@ def get_user_by_login(login: str) -> Profile:
     # This fixes some nasty "current transaction is aborted" bug
     db.session.commit()
     query = db.session.query(Profile).filter_by(active=True)
-    debug(query.all())
-    for user in query.all():
-        debug(user, user.login, login)
     user = query.filter_by(login=login).first()
-    assert user
     return user
 
 

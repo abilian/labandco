@@ -1,13 +1,13 @@
 """Formulaire PI."""
-
 from __future__ import annotations
 
 from typing import Any
 
 from labster.domain.services.constants import get_constant
-from labster.newforms.base import HTML, Boolean2Field, BooleanField, FieldSet, \
-    Form, ListeContrats, ListeDivulgationsFutures, ListeDivulgationsPassees, \
-    ListeMateriels, ListePartenairesContactes, StringField, TextAreaField
+from labster.newforms.base import HTML, Boolean2Field, BooleanField, \
+    FieldSet, Form, ListeContrats, ListeDivulgationsFutures, \
+    ListeDivulgationsPassees, ListeMateriels, ListePartenairesContactes, \
+    StringField, TextAreaField
 #
 # Fieldsets
 #

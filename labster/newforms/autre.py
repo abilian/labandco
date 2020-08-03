@@ -1,5 +1,4 @@
 """Formulaire pour une DemandeAutre."""
-
 from __future__ import annotations
 
 from labster.newforms.base import FieldSet, Form, Select2Field, StringField, \

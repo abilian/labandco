@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "labster"
-version = "2.2.6"
+version = "2.2.16"
 description = ""
 authors = ["Abilian SAS"]
 
@@ -30,7 +30,7 @@ psycopg2-binary = "*"
 Flask-Redis = "*"
 
 # Pinned for now
-pandas = "<0.25"
+pandas = "*"
 Flask-Assets = "< 2"
 werkzeug = "<1"
 
@@ -88,8 +88,10 @@ jsonrpcclient = "^3.3.5"
 email_validator = "*"
 apscheduler = "^3.6.3"
 pampy = "^0.3.0"
-devtools = "^0.5.1"
 loguru = "^0.4.1"
+
+# Normally it's a dev tool, but in case we leave an import
+devtools = "*"
 
 glom = "^19.2"
 

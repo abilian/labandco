@@ -8,7 +8,6 @@ from __future__ import annotations
 from collections import Sequence
 from typing import Collection, Dict, List, Tuple
 
-from devtools import debug
 from jsonrpcserver import method
 from marshmallow import Schema, fields
 from marshmallow_sqlalchemy import ModelSchema

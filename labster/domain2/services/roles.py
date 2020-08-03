@@ -3,6 +3,8 @@ from __future__ import annotations
 from enum import Enum, unique
 from typing import Any, Collection, Dict, Set
 
+from devtools import debug
+
 from labster.domain2.model.profile import Profile
 from labster.domain2.model.structure import Structure
 
@@ -83,12 +85,16 @@ class RoleService:
             self.ungrant_role(user, Role.MEMBRE_AFFILIE, structure)
 
         structures = roles[Role.MEMBRE_AFFECTE] | roles[Role.MEMBRE_RATTACHE]
+
         for structure in structures:
             self.grant_role(user, Role.MEMBRE, structure)
 
         ancestors = set()
         for structure in structures:
-            ancestors.update(structure.ancestors)
+            if not structure:
+                debug(user, roles)
+            if structure:
+                ancestors.update(structure.ancestors)
 
         for structure in ancestors:
             self.grant_role(user, Role.MEMBRE_AFFILIE, structure)

@@ -36,8 +36,9 @@ from .base import Repository
 from .type_structure import ED, TypeStructure, get_type_structure
 
 if TYPE_CHECKING:
-    from .profile import Profile
     from labster.domain2.services.roles import Role
+
+    from .profile import Profile
 
 
 hierarchy = Table(

@@ -1,7 +1,6 @@
 """
 TODO: explain
 """
-
 from __future__ import annotations
 
 from abilian.core.entities import Entity

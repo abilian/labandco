@@ -244,6 +244,7 @@ def grant_mnp():
 @click.command()
 @with_appcontext
 def fix():
-    from .fixes import fix_ajout_supann_code_entite
-
+    # from .fixes import fix_ajout_supann_code_entite
     # fix_ajout_supann_code_entite()
+
+    print("No fix needed")

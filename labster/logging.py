@@ -9,8 +9,8 @@ from pathlib import Path
 import structlog
 from flask import Flask, g, request
 from structlog.dev import set_exc_info
-from structlog.processors import JSONRenderer, StackInfoRenderer, TimeStamper, \
-    format_exc_info
+from structlog.processors import JSONRenderer, StackInfoRenderer, \
+    TimeStamper, format_exc_info
 
 
 def init_logging(app: Flask) -> None:

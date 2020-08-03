@@ -1,3 +1,4 @@
+# Set up warnings control
 from __future__ import annotations
 
 import logging
@@ -21,7 +22,6 @@ from .di import injector
 from .extensions import redis, whoosh
 from .logging import init_logging
 
-# Set up warnings control
 warnings.simplefilter("ignore", category=sqlalchemy.exc.SAWarning)
 # Doesn't work, despite https://github.com/Kozea/WeasyPrint/issues/312
 logging.getLogger("weasyprint").setLevel(100)

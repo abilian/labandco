@@ -1,10 +1,4 @@
 """Formulaires PI: parties communes."""
-
-from __future__ import annotations
-
-from labster.newforms.base import Boolean2Field, BooleanField, FieldSet, \
-    Select2Field, StringField, TextAreaField
-
 # Nom
 # Prénom
 # Téléphone
@@ -15,6 +9,11 @@ from labster.newforms.base import Boolean2Field, BooleanField, FieldSet, \
 # de participation à la création, qui conditionne le futur intéressement des contributeurs"
 # Période à laquelle vous avez contribué à l'œuvre / period in which you contributed to the work
 # Indiquer la nature de la contribution à l'œuvre / Please indicate the contribution to the work
+from __future__ import annotations
+
+from labster.newforms.base import Boolean2Field, BooleanField, FieldSet, \
+    Select2Field, StringField, TextAreaField
+
 interlocuteur_privilegie = FieldSet(
     "interlocuteur_privilegie",
     "Interlocuteur privilégié",

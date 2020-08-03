@@ -1,7 +1,6 @@
 """
 Auth blueprint - used for authencation.
 """
-
 from __future__ import annotations
 
 from flask import Blueprint
@@ -14,4 +13,4 @@ __all__ = ()
 
 @blueprint.record
 def configure(state):
-    from . import cas, backdoors
+    from . import backdoors, cas

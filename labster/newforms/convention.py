@@ -1,5 +1,4 @@
 """Formulaire PI."""
-
 from __future__ import annotations
 
 from labster.newforms.base import HTML, BooleanField, DateField, FieldSet, \

@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 from attr import attrs
+from devtools import debug
 from flask_sqlalchemy import SQLAlchemy
 from ldif import LDIFParser
 from tqdm import tqdm
@@ -68,8 +69,9 @@ class LdifRecord:
         return affectation
 
     def _get_structure_d_affectation(self) -> Optional[Structure]:
-        affectation_principale = self.supannEntiteAffectationPrincipale
         structure_d_affectation = None
+
+        affectation_principale = self.supannEntiteAffectationPrincipale
         if affectation_principale:
             structure_d_affectation = (
                 db.session.query(Structure)
@@ -81,9 +83,10 @@ class LdifRecord:
 
         # Old LDIF format
         affectation = self.sorbonneUniversiteEmpAffectation
-        structure_d_affectation = None
         if affectation:
-            structure_d_affectation = structure_repo.get_by_dn(affectation)
+            structure_d_affectation = (
+                db.session.query(Structure).filter(Structure.dn == affectation).first()
+            )
             if structure_d_affectation:
                 return structure_d_affectation
 
@@ -149,6 +152,8 @@ def deactivate_users(deleted_uids):
 
 
 def update_profile_from_record(profile: Profile, record: LdifRecord):
+    assert profile
+
     profile.nom = record.sn
     profile.prenom = record.givenName
     profile.uid = record.uid
@@ -161,7 +166,7 @@ def update_profile_from_record(profile: Profile, record: LdifRecord):
     affectation = record.affectation
 
     if not affectation:
-        if profile and profile.active:
+        if profile.active:
             profile.affectation = ""
             profile.deactivate()
         return
@@ -170,7 +175,7 @@ def update_profile_from_record(profile: Profile, record: LdifRecord):
         profile.activate()
 
     if profile.affectation != affectation:
-        profile.affectation = affectation or ""
+        profile.affectation = affectation
 
     fonctions = list(record.fonctions)
     if set(profile.fonctions) != set(fonctions):

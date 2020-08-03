@@ -1,17 +1,22 @@
 from __future__ import annotations
 
 from datetime import datetime
+from smtplib import SMTPException
 from typing import TYPE_CHECKING, Set
 
+import structlog
 from flask import render_template
 from flask_mail import Message
 
 from labster.extensions import db, mail
 
 if TYPE_CHECKING:
-    from labster.domain2.model.profile import Profile, FLUX_TENDU
     from labster.domain2.model.notification import Notification
+    from labster.domain2.model.profile import FLUX_TENDU, Profile
     from labster.lib.workflow import Workflow
+
+
+logger = structlog.get_logger()
 
 
 def send_notification(user: Profile, body: str, workflow: Workflow) -> Notification:
@@ -54,7 +59,10 @@ def send_notification_by_email(notification: Notification) -> None:
     }
     html = render_template("emails/notif-generique.html", **ctx)
     msg = Message(subject, recipients=recipients, html=html)
-    mail.send(msg)
+    try:
+        mail.send(msg)
+    except SMTPException as e:
+        logger.error("SMTP error", e)
 
 
 def send_email(recipients: Set[Profile], subject: str, template, context) -> None:

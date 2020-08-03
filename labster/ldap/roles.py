@@ -44,7 +44,8 @@ class RolesUpdater:
             self.role_service.ungrant_role(user, Role.MEMBRE_AFFECTE, structure)
 
         structure = self.structure_repo.get_by_dn(user.affectation)
-        self.role_service.grant_role(user, Role.MEMBRE_AFFECTE, structure)
+        if structure:
+            self.role_service.grant_role(user, Role.MEMBRE_AFFECTE, structure)
 
     # def update_role_porteur(self, user: Profile):
     #     if "researcher" in user.fonctions or "faculty" in user.fonctions:

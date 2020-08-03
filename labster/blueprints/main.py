@@ -9,7 +9,6 @@ from abilian.core.models.blob import Blob
 from flask import Blueprint, Request, make_response, redirect, \
     render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from weasyprint import CSS, HTML
 from werkzeug.exceptions import Forbidden, NotFound
 
 from labster.domain2.model.demande import Demande, DemandeRH
@@ -18,8 +17,8 @@ from labster.domain2.model.structure import StructureRepository
 from labster.domain2.services.constants import get_constants
 from labster.domain2.services.documents_generes import devis_rh, \
     lettre_commande_rh
-from labster.rbac import acces_restreint, check_can_add_pj, check_read_access, \
-    feuille_cout_editable
+from labster.rbac import acces_restreint, check_can_add_pj, \
+    check_read_access, feuille_cout_editable
 from labster.rpc.commands.demandes import cleanup_model
 from labster.security import get_current_profile, login_required
 
@@ -104,7 +103,7 @@ def blob(demande_id: int, blob_id: int, db: SQLAlchemy):
     else:
         response.headers["content-type"] = "text/plain"
     content_disposition = f'attachment;filename="{filename}"'
-    response.headers["content-disposition"] = content_disposition
+    response.headers["content-disposition"] = content_disposition.encode()
     return response
 
 
@@ -152,7 +151,7 @@ def devis_rh_rest(id, db: SQLAlchemy):
     response = make_response(devis_rh(demande))
     response.headers["content-type"] = "application/pdf"
     content_disposition = 'attachment;filename="devis-rh.pdf"'
-    response.headers["content-disposition"] = content_disposition
+    response.headers["content-disposition"] = content_disposition.encode()
     return response
 
 
@@ -202,7 +201,7 @@ def lettre_commande_rh_rest(id, db: SQLAlchemy):
     response = make_response(lettre_commande_rh(demande))
     response.headers["content-type"] = "application/pdf"
     content_disposition = 'attachment;filename="lettre-commande-rh.pdf"'
-    response.headers["content-disposition"] = content_disposition
+    response.headers["content-disposition"] = content_disposition.encode()
     return response
 
 

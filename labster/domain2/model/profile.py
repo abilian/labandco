@@ -12,8 +12,8 @@ from labster.domain2.model.base import Repository
 from labster.ldap.constants import DRI_DN
 
 if TYPE_CHECKING:
-    from labster.domain2.services.roles import Role
     from labster.domain2.model.structure import Structure
+    from labster.domain2.services.roles import Role
 
 
 FLUX_TENDU = 0
@@ -88,8 +88,8 @@ class Profile(db.Model):
     # Roles
     #
     def structure_d_appartenance(self) -> Structure:
-        from labster.domain2.services.roles import RoleService, Role
         from labster.di import injector
+        from labster.domain2.services.roles import Role, RoleService
 
         role_service = injector.get(RoleService)
         roles_dict = role_service.get_roles_for_user(self)
@@ -98,8 +98,8 @@ class Profile(db.Model):
         return list(structures)[0]
 
     def has_role(self, role: Role, context: Any = None) -> bool:
-        from labster.domain2.services.roles import RoleService
         from labster.di import injector
+        from labster.domain2.services.roles import RoleService
 
         role_service = injector.get(RoleService)
         return role_service.has_role(self, role, context)

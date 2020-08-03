@@ -11,8 +11,8 @@ from labster.domain2.services.notifications import send_notification
 from labster.types import JSONList
 
 if TYPE_CHECKING:
-    from labster.domain2.model.profile import Profile
     from labster.domain2.model.demande import Demande
+    from labster.domain2.model.profile import Profile
 
 
 class WorkflowException(Exception):

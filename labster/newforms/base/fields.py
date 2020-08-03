@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import hashlib
 import uuid
 from typing import List
 
 from flask_babel import format_date
 
-from labster.domain2.model.profile import Profile
+from labster.domain.models.profiles import Profile
 from labster.domain.models.util import parse_date
 from labster.types import JSONDict
 
