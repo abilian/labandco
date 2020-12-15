@@ -110,7 +110,10 @@ def get_contacts_for_user() -> JSONDict:
                         "sigle": structure.sigle,
                     }
                     result2.append(
-                        {"structure": structure_dto, "bureau": contact_type.value,}
+                        {
+                            "structure": structure_dto,
+                            "bureau": contact_type.value,
+                        }
                     )
 
     return {

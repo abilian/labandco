@@ -131,9 +131,7 @@ insertion_sql = """INSERT INTO log(
 
 
 class SQLiteHandler(logging.Handler):
-    """
-    Thread-safe logging handler for SQLite.
-    """
+    """Thread-safe logging handler for SQLite."""
 
     def __init__(self, db_file):
         logging.Handler.__init__(self)
@@ -144,9 +142,7 @@ class SQLiteHandler(logging.Handler):
         conn.close()
 
     def format_time(self, record):
-        """
-        Create a time stamp
-        """
+        """Create a time stamp."""
         record.dbtime = time.strftime(
             "%Y-%m-%d %H:%M:%S", time.localtime(record.created)
         )

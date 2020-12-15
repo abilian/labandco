@@ -24,7 +24,13 @@ def get_selectors():
             "name": "type_demande",
             "label": "Type de demande",
             "multiple": True,
-            "options": [{"value": x[0], "text": x[0],} for x in types_demandes],
+            "options": [
+                {
+                    "value": x[0],
+                    "text": x[0],
+                }
+                for x in types_demandes
+            ],
         }
     )
 
@@ -42,7 +48,13 @@ def get_selectors():
             "name": "financeur",
             "label": "Financeur",
             "multiple": True,
-            "options": [{"value": x[0], "text": x[0],} for x in financeurs],
+            "options": [
+                {
+                    "value": x[0],
+                    "text": x[0],
+                }
+                for x in financeurs
+            ],
         }
     )
 
@@ -58,7 +70,13 @@ def get_selectors():
             "name": "type_recrutement",
             "label": "Type de recrutement",
             "multiple": True,
-            "options": [{"value": x[0], "text": x[0],} for x in types_recrutement],
+            "options": [
+                {
+                    "value": x[0],
+                    "text": x[0],
+                }
+                for x in types_recrutement
+            ],
         }
     )
 
@@ -76,7 +94,13 @@ def get_selectors():
             "label": "Porteur",
             # "multiple": True,
             "options": [{"value": "", "text": "-"}]
-            + [{"value": str(p.id), "text": p.full_name,} for p in porteurs],
+            + [
+                {
+                    "value": str(p.id),
+                    "text": p.full_name,
+                }
+                for p in porteurs
+            ],
         }
     )
 

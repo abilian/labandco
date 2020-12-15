@@ -41,7 +41,11 @@ def lettre_commande_rh(demande: DemandeRH):
 def additional_ctx_for_demande(demande: DemandeRH):
     ctx: Dict[str, Any] = {}
 
-    ctx["structure_d_accueil"] = demande.structure
+    structure_inconnue = {
+        "nom": "Structure inconnue",
+        "signataire": None,
+    }
+    ctx["structure_d_accueil"] = demande.structure or structure_inconnue
 
     d = demande.data.get("structure_financeuse")
     if d:
@@ -50,6 +54,12 @@ def additional_ctx_for_demande(demande: DemandeRH):
     else:
         ctx["structure_financeuse"] = demande.structure
 
-    ctx["signataire"] = ctx["structure_financeuse"].signataire
+    structure_financeuse = ctx["structure_financeuse"]
+
+    if structure_financeuse:
+        ctx["signataire"] = structure_financeuse.signataire
+    else:
+        ctx["structure_financeuse"] = structure_inconnue
+        ctx["signataire"] = None
 
     return ctx

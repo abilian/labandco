@@ -41,7 +41,7 @@ export default {
       });
     }
 
-    window.setInterval(refresh, 100000);
+    window.setInterval(refresh, 300000);
   },
 };
 </script>

@@ -1,6 +1,4 @@
-"""
-Send daily or weekly notification emails.
-"""
+"""Send daily or weekly notification emails."""
 from __future__ import annotations
 
 from typing import List, Optional
@@ -66,9 +64,7 @@ def send_recap_to(user: Profile) -> bool:
 
 
 def make_recap_email(user: Profile) -> Optional[str]:
-    """
-    Returns None if nothing to send.
-    """
+    """Returns None if nothing to send."""
     notifications = get_pending_notifications(user)
 
     demandes_set = set(mes_taches(user))

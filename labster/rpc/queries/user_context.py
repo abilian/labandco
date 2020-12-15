@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import threading
 from typing import Any, List
 
 from jsonrpcserver import method
@@ -22,11 +23,16 @@ from .home_boxes import get_boxes
 
 structure_repo = injector.get(StructureRepository)
 
+cache = threading.local()
+
 
 @method
 def get_user_context() -> JSONDict:
     user = get_current_profile()
+    return get_context(user)
 
+
+def get_context(user: Profile) -> JSONDict:
     menus = get_menu(user)
     types_demandes = list(get_demande_types_for_user(user))
 

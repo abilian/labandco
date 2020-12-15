@@ -36,6 +36,7 @@ def init_web(app: Flask) -> None:
     app.before_request(inject_debug_info)
     app.before_request(make_session_permanent)
     app.before_request(inject_assets)
+    app.before_request(setup_cache)
 
     app.jinja_env.filters.update(datetime=lambda x: x.strftime("%d/%m/%y %H:%M"))
 
@@ -113,3 +114,7 @@ def stop_services() -> None:
 def inject_polymorphic_url_for() -> Dict[str, Callable]:
     # TODO: use real registry
     return {"url_for": url_for, "id": id}
+
+
+def setup_cache() -> None:
+    g.cache = {}

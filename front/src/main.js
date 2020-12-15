@@ -4,7 +4,7 @@
 // Fix this later (if you can figure out what it means!):
 /* eslint-disable vue/no-dupe-keys */
 
-import "@fortawesome/fontawesome-pro/css/all.css";
+import "../vendor/fontawesome-pro/css/all.css";
 
 // Remove ?
 import "bootstrap/dist/css/bootstrap.css";

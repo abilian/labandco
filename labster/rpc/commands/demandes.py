@@ -6,13 +6,14 @@ from pathlib import Path
 from typing import Optional
 
 from abilian.core.models.blob import Blob
+from devtools import debug
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 from sqlalchemy import func
 from toolz import first
 from weasyprint import CSS, HTML
-from werkzeug.exceptions import Forbidden, NotFound
+from werkzeug.exceptions import BadRequest, Forbidden, NotFound
 
 from labster.di import injector
 from labster.domain2.model.demande import Demande, demande_factory
@@ -133,21 +134,32 @@ def update_demande(id, model, form):
 
 def get_structure(model: dict) -> Optional[Structure]:
     structure_dto = model.get("laboratoire")
-    if structure_dto:
+    if not structure_dto:
+        return None
+
+    if isinstance(structure_dto, str):
+        structure_id = structure_dto
+    elif isinstance(structure_dto, dict):
         structure_id = structure_dto["value"]
-        structure = structure_repo.get_by_id(structure_id)
     else:
-        structure = None
+        raise BadRequest
+
+    structure = structure_repo.get_by_id(structure_id)
     return structure
 
 
 def get_porteur(model: dict) -> Optional[Profile]:
     porteur_dto = model.get("porteur")
-    if porteur_dto:
+    if not porteur_dto:
+        return None
+
+    if isinstance(porteur_dto, str):
+        porteur_id = porteur_dto
+    elif isinstance(porteur_dto, dict):
         porteur_id = porteur_dto["value"]
-        porteur = db.session.query(Profile).get(porteur_id)
     else:
-        porteur = None
+        raise BadRequest
+    porteur = db.session.query(Profile).get(porteur_id)
     return porteur
 
 

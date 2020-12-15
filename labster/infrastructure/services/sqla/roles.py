@@ -48,7 +48,8 @@ def make_mapper(metadata):
 class SqlaRoleService(RoleService):
     @inject
     def __init__(
-        self, db: SQLAlchemy,
+        self,
+        db: SQLAlchemy,
     ):
         self.db = db
         self.session = self.db.session

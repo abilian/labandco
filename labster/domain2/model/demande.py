@@ -49,7 +49,9 @@ class Demande(db.Model):
     id = Column(Integer, primary_key=True)
     old_id = Column(Integer)
     type = Column(
-        sa.Enum(*types_demande, name="type_demande"), nullable=False, index=True,
+        sa.Enum(*types_demande, name="type_demande"),
+        nullable=False,
+        index=True,
     )
     created_at = Column(DateTime)
     updated_at = Column(DateTime)

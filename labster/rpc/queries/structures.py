@@ -1,5 +1,4 @@
-"""
-Methodes JSON-RPC pour manipuler le graphe des structures.
+"""Methodes JSON-RPC pour manipuler le graphe des structures.
 
 Note: les méthodes sont préfixées par "sg_" (sg = "structures graph").
 """

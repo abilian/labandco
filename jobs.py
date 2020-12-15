@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Cron-like scheduler
-"""
+"""Cron-like scheduler."""
 
 import os
 import sys

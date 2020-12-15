@@ -32,8 +32,7 @@ role_service = injector.get(RoleService)
 @context_for("demande.new")
 @method
 def get_new(type: str = "calculette_rh") -> JSONDict:
-    """Retourne les données nécessaires pour un formulaire vierge.
-    """
+    """Retourne les données nécessaires pour un formulaire vierge."""
     calculette = False
     if type == "calculette_rh":
         calculette = True
@@ -140,9 +139,7 @@ def hide_fields(form):
 
 
 def get_fieldset(fieldsets, name):
-    """
-    Return a fieldset.
-    """
+    """Return a fieldset."""
     for it in fieldsets:
         if it.name == name:
             return it
@@ -223,9 +220,10 @@ class DemandeSchema(TableSchema):
 
     def get_structure(self, demande: Demande):
         structure = demande.structure
-        assert demande.structure
-        return {"id": structure.id, "label": structure.nom}
-        # return self.get_user_field(obj, "gestionnaire")
+        if structure:
+            return {"id": structure.id, "label": structure.nom}
+        else:
+            return {}
 
     # Form
     def get_form_data(self, demande: Demande):

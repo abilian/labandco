@@ -67,8 +67,7 @@ def get_drv_membership(user: Profile) -> Optional[Structure]:
 # Read access
 #
 def check_read_access(demande: Optional[Demande]):
-    """Raises 'Forbidden' if current user doesn't have access to demande.
-    """
+    """Raises 'Forbidden' if current user doesn't have access to demande."""
     if not demande:
         abort(404)
     if not has_read_access(demande):
@@ -157,8 +156,8 @@ def is_responsable_structure_concernee(user: Profile, demande: Demande) -> bool:
 # Write access
 #
 def check_write_access(demande: Optional[Demande]):
-    """Raises 'Forbidden' if current user doesn't have write access to demande.
-    """
+    """Raises 'Forbidden' if current user doesn't have write access to
+    demande."""
     if not demande:
         abort(404)
     if not has_write_access(demande):
@@ -204,8 +203,8 @@ def feuille_cout_editable(demande: Demande) -> bool:
 
 
 def check_can_add_pj(demande: Optional[Demande]):
-    """Raises 'Forbidden' if current user doesn't have write access to demande.
-    """
+    """Raises 'Forbidden' if current user doesn't have write access to
+    demande."""
     if not demande:
         abort(404)
     if not can_add_pj(demande):

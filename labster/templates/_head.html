@@ -26,7 +26,7 @@
       var dsn = {{ sentry_dsn | tojson }};
       var app_name = {{ (app.name+'_front') | tojson }};
       var server_name = {{ config.get('SERVER_NAME', 'unknown') | tojson }};
-      {% if g.current_user %}
+      {% if g.current_user and not g.current_user.is_anonymous %}
         var user_email = {{ ((g.current_user.email or "") + "") | tojson }};
         var user_id = {{ g.current_user.id or "" | tojson }};
       {% else %}

@@ -50,7 +50,7 @@ def test_cypress():
 
 @test.command("rpc")
 def test_rpc():
-    """Runs functional tests on the RPC endpoints"""
+    """Runs functional tests on the RPC endpoints."""
     daemons = [
         ("web", "flask run"),
         ("rpc-tests", "pytest rpc_tests"),

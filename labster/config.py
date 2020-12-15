@@ -33,7 +33,10 @@ CONTENT_SECURITY_POLICY = {
         "https://sentry.io/",
         "https://browser.sentry-cdn.com/",
     ],
-    "connect-src": DEFAULT_SRC + ["https://sentry.io/",],
+    "connect-src": DEFAULT_SRC
+    + [
+        "https://sentry.io/",
+    ],
     "style-src": DEFAULT_SRC + ["'unsafe-inline'"],
     "img-src": DEFAULT_SRC + ["'unsafe-inline'", "data:"],
     "font-src": DEFAULT_SRC + ["'unsafe-inline'", "data:"],

@@ -73,7 +73,8 @@ def feuille_cout(id: int, db: SQLAlchemy):
 @route("/blob/<int:demande_id>/<int:blob_id>")
 def blob(demande_id: int, blob_id: int, db: SQLAlchemy):
     demande = db.session.query(Demande).get(demande_id)
-    if not demande:
+    blob = Blob.query.get(blob_id)
+    if not demande or not blob:
         raise NotFound()
 
     check_read_access(demande)
@@ -90,7 +91,6 @@ def blob(demande_id: int, blob_id: int, db: SQLAlchemy):
         return "fichier inconnu"
 
     filename = get_filename(demande, blob_id)
-    blob = Blob.query.get(blob_id)
     suffix = get_suffix_for(blob.value or b"")
     if not suffix:
         suffix = ".pdf"

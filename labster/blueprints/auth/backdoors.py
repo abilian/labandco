@@ -67,7 +67,14 @@ def switch(app: Flask, request: Request):
         {"carapezzi", "duhieu", "lombard", "diasdeamorim", "valdes"}
     )
     directeurs = get_users_by_login(
-        {"santiardbaro", "charretier", "sciandra", "mercierc", "mouchelj", "stemmann",}
+        {
+            "santiardbaro",
+            "charretier",
+            "sciandra",
+            "mercierc",
+            "mouchelj",
+            "stemmann",
+        }
     )
 
     dri = structure_repo.get_by_sigle("DR&I")

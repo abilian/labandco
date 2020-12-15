@@ -18,6 +18,7 @@ from labster.domain2.services.contacts import ContactService
 from labster.domain2.services.roles import Role, RoleService
 from labster.domain2.services.workflow.states import EN_EDITION, EN_VALIDATION
 from labster.rbac import get_drv_membership, is_membre_dri, is_membre_drv
+from labster.rpc.queries.cache import memoize
 from labster.rpc.util import owner_sorter
 from labster.security import get_current_profile
 from labster.types import JSON, JSONDict, JSONList
@@ -174,9 +175,10 @@ def mes_demandes(
     return query.all()
 
 
+@memoize()
 def mes_taches(user: Profile) -> List[Demande]:
-    """Retourne la liste des demandes pour lesquels l'utilisateur a une
-    action à réaliser."""
+    """Retourne la liste des demandes pour lesquels l'utilisateur a une action
+    à réaliser."""
     query = (
         base_query().filter(Demande.active == True).order_by(Demande.created_at.desc())
     )
@@ -389,18 +391,22 @@ class ContactTableView(TableView):
         )
 
 
+@memoize()
+def get_mapping():
+    contact_service = injector.get(ContactService)
+    return contact_service.get_mapping()
+
+
 class MesStructuresDriOuDrvTableView(TableView):
     scope = "mes structures dri"
     title = "Demandes des structures dont je suis un contact Lab&Co"
 
     def is_visible_for(self, user: Profile):
-        contact_service = injector.get(ContactService)
-        mapping = contact_service.get_mapping()
+        mapping = get_mapping()
         return (is_membre_dri(user) or is_membre_drv(user)) and mapping
 
     def get_demandes_for(self, user: Profile):
-        contact_service = injector.get(ContactService)
-        mapping = contact_service.get_mapping()
+        mapping = get_mapping()
         structures = {s for s, d in mapping.items() if user in d.values()}
         structure_ids = {s.id for s in structures}
         return filter_on_state_for_dri(
@@ -536,7 +542,11 @@ def demande_to_json(demande: Demande, user: Profile) -> JSONDict:
         row["owner"] = ""
 
     row["owners"] = [
-        {"name": f"{owner.nom}, {owner.prenom}", "id": owner.id,} for owner in owners
+        {
+            "name": f"{owner.nom}, {owner.prenom}",
+            "id": owner.id,
+        }
+        for owner in owners
     ]
 
     return row

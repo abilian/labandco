@@ -7,6 +7,7 @@ import traceback
 from json import JSONDecodeError
 from pprint import pformat, pprint
 
+import sentry_sdk
 from flask import Blueprint, Flask
 from flask import Request as FlaskRequest
 from flask import Response
@@ -118,8 +119,7 @@ def run(req: str, app: Flask) -> Response:
 
 
 def dispatch(request_raw: str) -> JsonRpcResponse:
-    """
-    Dispatch a request (or requests) to methods.
+    """Dispatch a request (or requests) to methods.
 
     This is the main public method, it's the only one with optional params, and the only
     one that can be configured with a config file/env vars.
@@ -129,7 +129,6 @@ def dispatch(request_raw: str) -> JsonRpcResponse:
 
     Returns:
         A Response.
-
     """
     methods = global_methods
     try:
@@ -146,7 +145,11 @@ def dispatch(request_raw: str) -> JsonRpcResponse:
     try:
         method_name = request.method
         method = methods.items[method_name]
-        result = call(method, *request.args, **request.kwargs)
+
+        with sentry_sdk.start_span(op="rpc", transaction="rpc." + method_name) as span:
+            span.set_data("args", request.args)
+            span.set_data("kwargs", request.kwargs)
+            result = call(method, *request.args, **request.kwargs)
 
         return SuccessResponse(result=result, id=request.id)
 

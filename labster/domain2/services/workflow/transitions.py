@@ -1,6 +1,4 @@
-"""
-Modèle de case management adapté au projet Labster.
-"""
+"""Modèle de case management adapté au projet Labster."""
 from __future__ import annotations
 
 from datetime import date, datetime

@@ -1,6 +1,4 @@
-"""
-Champs communs à plusieurs formulaires.
-"""
+"""Champs communs à plusieurs formulaires."""
 from __future__ import annotations
 
 from labster.newforms.base import FieldSet, Select2Field

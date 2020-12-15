@@ -9,9 +9,21 @@ MAIN = {
     "entries": [
         # Homes
         {"label": "Accueil", "to": "/", "icon": "home"},
-        {"label": "Tâches", "to": "/tasks", "icon": "check-square",},
-        {"label": "Mes demandes en cours", "to": "/demandes", "icon": "briefcase",},
-        {"label": "Demandes archivées", "to": "/archives", "icon": "graduation-cap",},
+        {
+            "label": "Tâches",
+            "to": "/tasks",
+            "icon": "check-square",
+        },
+        {
+            "label": "Mes demandes en cours",
+            "to": "/demandes",
+            "icon": "briefcase",
+        },
+        {
+            "label": "Demandes archivées",
+            "to": "/archives",
+            "icon": "graduation-cap",
+        },
         # Stuff
         {"label": "Questions & suggestions", "to": "/faq", "icon": "question"},
         {

@@ -1,3 +1,2 @@
-"""Nouveau domaine.
-"""
+"""Nouveau domaine."""
 from __future__ import annotations
