@@ -40,7 +40,7 @@ De manière alternative, si vous avez [Poetry](https://poetry.eustace.io/) insta
 
 ### Installer un environnement de développement
 
-1) Créer et activer un virtualenv (Python 3.7 pour l'instant)
+1) Créer et activer un virtualenv (Python 3.9 pour l'instant)
 
 2) Installer Poetry <https://github.com/sdispater/poetry>
 
