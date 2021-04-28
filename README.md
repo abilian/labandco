@@ -33,13 +33,9 @@ Si votre machine de développement est "raisonnablement" configurée, vous pouve
 
     ./install.py
 
-De manière alternative, si vous avez [Poetry](https://poetry.eustace.io/) ou [Pipenv](https://github.com/pypa/pipenv) installés, vous pouvez tapper:
+De manière alternative, si vous avez [Poetry](https://poetry.eustace.io/) installé, vous pouvez tapper:
 
     poetry install
-
-ou:
-
-    pipenv install --pre
 
 
 ### Installer un environnement de développement
