@@ -33,18 +33,14 @@ Si votre machine de développement est "raisonnablement" configurée, vous pouve
 
     ./install.py
 
-De manière alternative, si vous avez [Poetry](https://poetry.eustace.io/) ou [Pipenv](https://github.com/pypa/pipenv) installés, vous pouvez tapper:
+De manière alternative, si vous avez [Poetry](https://poetry.eustace.io/) installé, vous pouvez tapper:
 
     poetry install
-
-ou:
-
-    pipenv install --pre
 
 
 ### Installer un environnement de développement
 
-1) Créer et activer un virtualenv (Python 3.7 pour l'instant)
+1) Créer et activer un virtualenv (Python 3.9 pour l'instant)
 
 2) Installer Poetry <https://github.com/sdispater/poetry>
 

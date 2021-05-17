@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+
 import os
 import sys
 from pathlib import Path
 
 APP_NAME = "Lab&Co"
-PYTHON_VERSION = "3.7.5"
+PYTHON_VERSION = "3.9.2"
 
 
 def run(cmd):
@@ -46,17 +47,22 @@ print()
 
 if not Path("env").exists():
     print("Creating virtual env")
-    cmd = f"{pyenv_root}/versions/{PYTHON_VERSION}/bin/python3.7 -m venv env"
+    cmd = f"{pyenv_root}/versions/{PYTHON_VERSION}/bin/python3 -m venv env"
     if run(cmd):
-        print("! Couldn't created virtualenv at 'env'")
+        print("! Couldn't create virtualenv at 'env'")
         sys.exit()
 
 else:
     print("Reusing existing virtual env 'env'.")
 
+print("Installing Poetry")
+cmd = "./env/bin/pip install poetry"
+if run(cmd):
+    print("! Couldn't install Poetry")
+    sys.exit()
 
 print("Installing or updating back-end (Python) dependencies")
-cmd = "./env/bin/pip install -r requirements.txt ."
+cmd = ". env/bin/activate && poetry install"
 if run(cmd):
     print("! Couldn't install back-end dependencies")
     sys.exit()
