@@ -4,9 +4,11 @@ version = "2.2.29"
 description = ""
 authors = ["Abilian SAS"]
 
+packages = [{ include = "labster", from = "src" }]
+
 include = [
     "poetry.lock",
-    "labster/static/**/*",
+    "src/labster/static/**/*",
     "migrations/**/*",
     "etc/**/*",
     "scripts/**/*",
