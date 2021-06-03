@@ -163,7 +163,7 @@ def _get_constants() -> Dict[str, Any]:
 
 
 def _upgrade_if_needed(config: Config, initial_constants: Dict[str, Any]):
-    """"data migration" tool.
+    """ "data migration" tool.
 
     - constants: the ones from the config, to update.
     - initial_constants: from the json file, that may have additions.
