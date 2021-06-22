@@ -24,7 +24,7 @@ db = injector.get(SQLAlchemy)
 
 
 @method
-def get_roles(structure_id: str) -> List[Dict[str, Any]]:
+def get_roles(structure_id: str) -> list[dict[str, Any]]:
     structure = structure_repo.get_by_id(StructureId(structure_id))
     assert structure
 
@@ -43,7 +43,7 @@ def get_roles(structure_id: str) -> List[Dict[str, Any]]:
             Role.PORTEUR,
         ]
 
-    result: List[Dict[str, Any]] = []
+    result: list[dict[str, Any]] = []
     for role in roles:
         role_dto = {
             "key": role.name,
@@ -91,7 +91,7 @@ def get_role_selectors(structure_id: str) -> JSON:
     membres = get_membres(structure)
     role_to_users = role_service.get_users_with_role_on(structure)
 
-    result: List[Dict[str, Any]] = []
+    result: list[dict[str, Any]] = []
     for role in roles:
         users_with_role = role_to_users[role]
         multiple = role != Role.SIGNATAIRE
@@ -211,7 +211,7 @@ def get_global_roles() -> JSONDict:
 #
 # Util
 #
-def convert_users_to_dto(users: Collection[Profile]) -> List[JSON]:
+def convert_users_to_dto(users: Collection[Profile]) -> list[JSON]:
     class ProfileSchema(Schema):
         id = fields.String()
         name = fields.String(attribute="reversed_name")

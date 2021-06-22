@@ -51,9 +51,9 @@ class Node:
 class MenuItem(Node):
     _url = ""
     _endpoint = ""
-    _entries: List[Dict] = []
+    _entries: list[dict] = []
 
-    def __init__(self, specs: Dict[str, Any]):
+    def __init__(self, specs: dict[str, Any]):
         for k, v in specs.items():
             setattr(self, "_" + k, v)
 
@@ -68,7 +68,7 @@ class MenuItem(Node):
         return ""
 
     @property
-    def entries(self) -> List[MenuItem]:
+    def entries(self) -> list[MenuItem]:
         return [MenuItem(entry) for entry in self._entries]
 
     def asdict(self):
@@ -86,15 +86,15 @@ class MenuItem(Node):
 
 
 class Menu(Node):
-    _entries: List[Dict] = []
+    _entries: list[dict] = []
 
-    def __init__(self, specs: Dict) -> None:
+    def __init__(self, specs: dict) -> None:
         for k, v in specs.items():
             setattr(self, "_" + k, v)
         self.entries = [MenuItem(e) for e in self._entries]
 
     @property
-    def active_entries(self) -> List[MenuItem]:
+    def active_entries(self) -> list[MenuItem]:
         if not self.is_active():
             return []
         result = [e for e in self.entries if e.is_active()]

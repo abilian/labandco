@@ -14,7 +14,7 @@ from labster.security import get_current_profile
 
 
 @context_for("faq")
-def get_faq() -> Dict[str, List[Any]]:
+def get_faq() -> dict[str, list[Any]]:
     entries = FaqEntry.query.order_by(FaqEntry.view_count.desc()).all()
     groups = sorted(r.group_by(lambda e: e.category, entries).items())
 

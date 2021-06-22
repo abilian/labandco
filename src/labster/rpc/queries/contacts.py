@@ -28,7 +28,7 @@ def get_contacts(structure_id) -> JSONList:
 
 @method
 def get_all_contacts() -> JSONList:
-    structures: List[Structure] = list(structure_repo.get_all())
+    structures: list[Structure] = list(structure_repo.get_all())
     structures.sort(key=lambda x: x.nom)
 
     result = []
@@ -74,7 +74,7 @@ def get_membres_dri() -> JSONList:
 def get_contacts_for_user() -> JSONDict:
     user = get_current_profile()
 
-    roles: Dict[Role, Set[Structure]] = role_service.get_roles_for_user(user)
+    roles: dict[Role, set[Structure]] = role_service.get_roles_for_user(user)
     structures = list(roles[Role.MEMBRE])
     structures.sort(key=lambda x: x.nom)
 
@@ -98,7 +98,7 @@ def get_contacts_for_user() -> JSONDict:
                 break
 
     result2 = []
-    mapping: Dict[Structure, Dict[ContactType, Profile]] = contact_service.get_mapping()
+    mapping: dict[Structure, dict[ContactType, Profile]] = contact_service.get_mapping()
     for structure, d in mapping.items():
         if user in d.values():
             for contact_type, user1 in d.items():
@@ -125,7 +125,7 @@ def get_contacts_for_user() -> JSONDict:
 #
 # Serialization
 #
-def make_contacts_dto(structure: Structure) -> List[Dict[str, Any]]:
+def make_contacts_dto(structure: Structure) -> list[dict[str, Any]]:
     result = []
     for contact_type in ContactType:
         contact = contact_service.get_contact(structure, contact_type)

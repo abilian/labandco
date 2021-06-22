@@ -32,7 +32,7 @@ def is_membre_dri(user: Profile) -> bool:
 #
 # DRV
 #
-def is_membre_drv(user: Profile, structure: Optional[Structure] = None) -> bool:
+def is_membre_drv(user: Profile, structure: Structure | None = None) -> bool:
     drv = get_drv_membership(user)
     if not drv:
         return False
@@ -48,7 +48,7 @@ def is_membre_drv(user: Profile, structure: Optional[Structure] = None) -> bool:
     return False
 
 
-def get_drv_membership(user: Profile) -> Optional[Structure]:
+def get_drv_membership(user: Profile) -> Structure | None:
     for drv_dn in DRV_DNS.values():
         drv = structure_repo.get_by_dn(drv_dn)
 
@@ -66,7 +66,7 @@ def get_drv_membership(user: Profile) -> Optional[Structure]:
 #
 # Read access
 #
-def check_read_access(demande: Optional[Demande]):
+def check_read_access(demande: Demande | None):
     """Raises 'Forbidden' if current user doesn't have access to demande."""
     if not demande:
         abort(404)
@@ -155,7 +155,7 @@ def is_responsable_structure_concernee(user: Profile, demande: Demande) -> bool:
 #
 # Write access
 #
-def check_write_access(demande: Optional[Demande]):
+def check_write_access(demande: Demande | None):
     """Raises 'Forbidden' if current user doesn't have write access to
     demande."""
     if not demande:
@@ -202,7 +202,7 @@ def feuille_cout_editable(demande: Demande) -> bool:
     return False
 
 
-def check_can_add_pj(demande: Optional[Demande]):
+def check_can_add_pj(demande: Demande | None):
     """Raises 'Forbidden' if current user doesn't have write access to
     demande."""
     if not demande:
@@ -297,7 +297,7 @@ def acces_restreint(demande: Demande) -> bool:
 #
 # Structures
 #
-def get_permissions_for_structure(structure: Structure) -> Set[str]:
+def get_permissions_for_structure(structure: Structure) -> set[str]:
     if current_app.config.get("TESTING"):
         return set()
 
@@ -358,7 +358,7 @@ def has_permission(structure: Structure, permission: str) -> bool:
     return permission in permissions
 
 
-def check_permission(structure: Optional[Structure], permission: str) -> None:
+def check_permission(structure: Structure | None, permission: str) -> None:
     if not structure:
         raise NotFound()
 
@@ -366,15 +366,15 @@ def check_permission(structure: Optional[Structure], permission: str) -> None:
         raise Forbidden()
 
 
-def check_structure_editable(structure: Optional[Structure]):
+def check_structure_editable(structure: Structure | None):
     check_permission(structure, "P1")
 
 
-def check_can_edit_roles(structure: Optional[Structure]):
+def check_can_edit_roles(structure: Structure | None):
     check_permission(structure, "P5")
 
 
-def check_can_edit_contacts(structure: Optional[Structure]):
+def check_can_edit_contacts(structure: Structure | None):
     check_permission(structure, "P6")
 
 

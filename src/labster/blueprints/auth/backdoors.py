@@ -107,7 +107,7 @@ def do_switch(args):
 
 
 # Utilisé en phase de test (URL: /switch/).
-def get_users_by_login(logins) -> List[Profile]:
+def get_users_by_login(logins) -> list[Profile]:
     users = (
         db.session.query(Profile)
         .filter(Profile.login.in_(logins))

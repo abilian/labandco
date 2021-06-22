@@ -21,7 +21,7 @@ class AuthContext:
             return AnonymousUser()
 
     @property
-    def current_profile(self) -> Optional[NewProfile]:
+    def current_profile(self) -> NewProfile | None:
         try:
             return g.current_profile
         except (RuntimeError, AttributeError):

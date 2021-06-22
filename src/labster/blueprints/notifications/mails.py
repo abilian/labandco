@@ -35,11 +35,11 @@ def send_notification_to(user: Profile) -> None:
         notification.sent = True
 
 
-def make_notification_email(user: Profile, notifications: List[Notification]) -> str:
+def make_notification_email(user: Profile, notifications: list[Notification]) -> str:
     demandes_set = {notification.demande for notification in notifications}
     demandes = sorted(demandes_set, key=lambda x: x.created_at, reverse=True)
 
-    def get_notifications(demande: Demande) -> List[Notification]:
+    def get_notifications(demande: Demande) -> list[Notification]:
         return [n for n in notifications if n.demande == demande]
 
     ctx = {
@@ -63,7 +63,7 @@ def send_recap_to(user: Profile) -> bool:
     return True
 
 
-def make_recap_email(user: Profile) -> Optional[str]:
+def make_recap_email(user: Profile) -> str | None:
     """Returns None if nothing to send."""
     notifications = get_pending_notifications(user)
 
@@ -78,7 +78,7 @@ def make_recap_email(user: Profile) -> Optional[str]:
     if not demandes:
         return None
 
-    def get_notifications(demande: Demande) -> List[Notification]:
+    def get_notifications(demande: Demande) -> list[Notification]:
         return [n for n in notifications if n.demande == demande]
 
     def get_cta(demande: Demande) -> str:
@@ -108,7 +108,7 @@ def make_recap_email(user: Profile) -> Optional[str]:
 #
 # Util
 #
-def get_pending_notifications(user: Profile) -> List[Notification]:
+def get_pending_notifications(user: Profile) -> list[Notification]:
     notifications = (
         Notification.query.filter(Notification.user == user)
         .filter(Notification.sent == False)

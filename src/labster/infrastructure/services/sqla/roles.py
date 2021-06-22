@@ -24,7 +24,7 @@ class Grant:
     id: str
     user_id: str
     role_name: str
-    context_id: Optional[str]
+    context_id: str | None
 
 
 def make_mapper(metadata):
@@ -110,7 +110,7 @@ class SqlaRoleService(RoleService):
         else:
             return self.get_grant(user, role, context) is not None
 
-    def get_users_with_role(self, role: Role, context: Any = None) -> Set[Profile]:
+    def get_users_with_role(self, role: Role, context: Any = None) -> set[Profile]:
         assert isinstance(role, Role)
 
         query = self.query().filter_by(role_name=role.name)
@@ -126,18 +126,18 @@ class SqlaRoleService(RoleService):
         grants = query.options(joinedload(Grant.user)).all()
         return {grant.user for grant in grants}
 
-    def get_users_with_role_on(self, context: Structure) -> Dict[Role, Set[Profile]]:
+    def get_users_with_role_on(self, context: Structure) -> dict[Role, set[Profile]]:
         query = self.query().filter_by(context_id=context.id)
         grants = query.all()
 
-        result: Dict[Role, Set] = defaultdict(set)
+        result: dict[Role, set] = defaultdict(set)
         for grant in grants:
             role = getattr(Role, grant.role_name)
             result[role].add(grant.user)
 
         return result
 
-    def get_users_with_given_role(self, role: Role, context: Structure) -> Set[Profile]:
+    def get_users_with_given_role(self, role: Role, context: Structure) -> set[Profile]:
         assert isinstance(role, Role)
         assert isinstance(context, Structure)
 
@@ -158,7 +158,7 @@ class SqlaRoleService(RoleService):
         grants = query.all()
         return {grant.user for grant in grants}
 
-    def get_roles_for_user(self, user: Profile) -> Dict[Role, Set[Structure]]:
+    def get_roles_for_user(self, user: Profile) -> dict[Role, set[Structure]]:
         query = self.query().filter_by(user_id=user.id)
         grants = query.all()
 

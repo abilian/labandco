@@ -22,7 +22,7 @@ schema = Schema(
 
 class Whoosh:
     whoosh_base: str
-    app: Optional[Flask]
+    app: Flask | None
 
     def __init__(self, app=None):
         self.app = app
@@ -66,7 +66,7 @@ class Whoosh:
                 if isinstance(v, str):
                     indexed_values.append(v)
 
-            allowed_roles_and_users: List[str] = []
+            allowed_roles_and_users: list[str] = []
 
             v = demande.porteur
             if v:

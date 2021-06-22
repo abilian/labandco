@@ -19,7 +19,7 @@ def test_get_constant(db_session: scoped_session) -> None:
 
 
 def test_update_constants(db_session: scoped_session) -> None:
-    constants: Dict[str, Any] = {}
+    constants: dict[str, Any] = {}
     real_constants = get_constants()
     assert update_constants(constants) == real_constants
 

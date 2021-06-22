@@ -22,7 +22,7 @@ class SqlaProfileRepository(ProfileRepository):
     def query(self):
         return self.session.query(Profile)
 
-    def get_all(self) -> Set[Profile]:
+    def get_all(self) -> set[Profile]:
         return set(self.query().all())
 
     def put(self, profile: Profile):

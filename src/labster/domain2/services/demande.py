@@ -15,7 +15,7 @@ PI = object()
 
 EMPTY_SET = set()
 
-MAP: Dict[Any, Set[Any]] = {
+MAP: dict[Any, set[Any]] = {
     UN: {REC},
     FA: {REC},
     DU: {REC},
@@ -33,7 +33,7 @@ MAP: Dict[Any, Set[Any]] = {
 }
 
 
-def get_demande_types_for_user(user: Profile) -> Set[str]:
+def get_demande_types_for_user(user: Profile) -> set[str]:
     role_service = injector.get(RoleService)
     contact_service = injector.get(ContactService)
 

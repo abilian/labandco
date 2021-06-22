@@ -45,7 +45,7 @@ def get_demandes(scope="all", archives=False, tag="") -> JSONList:
     if not view:
         return []
 
-    demandes: List[Demande] = view.get_demandes_for(profile)
+    demandes: list[Demande] = view.get_demandes_for(profile)
 
     def make_pred(tag):
         def pred(demande):
@@ -73,7 +73,7 @@ def get_demandes(scope="all", archives=False, tag="") -> JSONList:
 
 def get_table_view(
     scope: str, user: Profile, archives: bool = False
-) -> Optional[TableView]:
+) -> TableView | None:
     all_table_views = [
         cls()
         for cls in globals().values()
@@ -159,7 +159,7 @@ class DemandesAValiderTableView(TableView):
 
 def mes_demandes(
     user: Profile, archived: bool = False, all: bool = False
-) -> List[Demande]:
+) -> list[Demande]:
     query = (
         base_query()
         .filter(
@@ -176,7 +176,7 @@ def mes_demandes(
 
 
 @memoize()
-def mes_taches(user: Profile) -> List[Demande]:
+def mes_taches(user: Profile) -> list[Demande]:
     """Retourne la liste des demandes pour lesquels l'utilisateur a une action
     à réaliser."""
     query = (
@@ -195,7 +195,7 @@ def mes_taches(user: Profile) -> List[Demande]:
     return demandes
 
 
-def mes_taches_en_retard(user: Profile) -> List[Demande]:
+def mes_taches_en_retard(user: Profile) -> list[Demande]:
     demandes = mes_taches(user)
 
     def en_retard(d) -> bool:
@@ -445,7 +445,7 @@ class ArchivesMesStructuresDriOuDrvTableView(MesStructuresDriOuDrvTableView):
 #
 # Util
 #
-def filter_on_state_for_dri(demandes: List[Demande]) -> List[Demande]:
+def filter_on_state_for_dri(demandes: list[Demande]) -> list[Demande]:
     result = []
     for demande in demandes:
         wf_states = {
@@ -461,8 +461,8 @@ def filter_on_state_for_dri(demandes: List[Demande]) -> List[Demande]:
 #
 # Serialization
 #
-def demandes_to_json(demandes: List[Demande], user: Profile) -> JSONList:
-    result: List[JSON] = []
+def demandes_to_json(demandes: list[Demande], user: Profile) -> JSONList:
+    result: list[JSON] = []
 
     for demande in demandes:
         try:
@@ -552,14 +552,14 @@ def demande_to_json(demande: Demande, user: Profile) -> JSONDict:
     return row
 
 
-def format_date(d: Optional[date]) -> str:
+def format_date(d: date | None) -> str:
     if d:
         return d.strftime("%d/%m/%Y")
     else:
         return ""
 
 
-def isoformat_date(d: Optional[date]) -> str:
+def isoformat_date(d: date | None) -> str:
     if d:
         return d.isoformat()
     else:

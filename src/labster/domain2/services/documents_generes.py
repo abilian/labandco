@@ -39,7 +39,7 @@ def lettre_commande_rh(demande: DemandeRH):
 
 
 def additional_ctx_for_demande(demande: DemandeRH):
-    ctx: Dict[str, Any] = {}
+    ctx: dict[str, Any] = {}
 
     structure_inconnue = {
         "nom": "Structure inconnue",

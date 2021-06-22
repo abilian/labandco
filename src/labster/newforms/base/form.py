@@ -21,7 +21,7 @@ db = injector.get(SQLAlchemy)
 
 
 class Form:
-    fieldsets: List[FieldSet] = []
+    fieldsets: list[FieldSet] = []
     conditions: str = ""
     mode: str = "edit"
     name: str = ""
@@ -106,7 +106,7 @@ class Form:
         )
 
     @property
-    def fields(self) -> List[Field]:
+    def fields(self) -> list[Field]:
         fields = []
         for fs in self.fieldsets:
             for f in fs.fields:

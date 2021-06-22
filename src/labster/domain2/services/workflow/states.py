@@ -32,7 +32,7 @@ class EnValidation(State):
     label_short = "En validation"
     next_action = "Demande à considérer pour validation"
 
-    def task_owners(self, workflow: Workflow) -> Set[Profile]:
+    def task_owners(self, workflow: Workflow) -> set[Profile]:
         demande = workflow.case
         assert demande
 
@@ -103,11 +103,11 @@ TRAITEE = Traitee()
 REJETEE = Rejetee()
 ABANDONNEE = Abandonnee()
 
-ACTIVE_STATES: List[State] = [
+ACTIVE_STATES: list[State] = [
     EN_EDITION,
     EN_VALIDATION,
     EN_VERIFICATION,
     EN_INSTRUCTION,
 ]
-INACTIVE_STATES: List[State] = [TRAITEE, REJETEE, ABANDONNEE]
-ALL_STATES: List[State] = ACTIVE_STATES + INACTIVE_STATES
+INACTIVE_STATES: list[State] = [TRAITEE, REJETEE, ABANDONNEE]
+ALL_STATES: list[State] = ACTIVE_STATES + INACTIVE_STATES

@@ -23,7 +23,7 @@ db = injector.get(SQLAlchemy)
 
 
 @method
-def add_roles(structure_id: str, profile_ids: List[str], role_id: str):
+def add_roles(structure_id: str, profile_ids: list[str], role_id: str):
     structure = structure_repo.get_by_id(StructureId(structure_id))
     check_can_edit_roles(structure)
 
@@ -54,7 +54,7 @@ def delete_role(structure_id: str, profile_id: str, role_id: str):
 
 
 @method
-def update_roles(structure_id: str, data: Dict[str, JSON]):
+def update_roles(structure_id: str, data: dict[str, JSON]):
     structure = structure_repo.get_by_id(StructureId(structure_id))
     check_can_edit_roles(structure)
 
@@ -89,7 +89,7 @@ def update_roles(structure_id: str, data: Dict[str, JSON]):
 
 
 @method
-def update_global_roles(data: Dict[str, JSON]):
+def update_global_roles(data: dict[str, JSON]):
     user = get_current_profile()
 
     if not user.has_role(Role.ADMIN_CENTRAL):

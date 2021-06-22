@@ -24,7 +24,7 @@ structure_repo = injector.get(StructureRepository)
 db = injector.get(SQLAlchemy)
 
 
-def parse_ldif_file(ldif_file: str) -> List[Tuple[str, Dict[str, Any]]]:
+def parse_ldif_file(ldif_file: str) -> list[tuple[str, dict[str, Any]]]:
     logger.info(f"### Parsing LDIF file {ldif_file}")
 
     orig_ldif_fd = open(ldif_file, "rb")
@@ -42,19 +42,19 @@ def parse_ldif_file(ldif_file: str) -> List[Tuple[str, Dict[str, Any]]]:
 
 @attrs(auto_attribs=True)
 class LdifRecord:
-    raw: Dict[str, List[str]]
+    raw: dict[str, list[str]]
 
     def __getattr__(self, name):
         return self.raw.get(name, [""])[0]
 
     @property
-    def uid(self) -> Optional[str]:
+    def uid(self) -> str | None:
         if "uid" not in self.raw:
             return None
         return self.raw["uid"][0]
 
     @property
-    def affectation(self) -> Optional[str]:
+    def affectation(self) -> str | None:
         structure_affectaction = self._get_structure_d_affectation()
         if not structure_affectaction:
             return None
@@ -68,7 +68,7 @@ class LdifRecord:
 
         return affectation
 
-    def _get_structure_d_affectation(self) -> Optional[Structure]:
+    def _get_structure_d_affectation(self) -> Structure | None:
         structure_d_affectation = None
 
         affectation_principale = self.supannEntiteAffectationPrincipale
@@ -105,7 +105,7 @@ class LdifRecord:
         return adresse
 
 
-def update_users_from_records(records: List[Tuple[str, Dict[str, List[str]]]]):
+def update_users_from_records(records: list[tuple[str, dict[str, list[str]]]]):
     profiles = profile_repo.get_all()
     old_profile_uids = {
         profile.uid for profile in profiles if profile.uid and profile.active

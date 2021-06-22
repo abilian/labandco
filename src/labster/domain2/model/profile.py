@@ -115,7 +115,7 @@ class Profile(db.Model):
 
 
 class ProfileRepository(Repository, ABC, metaclass=ABCMeta):
-    def get_all(self) -> Set[Profile]:
+    def get_all(self) -> set[Profile]:
         raise NotImplementedError
 
     def put(self, profile: Profile):

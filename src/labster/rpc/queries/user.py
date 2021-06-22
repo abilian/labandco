@@ -69,8 +69,8 @@ def get_user(id: str) -> JSONDict:
 # Serialization helpers
 #
 def get_roles_dto_for_user(
-    user: Profile, base_structure: Optional[Structure] = None, skip: bool = False
-) -> List[Dict[str, Any]]:
+    user: Profile, base_structure: Structure | None = None, skip: bool = False
+) -> list[dict[str, Any]]:
     roles_for_user = role_service.get_roles_for_user(user)
 
     all_structures = {}
@@ -84,14 +84,14 @@ def get_roles_dto_for_user(
     list_structures = list(all_structures.values())
     list_structures.sort(key=lambda s: s.depth)
 
-    ancestors: Set[Structure]
+    ancestors: set[Structure]
     if base_structure:
         ancestors = set(base_structure.ancestors)
     else:
         ancestors = set()
 
     def get_roles_list(structure):
-        role_list: List[str] = []
+        role_list: list[str] = []
         for role, structures in roles_for_user.items():
             if role == Role.MEMBRE:
                 continue
@@ -135,7 +135,7 @@ def get_roles_dto_for_user(
         }
         roles_dto.append(dto)
 
-    def sorter(dto) -> Tuple[int, int]:
+    def sorter(dto) -> tuple[int, int]:
         structure = dto["structure"]
         depth = structure["depth"]
         if set(dto["roles"]) & {
@@ -162,7 +162,7 @@ def get_roles_dto_for_user(
     return roles_dto
 
 
-def get_perimetre_dto_for_user(user) -> List[Dict[str, Any]]:
+def get_perimetre_dto_for_user(user) -> list[dict[str, Any]]:
     mapping = contact_service.get_mapping()
 
     result = []

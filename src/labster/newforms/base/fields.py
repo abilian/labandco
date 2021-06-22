@@ -17,7 +17,7 @@ class Field:
     editable = True
     scalar = True
     note = ""
-    specs: List[List[str]] = []
+    specs: list[list[str]] = []
 
     def __init__(self, name, label, **kw):
         self.name = name
@@ -98,7 +98,7 @@ class TriStateField(Field):
 
 
 class Select2Field(Field):
-    choices: List[str] = []
+    choices: list[str] = []
 
     def to_dict(self) -> JSONDict:
         d = Field.to_dict(self)
@@ -118,7 +118,7 @@ class Select2Field(Field):
 
 
 class MultipleSelect2Field(Field):
-    choices: List[str] = []
+    choices: list[str] = []
 
     def to_dict(self) -> JSONDict:
         d = Field.to_dict(self)

@@ -5,7 +5,7 @@ from typing import Callable, Dict
 
 from werkzeug.utils import import_string
 
-registry: Dict[str, Callable] = {}
+registry: dict[str, Callable] = {}
 
 
 def context_for(name: str) -> Callable:

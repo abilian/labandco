@@ -272,7 +272,7 @@ class ValiderDir(BaseTransition):
         demande = workflow.case
         actor = workflow.actor
 
-        signatures: Set[str] = set(workflow.get_value("signatures") or [])
+        signatures: set[str] = set(workflow.get_value("signatures") or [])
 
         structures_signataires = demande.structures_signataires()
         for structure in structures_signataires:
@@ -292,7 +292,7 @@ class ValiderDir(BaseTransition):
             EN_VERIFICATION.enter(workflow)
             return
 
-    def get_users_to_notify(self, workflow, old_state) -> Set[Profile]:
+    def get_users_to_notify(self, workflow, old_state) -> set[Profile]:
         case = workflow.case
         if case.contact_labco:
             return case.owners | {case.contact_labco}
@@ -595,7 +595,7 @@ class Commenter(BaseTransition):
     def get_form(self, workflow, **kw):
         return get_form(require_note=True)
 
-    def apply(self, workflow: Workflow, data: Dict):
+    def apply(self, workflow: Workflow, data: dict):
         self.send_notification(workflow)
 
     def send_notification(self, workflow: Workflow) -> None:

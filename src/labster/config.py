@@ -69,7 +69,7 @@ class DefaultConfig:
     MAIL_SENDER = "noreply@sorbonne-universite.fr"
     MAIL_SUPPRESS_SEND = True
 
-    CELERYBEAT_SCHEDULE: Dict[Any, Any] = {}
+    CELERYBEAT_SCHEDULE: dict[Any, Any] = {}
     #     # Executes every day at 6 A.M
     #     "add-every-monday-morning": {
     #         "task": "tasks.add",

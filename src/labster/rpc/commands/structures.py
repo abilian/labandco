@@ -41,7 +41,7 @@ db = injector.get(SQLAlchemy)
 
 
 @method
-def sg_update_structure(id: str, model: Dict[str, JSON]):
+def sg_update_structure(id: str, model: dict[str, JSON]):
     structure = structure_repo.get_by_id(StructureId(id))
     check_structure_editable(structure)
 
@@ -53,7 +53,7 @@ def sg_update_structure(id: str, model: Dict[str, JSON]):
 
 
 @method
-def sg_create_child_structure(id: str, model: Dict[str, str]):
+def sg_create_child_structure(id: str, model: dict[str, str]):
     parent_structure = structure_repo.get_by_id(StructureId(id))
     if not parent_structure:
         raise NotFound()

@@ -71,7 +71,7 @@ class ChercheurMixin:
     """Méthodes spécifiques au rôle "chercheur"."""
 
     @property
-    def contacts_dgrtt(self) -> List[Tuple[str, str, Profile]]:
+    def contacts_dgrtt(self) -> list[tuple[str, str, Profile]]:
         """Return a list of tuples: (bureau.id, bureau.nom, contact)"""
         from labster.domain.models.mapping_dgrtt import MappingDgrtt
 
@@ -96,7 +96,7 @@ class DirectionRechercheMixin:
     """Méthodes spécifiques au rôle "direction de recherche"."""
 
     @property
-    def stucture_dont_je_suis_le_directeur(self) -> Optional[OrgUnit]:
+    def stucture_dont_je_suis_le_directeur(self) -> OrgUnit | None:
         from labster.domain.models.roles import RoleType
 
         roles = self.get_roles(RoleType.DIRECTION)  # type: ignore
@@ -107,17 +107,17 @@ class DirectionRechercheMixin:
             return None
         return roles[0].context
 
-    def demandes_a_valider(self) -> List[Demande]:
+    def demandes_a_valider(self) -> list[Demande]:
         demandes = self.mes_taches()  # type: ignore
         return [d for d in demandes if d.wf_state == EN_VALIDATION.id]
 
 
 class GestionnaireMixin:
-    def get_membres_de_mes_structures(self) -> List[Profile]:
+    def get_membres_de_mes_structures(self) -> list[Profile]:
         from .roles import RoleType
 
         roles = self.get_roles(RoleType.GDL)  # type: ignore
-        membres: Set[Profile] = set()
+        membres: set[Profile] = set()
         for role in roles:
             org = role.context
             membres.update(org.get_membres())
@@ -126,7 +126,7 @@ class GestionnaireMixin:
 
 
 class RechercheMixin(ChercheurMixin, DirectionRechercheMixin):
-    roles: List[Role]
+    roles: list[Role]
     laboratoire: OrgUnit
 
     @property
@@ -138,7 +138,7 @@ class RechercheMixin(ChercheurMixin, DirectionRechercheMixin):
             return self.laboratoire
 
     @property
-    def sous_structure(self) -> Optional[OrgUnit]:
+    def sous_structure(self) -> OrgUnit | None:
         from .roles import RoleType
 
         roles = self.roles
@@ -150,7 +150,7 @@ class RechercheMixin(ChercheurMixin, DirectionRechercheMixin):
             return None
 
     @property
-    def equipe(self) -> Optional[OrgUnit]:
+    def equipe(self) -> OrgUnit | None:
         from .unites import EQUIPE
 
         sous_structure = self.sous_structure
@@ -164,7 +164,7 @@ class RechercheMixin(ChercheurMixin, DirectionRechercheMixin):
         return None
 
     @property
-    def departement(self) -> Optional[OrgUnit]:
+    def departement(self) -> OrgUnit | None:
         from labster.domain.models.unites import DEPARTEMENT, EQUIPE
 
         sous_structure = self.sous_structure
@@ -197,14 +197,14 @@ class DirectionDgrttMixin:
 
 class WorkflowActorMixin(RolesMixin):
     # Silence the typechecker
-    laboratoire: Optional[OrgUnit]
+    laboratoire: OrgUnit | None
 
     @property
-    def stucture_dont_je_suis_le_directeur(self) -> Optional[OrgUnit]:
+    def stucture_dont_je_suis_le_directeur(self) -> OrgUnit | None:
         return None
 
     @property
-    def perimetre_dgrtt(self) -> Set[OrgUnit]:
+    def perimetre_dgrtt(self) -> set[OrgUnit]:
         return set()
 
 
@@ -275,14 +275,14 @@ class Profile(UserMixin, AgentDgrttMixin, RechercheMixin, WorkflowActorMixin, En
         return f"{self.prenom} {self.nom}"
 
     @property
-    def ldap_dict(self) -> Dict[Text, Any]:
+    def ldap_dict(self) -> dict[str, Any]:
         try:
             return json.loads(self.ldap_entry)
         except (ValueError, TypeError):
             return {}
 
     @property
-    def cas_dict(self) -> Dict[Text, Any]:
+    def cas_dict(self) -> dict[str, Any]:
         try:
             return json.loads(self.cas_entry)
         except (ValueError, TypeError):

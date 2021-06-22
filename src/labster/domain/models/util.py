@@ -10,7 +10,7 @@ logger = structlog.get_logger()
 SEP = ("-", "/")
 
 
-def parse_date(dd: Any) -> Optional[date]:
+def parse_date(dd: Any) -> date | None:
     if not dd:
         return None
 

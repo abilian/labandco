@@ -275,7 +275,7 @@ class Demande(db.Model):
 
         raise AttributeError(f"object has no attribute '{name}'")
 
-    def has_same_data(self, data: Dict[str, Any]) -> bool:
+    def has_same_data(self, data: dict[str, Any]) -> bool:
         """Return True if the current version is the same as the given data."""
         current_data = self.data
 
@@ -304,7 +304,7 @@ class Demande(db.Model):
         return ""
 
     @property
-    def owners(self) -> Set[Profile]:
+    def owners(self) -> set[Profile]:
         owners = set()
         if self.gestionnaire:
             owners.add(self.gestionnaire)
@@ -315,23 +315,23 @@ class Demande(db.Model):
     #
     # Workflow
     #
-    def get_workflow(self, user: Optional[Profile] = None) -> LabsterWorkflow:
+    def get_workflow(self, user: Profile | None = None) -> LabsterWorkflow:
         return LabsterWorkflow(self, user)
 
-    def get_state(self, user: Optional[Profile] = None) -> State:
+    def get_state(self, user: Profile | None = None) -> State:
         workflow = self.get_workflow(user)
         return workflow.current_state()
 
-    def current_owners(self) -> List[Profile]:
+    def current_owners(self) -> list[Profile]:
         return self.get_workflow().current_owners()
 
-    def structures_signataires(self) -> Set[Structure]:
+    def structures_signataires(self) -> set[Structure]:
         result = self.get_structure_concernees()
         if self.structure:
             result.add(self.structure)
         return result
 
-    def valideurs(self) -> Set[Profile]:
+    def valideurs(self) -> set[Profile]:
         structures_signataires = self.structures_signataires()
         result = set()
         for structure in structures_signataires:
@@ -354,7 +354,7 @@ class Demande(db.Model):
         return result
 
     @property
-    def date_soumission(self) -> Optional[date]:
+    def date_soumission(self) -> date | None:
         for entry in self.wf_history:
             if entry.get("transition") == "SOUMETTRE":
                 return dateutil.parser.parse(entry["date"]).date()
@@ -362,7 +362,7 @@ class Demande(db.Model):
         return None
 
     @property
-    def date_finalisation(self) -> Optional[date]:
+    def date_finalisation(self) -> date | None:
         final_states = ["CONFIRMER_FINALISATION_DGRTT", "ABANDONNER", "REJETER_DGRTT"]
         for entry in self.wf_history:
             if entry.get("transition") in final_states:
@@ -387,14 +387,14 @@ class Demande(db.Model):
     def validate(self) -> Validation:
         return Validation(self, self.get_errors(), self.get_extra_errors())
 
-    def get_errors(self) -> List[Any]:
+    def get_errors(self) -> list[Any]:
         errors = []
         form_state = self.form_state
         fields = form_state.get("fields", [])
         for field_name, field_value in self.data.items():
             if field_name not in fields:
                 continue
-            field: Dict[str, Any] = fields[field_name]
+            field: dict[str, Any] = fields[field_name]
 
             visible = bool(field.get("visible"))
             required = bool(field.get("required"))
@@ -410,7 +410,7 @@ class Demande(db.Model):
 
         return errors
 
-    def get_extra_errors(self) -> List[str]:
+    def get_extra_errors(self) -> list[str]:
         return []
 
     def is_valid(self) -> bool:
@@ -421,7 +421,7 @@ class Demande(db.Model):
     def errors(self):
         return self.validate().errors
 
-    def update_data(self, data: Dict) -> None:
+    def update_data(self, data: dict) -> None:
         self.increase_version()
         self.data.update(data)
 
@@ -495,11 +495,11 @@ class DemandeRH(Demande):
         self.name = self.nom
 
     @property
-    def date_debut(self) -> Optional[date]:
+    def date_debut(self) -> date | None:
         return parse_date(self.data.get("date_debut"))
 
     @property
-    def date_fin(self) -> Optional[date]:
+    def date_fin(self) -> date | None:
         return parse_date(self.data.get("date_fin"))
 
     @property
@@ -525,8 +525,8 @@ class DemandeRH(Demande):
         except Exception:
             return Decimal(0)
 
-    def get_extra_errors(self) -> List[str]:
-        errors: List[str] = []
+    def get_extra_errors(self) -> list[str]:
+        errors: list[str] = []
         if not self.attachments:
             errors += ["Vous devez obligatoirement attacher une pièce-jointe."]
         if self.date_fin and self.date_debut and self.date_fin <= self.date_debut:
@@ -653,7 +653,7 @@ class DemandeAutre(Demande):
         self.nom = self.titre
 
 
-_REGISTRY: Dict[str, Type[Demande]] = {
+_REGISTRY: dict[str, type[Demande]] = {
     "rh": DemandeRH,
     "convention": DemandeConvention,
     "avenant_convention": DemandeAvenantConvention,
@@ -663,7 +663,7 @@ _REGISTRY: Dict[str, Type[Demande]] = {
 }
 
 
-def demande_factory(type: str, demandeur: Profile, data: Dict, **args: Dict) -> Demande:
+def demande_factory(type: str, demandeur: Profile, data: dict, **args: dict) -> Demande:
     demande_cls = _REGISTRY.get(type)
     if not demande_cls:
         raise RuntimeError(f"Type de demande illégal: {type}")
@@ -676,7 +676,7 @@ def demande_factory(type: str, demandeur: Profile, data: Dict, **args: Dict) -> 
 
 class Validation:
     def __init__(
-        self, obj: Demande, errors: List[Any], extra_errors: List[str]
+        self, obj: Demande, errors: list[Any], extra_errors: list[str]
     ) -> None:
         self.obj = obj
         self.errors = errors
@@ -783,7 +783,7 @@ def get_bureau_dri_autre(demande: DemandeAutre):
     return ContactType.CONTACT_DRV
 
 
-def get_contact_labco(structure: Structure, type: ContactType) -> Optional[Profile]:
+def get_contact_labco(structure: Structure, type: ContactType) -> Profile | None:
     from labster.di import injector
 
     contact_service = injector.get(ContactService)

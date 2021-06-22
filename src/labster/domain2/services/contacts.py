@@ -35,11 +35,11 @@ class ContactService:
 
     def get_contact(
         self, structure: Structure, contact_type: ContactType
-    ) -> Optional[Profile]:
+    ) -> Profile | None:
         raise NotImplementedError
 
-    def get_mapping(self) -> Dict[Structure, Dict[ContactType, Profile]]:
+    def get_mapping(self) -> dict[Structure, dict[ContactType, Profile]]:
         raise NotImplementedError
 
-    def get_mapping_for(self, structure: Structure) -> Dict[ContactType, Profile]:
+    def get_mapping_for(self, structure: Structure) -> dict[ContactType, Profile]:
         raise NotImplementedError

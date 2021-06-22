@@ -23,7 +23,7 @@ class SqlaStructureRepository(StructureRepository):
     def query(self):
         return self.session.query(Structure).filter(Structure.active == True)
 
-    def get_all(self) -> Set[Structure]:
+    def get_all(self) -> set[Structure]:
         return set(self.query().all())
 
     def put(self, structure: Structure):
@@ -40,7 +40,7 @@ class SqlaStructureRepository(StructureRepository):
     def clear(self):
         self.query().delete()
 
-    def get_by(self, key: str, value: Any) -> Optional[Structure]:
+    def get_by(self, key: str, value: Any) -> Structure | None:
         return self.query().filter_by(**{key: value}).first()
 
     # Not needed I think

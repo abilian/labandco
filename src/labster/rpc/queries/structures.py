@@ -36,7 +36,7 @@ def sg_all_structures() -> JSON:
     root = structure_repo.get_root()
     assert root
 
-    def children(structure: Structure, level=0) -> List[Tuple[Structure, int]]:
+    def children(structure: Structure, level=0) -> list[tuple[Structure, int]]:
         assert structure
 
         result = [(structure, level)]
@@ -86,7 +86,7 @@ def sg_structure_can_be_deleted(id: str):
 
 
 @method
-def sg_get_possible_child_types(id: str) -> List[Dict[str, str]]:
+def sg_get_possible_child_types(id: str) -> list[dict[str, str]]:
     user = get_current_profile()
 
     structure = structure_repo.get_by_id(id)
@@ -208,7 +208,7 @@ class FullStructureSchema(ModelSchema):
 
         return False
 
-    def get_permissions(self, structure: Structure) -> Dict[str, bool]:
+    def get_permissions(self, structure: Structure) -> dict[str, bool]:
         return {p: True for p in rbac.get_permissions_for_structure(structure)}
 
 

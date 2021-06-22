@@ -18,7 +18,7 @@ db = injector.get(SQLAlchemy)
 
 
 @method
-def update_contacts(structure_id: str, contacts: Dict[str, str]):
+def update_contacts(structure_id: str, contacts: dict[str, str]):
     structure = structure_repo.get_by_id(structure_id)
     check_can_edit_contacts(structure)
 

@@ -78,7 +78,7 @@ CELSA_DN = "ou=DI,ou=CE,ou=EI,ou=FACL,ou=SU,ou=Affectations,dc=chapeau,dc=fr"
 
 def get_parent_dn(dn: str) -> str:
     path = list(dn.split(","))
-    parent_path: List[str] = path[1:]
+    parent_path: list[str] = path[1:]
 
     # Prise en compte de différents cas particuliers
     parent_dn = ",".join(parent_path)

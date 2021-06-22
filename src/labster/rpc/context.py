@@ -10,7 +10,7 @@ from .registry import registry
 
 
 @method
-def get_context(name: str, params: Optional[JSONDict] = None, **kw) -> JSONDict:
+def get_context(name: str, params: JSONDict | None = None, **kw) -> JSONDict:
     if params is None:
         params = {}
 

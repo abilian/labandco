@@ -18,11 +18,11 @@ db = injector.get(SQLAlchemy)
 
 
 @method
-def update_membres_rattaches(structure_id: str, values: List[Dict]):
+def update_membres_rattaches(structure_id: str, values: list[dict]):
     structure = structure_repo.get_by_id(structure_id)
     assert structure
 
-    membres: List[Profile] = role_service.get_users_with_given_role(
+    membres: list[Profile] = role_service.get_users_with_given_role(
         Role.MEMBRE_RATTACHE, structure
     )
 

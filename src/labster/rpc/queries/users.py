@@ -59,9 +59,9 @@ class ProfileSchemaMany(Schema):
         return make_structures_dto(roles)
 
 
-def make_structures_dto(roles_dict: Dict[Role, Set[Structure]]) -> List[Dict]:
-    def reverse_dict(d: Dict) -> Dict[Any, List]:
-        result: Dict[Any, List] = {}
+def make_structures_dto(roles_dict: dict[Role, set[Structure]]) -> list[dict]:
+    def reverse_dict(d: dict) -> dict[Any, list]:
+        result: dict[Any, list] = {}
         for k, l in d.items():
             for v in l:
                 result[v] = result.get(v, [])

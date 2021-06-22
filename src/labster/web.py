@@ -111,7 +111,7 @@ def stop_services() -> None:
         #     index_service.stop()
 
 
-def inject_polymorphic_url_for() -> Dict[str, Callable]:
+def inject_polymorphic_url_for() -> dict[str, Callable]:
     # TODO: use real registry
     return {"url_for": url_for, "id": id}
 

@@ -270,7 +270,7 @@ class DemandeSchema(TableSchema):
 
     # Pour l'onglet "Pièces à joindre"
     def get_pieces_jointes(self, obj: Demande) -> JSONList:
-        result: List[Dict[str, Any]] = []
+        result: list[dict[str, Any]] = []
         for name, v in obj.attachments.items():
             creator_login = v["creator"]
             creator = (

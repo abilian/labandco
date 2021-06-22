@@ -158,7 +158,7 @@ class Structure(db.Model):
         return self.sigle or self.nom
 
     @property
-    def parent(self) -> Optional[Structure]:
+    def parent(self) -> Structure | None:
         if self.real_parents:
             return list(self.real_parents)[0]
         elif self.parents:
@@ -212,7 +212,7 @@ class Structure(db.Model):
         self.active = False
 
     @property
-    def ancestors(self) -> List[Structure]:
+    def ancestors(self) -> list[Structure]:
         parent = self.parent
         if not parent:
             return []
@@ -220,7 +220,7 @@ class Structure(db.Model):
             return [parent] + parent.ancestors
 
     @property
-    def descendants(self) -> Set[Structure]:
+    def descendants(self) -> set[Structure]:
         result = set()
         for child in self.children:
             result.add(child)
@@ -251,19 +251,19 @@ class Structure(db.Model):
     # Roles
     #
     @property
-    def responsables(self) -> Set[Profile]:
+    def responsables(self) -> set[Profile]:
         from labster.domain2.services.roles import Role
 
         return self._get_users_with_role(Role.RESPONSABLE)
 
     @property
-    def gestionnaires(self) -> Set[Profile]:
+    def gestionnaires(self) -> set[Profile]:
         from labster.domain2.services.roles import Role
 
         return self._get_users_with_role(Role.GESTIONNAIRE)
 
     @property
-    def signataire(self) -> Optional[Profile]:
+    def signataire(self) -> Profile | None:
         from labster.domain2.services.roles import Role
 
         signataires = self._get_users_with_role(Role.SIGNATAIRE)
@@ -272,7 +272,7 @@ class Structure(db.Model):
         else:
             return None
 
-    def _get_users_with_role(self, role: Role) -> Set[Profile]:
+    def _get_users_with_role(self, role: Role) -> set[Profile]:
         from labster.di import injector
         from labster.domain2.services.roles import RoleService
 
@@ -314,30 +314,30 @@ class StructureRepository(Repository, ABC, metaclass=ABCMeta):
         raise NotImplementedError
 
     # @abstractmethod
-    def get_all(self) -> Set[Structure]:
+    def get_all(self) -> set[Structure]:
         raise NotImplementedError
 
     # Generic (slow) implem
-    def get_by(self, key: str, value: Any) -> Optional[Structure]:
+    def get_by(self, key: str, value: Any) -> Structure | None:
         all_objects = self.get_all()
         for x in all_objects:
             if getattr(x, key) == value:
                 return x
         return None
 
-    def get_by_id(self, id: str) -> Optional[Structure]:
+    def get_by_id(self, id: str) -> Structure | None:
         return self.get_by("id", id)
 
-    def get_by_old_dn(self, old_dn: str) -> Optional[Structure]:
+    def get_by_old_dn(self, old_dn: str) -> Structure | None:
         return self.get_by("old_dn", old_dn)
 
-    def get_by_dn(self, dn: str) -> Optional[Structure]:
+    def get_by_dn(self, dn: str) -> Structure | None:
         return self.get_by("dn", dn)
 
-    def get_by_sigle(self, sigle: str) -> Optional[Structure]:
+    def get_by_sigle(self, sigle: str) -> Structure | None:
         return self.get_by("sigle", sigle)
 
-    def get_by_old_id(self, old_id: int) -> Optional[Structure]:
+    def get_by_old_id(self, old_id: int) -> Structure | None:
         return self.get_by("old_id", old_id)
 
     def get_root(self) -> Structure:

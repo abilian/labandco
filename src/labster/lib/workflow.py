@@ -61,7 +61,7 @@ class State:
     def on_leave(self, workflow: Workflow) -> None:
         """Callback (override in subclasses)."""
 
-    def task_owners(self, workflow: Workflow) -> Set[Profile]:
+    def task_owners(self, workflow: Workflow) -> set[Profile]:
         """Override in subclasses."""
         return set()
 
@@ -69,8 +69,8 @@ class State:
 class Transition:
     label = ""
     category = "primary"
-    from_states: List[State] = []
-    to_state: Optional[State] = None
+    from_states: list[State] = []
+    to_state: State | None = None
     message = (
         "Transition de l'état '{old_state}' vers l'état "
         "'{new_state}' initiée par l'utilisateur {actor}."
@@ -80,7 +80,7 @@ class Transition:
     def precondition(self, workflow: Workflow) -> bool:
         return True
 
-    def apply(self, workflow: Workflow, data: Dict) -> None:
+    def apply(self, workflow: Workflow, data: dict) -> None:
         pass
 
     @property
@@ -98,7 +98,7 @@ class Transition:
             return False
         return self.precondition(workflow)
 
-    def execute(self, workflow: Workflow, data: Dict) -> None:
+    def execute(self, workflow: Workflow, data: dict) -> None:
         if not self.can_execute(workflow):
             raise WorkflowException(f"Can't execute transition {self.id}")
         if hasattr(self, "apply"):
@@ -106,7 +106,7 @@ class Transition:
         if self.to_state and not self.to_state == workflow.state:
             self.to_state.enter(workflow)
 
-    def get_users_to_notify(self, workflow: Workflow, old_state: State) -> Set[Profile]:
+    def get_users_to_notify(self, workflow: Workflow, old_state: State) -> set[Profile]:
         return set()
 
     def get_form(self, workflow: Workflow, **kw) -> JSONList:
@@ -114,9 +114,9 @@ class Transition:
 
 
 class Workflow:
-    states: List[State] = []
-    transitions: List[Transition] = []
-    initial_state: Optional[State] = None
+    states: list[State] = []
+    transitions: list[Transition] = []
+    initial_state: State | None = None
     case: Demande
     actor: Profile
 
@@ -146,13 +146,13 @@ class Workflow:
                 return state
         raise WorkflowException(f"Object is in an unknown state: {self.case.wf_state}")
 
-    def current_owners(self) -> Set[Profile]:
+    def current_owners(self) -> set[Profile]:
         return self.current_state().task_owners(self)
 
-    def possible_transitions(self) -> List[Transition]:
+    def possible_transitions(self) -> list[Transition]:
         return [t for t in self.transitions if t.can_execute(self)]
 
-    def execute_transition(self, transition: Transition, data: Optional[Dict] = None):
+    def execute_transition(self, transition: Transition, data: dict | None = None):
         if not data:
             data = {}
         case = self.case

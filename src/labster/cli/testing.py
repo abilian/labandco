@@ -85,7 +85,7 @@ def test_selfcrawl():
     config = current_app.config
     config["TESTING"] = True
 
-    users: List[Profile] = Profile.query.all()
+    users: list[Profile] = Profile.query.all()
     for user in sorted(random.sample(users, 5000), key=lambda x: x.login):
         if not user.active:
             continue

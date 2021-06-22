@@ -65,7 +65,7 @@ def send_notification_by_email(notification: Notification) -> None:
         logger.error("SMTP error", e)
 
 
-def send_email(recipients: Set[Profile], subject: str, template, context) -> None:
+def send_email(recipients: set[Profile], subject: str, template, context) -> None:
     assert isinstance(recipients, set)
 
     recipients = [r.email for r in recipients]

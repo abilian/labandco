@@ -63,7 +63,7 @@ def url_for_old_profile(profile: OldProfile, **kw) -> str:
 #     )
 
 
-def sort_by_name(iterable: Iterable) -> List:
+def sort_by_name(iterable: Iterable) -> list:
     result = list(iterable)
     if not result:
         return []

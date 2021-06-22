@@ -179,7 +179,7 @@ def get_contact_dgrtt(structure, bureau_dgrtt):
     return mappings[0].contact_dgrtt
 
 
-def get_membres_du_bureau_dgrtt(bureau_dgrtt: BureauDgrtt) -> List[Profile]:
+def get_membres_du_bureau_dgrtt(bureau_dgrtt: BureauDgrtt) -> list[Profile]:
     """Retourne la liste des membres d'un bureau DR&I (DGRTT) donné."""
     from labster.domain.models.mapping_dgrtt import MappingDgrtt
 

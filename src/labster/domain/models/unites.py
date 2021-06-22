@@ -118,14 +118,14 @@ class OrgUnit(Entity):
         return 0
 
     @property
-    def path(self) -> List[Text]:
+    def path(self) -> list[str]:
         t = [""] * 5
         for p in self.parents + [self]:
             t[p.depth] = p.nom
         return t
 
     @property
-    def parents(self) -> List[OrgUnit]:
+    def parents(self) -> list[OrgUnit]:
         p = self
         result = []
         while True:
@@ -136,7 +136,7 @@ class OrgUnit(Entity):
         result.reverse()
         return result
 
-    def descendants(self) -> List[OrgUnit]:
+    def descendants(self) -> list[OrgUnit]:
         if self.type == EQUIPE:
             return []
         if self.type == DEPARTEMENT:
@@ -153,12 +153,12 @@ class OrgUnit(Entity):
 
         return MappingDgrtt.query.get_for_ou(self)
 
-    def get_members_with_role(self, role_type: Optional[RoleType]) -> List[Profile]:
+    def get_members_with_role(self, role_type: RoleType | None) -> list[Profile]:
         roles = roles_service.get_roles(role_type=role_type, target=self)
         result = [r.profile for r in roles if r.profile]
         return result
 
-    def get_directeurs(self) -> List[Profile]:
+    def get_directeurs(self) -> list[Profile]:
         from .roles import RoleType
 
         result = self.get_members_with_role(RoleType.DIRECTION)
@@ -171,14 +171,14 @@ class OrgUnit(Entity):
 
         return result
 
-    def get_gestionnaires(self) -> List[Profile]:
+    def get_gestionnaires(self) -> list[Profile]:
         from .roles import RoleType
 
         result = self.get_members_with_role(RoleType.GDL)
         assert all(p.has_role("gestionnaire") for p in result)
         return result
 
-    def get_administrateurs(self) -> List[Profile]:
+    def get_administrateurs(self) -> list[Profile]:
         from .roles import RoleType
 
         result = self.get_members_with_role(RoleType.ALL)
@@ -186,18 +186,18 @@ class OrgUnit(Entity):
         return result
 
     @property
-    def direction(self) -> List[Profile]:
+    def direction(self) -> list[Profile]:
         return self.get_directeurs()
 
     @property
-    def gestionnaires(self) -> List[Profile]:
+    def gestionnaires(self) -> list[Profile]:
         return self.get_gestionnaires()
 
     @property
     def administrateurs(self):
         return self.get_administrateurs()
 
-    def set_roles(self, users: List[Profile], role_type: RoleType) -> None:
+    def set_roles(self, users: list[Profile], role_type: RoleType) -> None:
         roles = roles_service.get_roles(role_type=role_type, target=self)
         for role in roles:
             db.session.delete(role)
@@ -206,7 +206,7 @@ class OrgUnit(Entity):
             roles_service.grant_role(user, role_type, self)
 
     @property
-    def directeur(self) -> Optional[Profile]:
+    def directeur(self) -> Profile | None:
 
         direction = self.get_directeurs()
         direction = [d for d in direction if d.is_directeur]
@@ -240,7 +240,7 @@ class OrgUnit(Entity):
         else:
             raise AssertionError()
 
-    def get_labo(self) -> Optional[OrgUnit]:
+    def get_labo(self) -> OrgUnit | None:
         if self.type == LABORATOIRE:
             return self
         if not self.parent:
@@ -252,20 +252,20 @@ class OrgUnit(Entity):
         raise AssertionError("Should not happen")
 
     @property
-    def laboratoire(self) -> Optional[OrgUnit]:
+    def laboratoire(self) -> OrgUnit | None:
         try:
             return self.get_labo()
         except Exception:
             return None
 
     @property
-    def equipe(self) -> Optional[OrgUnit]:
+    def equipe(self) -> OrgUnit | None:
         if self.type == EQUIPE:
             return self
         return None
 
     @property
-    def departement(self) -> Optional[OrgUnit]:
+    def departement(self) -> OrgUnit | None:
         if self.type == DEPARTEMENT:
             return self
         if self.type == EQUIPE and self.parent.type == DEPARTEMENT:
@@ -273,7 +273,7 @@ class OrgUnit(Entity):
         return None
 
     @property
-    def ufr(self) -> Optional[OrgUnit]:
+    def ufr(self) -> OrgUnit | None:
         if self.type == POLE_DE_RECHERCHE:
             return None
         if self.type == UFR:
@@ -287,7 +287,7 @@ class OrgUnit(Entity):
         return None
 
     @property
-    def pole(self) -> Optional[OrgUnit]:
+    def pole(self) -> OrgUnit | None:
         if self.type == POLE_DE_RECHERCHE:
             return self
         if self.type == UFR:
@@ -300,7 +300,7 @@ class OrgUnit(Entity):
             return parent
         return parent.parent
 
-    def get_membres(self) -> List[Profile]:
+    def get_membres(self) -> list[Profile]:
         if self.type not in [LABORATOIRE, EQUIPE, DEPARTEMENT]:
             return []
 
@@ -323,7 +323,7 @@ class OrgUnit(Entity):
                 membres_dict.update(equipe.get_membres())
             membres = list(membres_dict)
 
-        def sorter(profile: Profile) -> Tuple[Text, Text]:
+        def sorter(profile: Profile) -> tuple[str, str]:
             return profile.nom, profile.prenom
 
         return sorted(membres, key=sorter)

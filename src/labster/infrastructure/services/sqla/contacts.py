@@ -76,7 +76,7 @@ class SqlaContactService(ContactService):
 
     def get_contact(
         self, structure: Structure, contact_type: ContactType
-    ) -> Optional[Profile]:
+    ) -> Profile | None:
 
         assert isinstance(structure, Structure)
         assert isinstance(contact_type, ContactType)
@@ -87,7 +87,7 @@ class SqlaContactService(ContactService):
             .filter(Contact.contact_type_name == contact_type.name)
         )
 
-        contact: Optional[Contact] = query.first()
+        contact: Contact | None = query.first()
         if contact:
             return contact.user
         else:
@@ -119,12 +119,12 @@ class SqlaContactService(ContactService):
             .filter(Contact.contact_type_name == contact_type.name)
         )
 
-        contact: Optional[Contact] = query.first()
+        contact: Contact | None = query.first()
         if contact:
             self.db.session.delete(contact)
             self.db.session.flush()
 
-    def get_mapping_for(self, structure: Structure) -> Dict[ContactType, Profile]:
+    def get_mapping_for(self, structure: Structure) -> dict[ContactType, Profile]:
         assert isinstance(structure, Structure)
 
         query = self.query().filter(Contact.structure_id == structure.id)
@@ -132,7 +132,7 @@ class SqlaContactService(ContactService):
         contacts = query.all()
         return {ContactType[c.contact_type_name]: c.user for c in contacts}
 
-    def get_mapping(self) -> Dict[Structure, Dict[ContactType, Profile]]:
+    def get_mapping(self) -> dict[Structure, dict[ContactType, Profile]]:
         # TODO: optimize
         query = self.query()
         structures = {c.structure for c in query.all()}

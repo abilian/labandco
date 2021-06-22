@@ -33,7 +33,7 @@ __all__ = ("create_app", "Application")
 # logger = structlog.get_logger()
 
 
-def create_app(config: Optional[Type] = None) -> Flask:
+def create_app(config: type | None = None) -> Flask:
     app = Application("labster")
     app.wsgi_app = ReverseProxied(app.wsgi_app)
 
@@ -63,7 +63,7 @@ def create_app(config: Optional[Type] = None) -> Flask:
     return app
 
 
-def init_config(app: Application, config: Optional[Type]):
+def init_config(app: Application, config: type | None):
     if config:
         # for tests
         app.setup(config)
@@ -142,7 +142,7 @@ class ReverseProxied:
         self.app = app
 
     def __call__(
-        self, environ: Dict[str, str], start_response: Callable
+        self, environ: dict[str, str], start_response: Callable
     ) -> ClosingIterator:
         script_name = environ.get("HTTP_X_SCRIPT_NAME", "")
         if script_name:

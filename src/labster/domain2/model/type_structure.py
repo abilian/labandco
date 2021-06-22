@@ -7,7 +7,7 @@ from attr import attrs
 if TYPE_CHECKING:
     from labster.domain2.model.structure import Structure
 
-void: FrozenSet[TypeStructure] = frozenset()
+void: frozenset[TypeStructure] = frozenset()
 
 
 @attrs(hash=True, auto_attribs=True, frozen=True, str=False, repr=False)
@@ -15,7 +15,7 @@ class TypeStructure:
     name: str
     can_have_multiple_parents: bool
     reel: bool
-    types_parents: FrozenSet[TypeStructure]
+    types_parents: frozenset[TypeStructure]
 
     def check(self, structure: Structure) -> bool:
         return structure.type == self

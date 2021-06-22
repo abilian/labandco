@@ -76,7 +76,7 @@ class UserSchema(Schema):
     def get_is_admin(self, user: Profile):
         return user.has_role(Role.ADMIN_CENTRAL)
 
-    def get_roles(self, user: Profile) -> List[Any]:
+    def get_roles(self, user: Profile) -> list[Any]:
         assert isinstance(user, Profile)
         return []
 

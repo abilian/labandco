@@ -132,7 +132,7 @@ def update_demande(id, model, form):
     return messages
 
 
-def get_structure(model: dict) -> Optional[Structure]:
+def get_structure(model: dict) -> Structure | None:
     structure_dto = model.get("laboratoire")
     if not structure_dto:
         return None
@@ -148,7 +148,7 @@ def get_structure(model: dict) -> Optional[Structure]:
     return structure
 
 
-def get_porteur(model: dict) -> Optional[Profile]:
+def get_porteur(model: dict) -> Profile | None:
     porteur_dto = model.get("porteur")
     if not porteur_dto:
         return None

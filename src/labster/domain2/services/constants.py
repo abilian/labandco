@@ -126,7 +126,7 @@ def get_faq_categories():
     return [(x, x) for x in categories]
 
 
-def _get_constants() -> Dict[str, Any]:
+def _get_constants() -> dict[str, Any]:
     """Get constants from config or local json with updating system.
 
     Pick new constants that are defined in TYPES but are not saved in
@@ -162,7 +162,7 @@ def _get_constants() -> Dict[str, Any]:
     return constants
 
 
-def _upgrade_if_needed(config: Config, initial_constants: Dict[str, Any]):
+def _upgrade_if_needed(config: Config, initial_constants: dict[str, Any]):
     """ "data migration" tool.
 
     - constants: the ones from the config, to update.
@@ -227,12 +227,12 @@ def _upgrade_if_needed(config: Config, initial_constants: Dict[str, Any]):
         db.session.commit()
 
 
-def get_initial_constants() -> Dict[str, Any]:
+def get_initial_constants() -> dict[str, Any]:
     filename = dirname(__file__) + "/constants.json"
     return json.load(open(filename, "rb"))
 
 
-def get_constants() -> Dict[str, Any]:
+def get_constants() -> dict[str, Any]:
     constants = _get_constants()
     return update_constants(constants)
 
@@ -300,7 +300,7 @@ def save_constants(constants):
     return config
 
 
-def update_constants(constants: Dict[str, Any]) -> Dict[str, Any]:
+def update_constants(constants: dict[str, Any]) -> dict[str, Any]:
     if "types" in constants:
         del constants["types"]
     dotted_constants = DottedCollection.factory(constants)

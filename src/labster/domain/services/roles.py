@@ -154,7 +154,7 @@ def _has_role(user, role_type, target=None):
         return any(r.type == role_type.value for r in roles)
 
 
-def get_roles(user=None, role_type=None, target=None) -> List[Role]:
+def get_roles(user=None, role_type=None, target=None) -> list[Role]:
     from labster.domain.models.roles import Role, RoleType
 
     assert isinstance(role_type, (type(None), RoleType))
@@ -233,7 +233,7 @@ def ungrant_role(user: Profile, role_type: RoleType, target=None):
 
 
 # Utilisé en phase de test (URL: /switch/).
-def get_all_users() -> List[Profile]:
+def get_all_users() -> list[Profile]:
     from labster.domain.models.profiles import Profile
 
     gestionnaires = {"pulcherie", "boyern", "courtoisi", "sos", "girardv"}

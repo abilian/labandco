@@ -58,7 +58,7 @@ class RoleService:
     def get_users_with_role(self, role: Role, context: Any = None):
         raise NotImplementedError
 
-    def get_users_with_role_on(self, context: Structure) -> Dict[Role, Set[Profile]]:
+    def get_users_with_role_on(self, context: Structure) -> dict[Role, set[Profile]]:
         raise NotImplementedError
 
     def get_users_with_given_role(
@@ -66,13 +66,13 @@ class RoleService:
     ) -> Collection[Profile]:
         raise NotImplementedError
 
-    def get_roles_for_user(self, user: Profile) -> Dict[Role, Set[Structure]]:
+    def get_roles_for_user(self, user: Profile) -> dict[Role, set[Structure]]:
         raise NotImplementedError
 
     def update_roles(self, user: Profile):
         roles = self.get_roles_for_user(user)
 
-        structures: Set[Structure]
+        structures: set[Structure]
 
         structures = roles[Role.MEMBRE]
         for structure in structures:
