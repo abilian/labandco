@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Documentation
+
+- Add a changelog.
+
 ## [0.5] - 2021-09-09
 
 ### Bug Fixes
