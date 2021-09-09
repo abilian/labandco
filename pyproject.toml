@@ -165,6 +165,7 @@ gitignore_parser = "^0.0.5"
 pyinfra = "^0.11"
 selenium = "^3.141.0"
 vulture = "^1.4"
+portray = "^1.7.0"
 
 
 [tool.poetry.scripts]
