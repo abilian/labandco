@@ -132,6 +132,10 @@ Le backend utilise également le framework Abilian-Core développé par Abilian.
 
 L'authentification se fait en utilisant le protocole CAS implémenté par l'Université.
 
+### Modèle de données (simplifié)
+
+<img src="https://github.com/abilian/labandco/blob/master/doc/model.png?raw=true">
+
 
 
 ## FAQ
