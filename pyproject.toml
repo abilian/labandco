@@ -25,11 +25,12 @@ include = [
 # url = "https://pypi.fury.io/sfermigier/"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "~3.9"
 
 abilian-core = ">=0.11.12"
 psycopg2-binary = "*"
 Flask-Redis = "*"
+wtforms = "<3"
 
 # Pinned for now
 Flask-Assets = "< 2"
@@ -166,6 +167,7 @@ pyinfra = "^0.11"
 selenium = "^3.141.0"
 vulture = "^1.4"
 portray = "^1.7.0"
+sqla2uml = "^0.1.0"
 
 
 [tool.poetry.scripts]

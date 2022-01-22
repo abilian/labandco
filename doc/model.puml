@@ -1,0 +1,107 @@
+@startuml
+class Structure {
+  +id
+  +old_id
+  +active
+  +type_name
+  +nom
+  +sigle
+  +dn
+  +old_dn
+  +supann_code_entite
+  +email
+  +permettre_reponse_directe
+  +permettre_soummission_directe
+  +children
+}
+class Notification {
+  +created_at
+  +body
+  +user_id
+  +user
+  +actor_id
+  +actor
+  +demande_id
+  +demande
+  +sent
+  +id
+}
+class DemandePiLogiciel {
+}
+class Profile {
+  +id
+  +uid
+  +old_id
+  +old_uid
+  +login
+  +nom
+  +prenom
+  +email
+  +adresse
+  +telephone
+  +active
+  +affectation
+  +fonctions
+  +preferences_notifications
+  +preferences_nb_jours_notifications
+  +date_derniere_notification_vue
+}
+class Demande {
+  +id
+  +old_id
+  +type
+  +created_at
+  +updated_at
+  +nom
+  +name
+  +active
+  +editable
+  +no_infolab
+  +no_eotp
+  +contact_labco_id
+  +gestionnaire_id
+  +porteur_id
+  +structure_id
+  +data
+  +past_versions
+  +form_state
+  +attachments
+  +feuille_cout
+  +documents_generes
+  +wf_state
+  +wf_date_derniere_action
+  +wf_retard
+  +wf_history
+  +wf_data
+  +date_effective
+  +contact_labco
+  +porteur
+  +gestionnaire
+  +structure
+}
+class DemandeAutre {
+}
+class DemandeAvenantConvention {
+}
+class DemandeRH {
+}
+class DemandeConvention {
+}
+class DemandePiInvention {
+}
+
+Structure -up-|> Model
+Notification -up-|> IdMixin
+Notification -up-|> Model
+DemandePiLogiciel -up-|> Demande
+DemandePiLogiciel -up-|> DemandePiMixin
+Profile -up-|> Model
+Demande -up-|> Model
+DemandeAutre -up-|> Demande
+DemandeAvenantConvention -up-|> Demande
+DemandeRH -up-|> Demande
+DemandeConvention -up-|> Demande
+DemandePiInvention -up-|> Demande
+DemandePiInvention -up-|> DemandePiMixin
+
+@enduml
