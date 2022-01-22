@@ -134,7 +134,7 @@ L'authentification se fait en utilisant le protocole CAS implémenté par l'Univ
 
 ### Modèle de données (simplifié)
 
-<img src="https://github.com/abilian/labandco/blob/master/doc/model.png?raw=true">
+<img src="https://raw.githubusercontent.com/abilian/labandco/main/doc/model.png">
 
 
 
