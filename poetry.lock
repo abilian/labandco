@@ -254,7 +254,10 @@ mypy-extensions = ">=0.4.3"
 pathspec = ">=0.9.0,<1"
 platformdirs = ">=2"
 tomli = ">=0.2.6,<2.0.0"
-typing-extensions = ">=3.10.0.0"
+typing-extensions = [
+    {version = ">=3.10.0.0", markers = "python_version < \"3.10\""},
+    {version = "!=3.10.0.1", markers = "python_version >= \"3.10\""},
+]
 
 [package.extras]
 colorama = ["colorama (>=0.4.3)"]
@@ -823,23 +826,16 @@ python-versions = "*"
 flask = "*"
 
 [[package]]
-name = "Flask-Injector"
-version = "0.12.0"
+name = "flask-injector"
+version = "0.13.0"
 description = "Adds Injector, a Dependency Injection framework, support to Flask."
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
 
 [package.dependencies]
 Flask = "*"
 injector = ">=0.10.0"
-
-[package.source]
-type = "git"
-url = "https://github.com/abilian/flask_injector.git"
-reference = "master"
-resolved_reference = "02b437773c318f689e3ca3836fa574f05c60e366"
 
 [[package]]
 name = "flask-login"
@@ -1736,6 +1732,7 @@ numpy = [
     {version = ">=1.18.5", markers = "platform_machine != \"aarch64\" and platform_machine != \"arm64\" and python_version < \"3.10\""},
     {version = ">=1.19.2", markers = "platform_machine == \"aarch64\" and python_version < \"3.10\""},
     {version = ">=1.20.0", markers = "platform_machine == \"arm64\" and python_version < \"3.10\""},
+    {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
 ]
 python-dateutil = ">=2.8.1"
 pytz = ">=2020.1"
@@ -2762,8 +2759,8 @@ python-versions = "*"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "~3.9"
-content-hash = "6e19a5500b0ae1ac5475cc0436d2c914dc492fd68a855a97aa22749f31f9f05e"
+python-versions = "^3.9"
+content-hash = "ff214f3d774d1803315f916e92423793f63511b1ce534b461eec979115478abf"
 
 [metadata.files]
 abilian-core = [
@@ -3256,7 +3253,10 @@ flask-httpauth = [
     {file = "Flask-HTTPAuth-4.5.0.tar.gz", hash = "sha256:395040fda2854df800d15e84bc4a81a5f32f1d4a5e91eee554936f36f330aa29"},
     {file = "Flask_HTTPAuth-4.5.0-py3-none-any.whl", hash = "sha256:e16067ba3378ea366edf8de4b9d55f38c0a0cbddefcc0f777a54b3fce1d99392"},
 ]
-Flask-Injector = []
+flask-injector = [
+    {file = "Flask-Injector-0.13.0.tar.gz", hash = "sha256:d527f82dfa118acd3011da02edeef855ac7ec656383e2cb6b811071f4f6364a3"},
+    {file = "Flask_Injector-0.13.0-py2.py3-none-any.whl", hash = "sha256:b056234827951ea5c1e5ccccd40b562540e24465913cccc95f4ab2ee831cd37c"},
+]
 flask-login = [
     {file = "Flask-Login-0.5.0.tar.gz", hash = "sha256:6d33aef15b5bcead780acc339464aae8a6e28f13c90d8b1cf9de8b549d1c0b4b"},
     {file = "Flask_Login-0.5.0-py2.py3-none-any.whl", hash = "sha256:7451b5001e17837ba58945aead261ba425fdf7b4f0448777e597ddab39f4fba0"},

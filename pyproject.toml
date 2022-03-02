@@ -25,7 +25,7 @@ include = [
 # url = "https://pypi.fury.io/sfermigier/"
 
 [tool.poetry.dependencies]
-python = "~3.9"
+python = "^3.9"
 
 abilian-core = ">=0.11.12"
 psycopg2-binary = "*"
@@ -110,7 +110,8 @@ glom = "*"
 # xlrd = "^1.2"
 
 # Personal forks
-flask-injector = { git = "https://github.com/abilian/flask_injector.git" }
+flask-injector = "*"
+#flask-injector = { git = "https://github.com/abilian/flask_injector.git" }
 #Flask-Injector-Abilian = "*"
 
 # q = "*"
