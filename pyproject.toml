@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "labandco"
-version = "2.2.29"
+version = "2.2.30"
 description = ""
 authors = ["Abilian SAS"]
 
@@ -31,6 +31,7 @@ abilian-core = ">=0.11.12"
 psycopg2-binary = "*"
 Flask-Redis = "*"
 wtforms = "<3"
+markupsafe = ">=2,<2.1"
 
 # Pinned for now
 Flask-Assets = "< 2"
