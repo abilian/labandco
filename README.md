@@ -10,6 +10,10 @@ Il couvre notamment:
 - Les contrats de recherche (recherche partenariale, ANR, projets européens...)
 - La valorisation de la recherche (logiciels, brevets, bases de donnée...)
 
+## Illustration
+
+<img src="https://raw.githubusercontent.com/abilian/labandco/main/doc/illustration.png">
+
 ### Historique
 
 Lab&Co est développé par [Abilian](http://www.abilian.com/) en partenariat avec [Will Strategy](https://willstrategy.com/) depuis 2014 pour l'Université Pierre et Marie Curie (UPMC), devenue depuis Sorbonne Université.
