@@ -20,7 +20,7 @@ Lab&Co est développé par [Abilian](http://www.abilian.com/) en partenariat ave
 
 Il est utilisé par plusieurs centaines de chercheurs et la soixantaine de personnes travaillant à la DR&I (Direction de la Recherche et de l'Innovation).
 
-La version du code que vous consultez actuellement est la version "3.0" de l'application, qui est en cours de finalisation pour un déploiement fin 2019 à Sorbonne Université.
+La version du code que vous consultez actuellement est la version "3.0" de l'application, qui été déployée fin 2019 à Sorbonne Université.
 
 ### Votre projet
 
