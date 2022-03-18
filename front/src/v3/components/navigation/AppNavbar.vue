@@ -125,7 +125,7 @@ export default {
 
     onLogout() {
       this.$storage.clear();
-      axios.post("/login").then(response => {
+      axios.post("/login").then((response) => {
         window.location.href = "/";
       });
     },

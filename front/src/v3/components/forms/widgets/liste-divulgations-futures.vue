@@ -1,11 +1,9 @@
 <template>
-  <table class="table table-condensed table-bordered" style="width: 100%;">
+  <table class="table table-condensed table-bordered" style="width: 100%">
     <thead>
       <tr class="personnel">
         <th width="30">
-          <a class="btn btn-default" @click.prevent="add_line()">
-            +
-          </a>
+          <a class="btn btn-default" @click.prevent="add_line()"> + </a>
         </th>
         <th width="45%">
           Type de divulgation (résumé de congrès, article, communication
@@ -15,9 +13,7 @@
             vous aurez enregistré le formulaire
           </em>
         </th>
-        <th width="45%" style="vertical-align:top;">
-          Date envisagée
-        </th>
+        <th width="45%" style="vertical-align: top">Date envisagée</th>
       </tr>
     </thead>
 

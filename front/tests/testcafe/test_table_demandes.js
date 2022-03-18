@@ -36,11 +36,8 @@ const buttonOk = selectAll("#button-ok");
 
 const reload = ClientFunction(() => window.location.reload());
 
-test("Reloading the browser uses the saved data in local storage", async t => {
-  await t
-    .click(firstMenu)
-    .click(selectAll)
-    .click(buttonOk);
+test("Reloading the browser uses the saved data in local storage", async (t) => {
+  await t.click(firstMenu).click(selectAll).click(buttonOk);
 
   reload();
   await t.click(firstMenu);

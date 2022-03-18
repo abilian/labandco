@@ -4,9 +4,7 @@ describe("Table", () => {
   });
 
   it("should save state in local storage", () => {
-    cy.get(".fa-chevron-down")
-      .eq(0)
-      .click();
+    cy.get(".fa-chevron-down").eq(0).click();
     cy.get("#selectAll").should("be.checked");
 
     cy.get("#selectAll").click();
@@ -14,9 +12,7 @@ describe("Table", () => {
 
     cy.reload();
 
-    cy.get(".fa-chevron-down")
-      .eq(0)
-      .click();
+    cy.get(".fa-chevron-down").eq(0).click();
     cy.get("#selectAll").should("not.be.checked");
   });
 });

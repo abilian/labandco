@@ -21,9 +21,7 @@
         default content. (use slot="header/body/footer")
       -->
       <div slot="header">
-        <h3 slot="header">
-          Options de visualisation
-        </h3>
+        <h3 slot="header">Options de visualisation</h3>
         <em>
           Glissez-déposez des éléments pour les trier et sélectionnez les
           colonnes à afficher.
@@ -62,19 +60,19 @@ export default {
   components: { Modal, Draggable },
   props: ["columns"],
 
-  data: function() {
+  data: function () {
     return {
       showModal: false,
       columns2: null,
     };
   },
 
-  mounted: function() {
+  mounted: function () {
     this.columns2 = this.columns;
   },
 
   methods: {
-    onColumnsChanged: function(data) {
+    onColumnsChanged: function (data) {
       this.$emit("columnsChanged", this.columns2);
     },
   },

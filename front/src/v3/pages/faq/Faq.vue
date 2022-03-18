@@ -61,9 +61,7 @@
         </div>
       </div>
 
-      <div v-else class="card-body">
-        Chargement en cours...
-      </div>
+      <div v-else class="card-body">Chargement en cours...</div>
     </div>
   </div>
 </template>

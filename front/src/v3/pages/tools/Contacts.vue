@@ -134,7 +134,7 @@ export default {
 
   methods: {
     provider(ctx, callback) {
-      this.$root.rpc("get_all_contacts", []).then(result => {
+      this.$root.rpc("get_all_contacts", []).then((result) => {
         this.totalRows = result.length;
         callback(result);
       });

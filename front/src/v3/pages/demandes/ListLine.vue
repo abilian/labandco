@@ -1,11 +1,11 @@
 <template>
   <td class="w-70">
-    <table class="table" style="width: 100%; margin-bottom: 0;">
+    <table class="table" style="width: 100%; margin-bottom: 0">
       <tr>
         <th
           v-for="l in field.specs"
           class="text-muted"
-          style="font-weight: normal;"
+          style="font-weight: normal"
         >
           {{ l[1] }}
         </th>

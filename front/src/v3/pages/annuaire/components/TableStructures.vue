@@ -8,7 +8,7 @@
       <div class="card-tools">
         <ul
           class="pagination pagination-sm float-right"
-          style="margin: 0 0 0 4em;"
+          style="margin: 0 0 0 4em"
         >
           <li class="page-item">
             <a href="#" @click.prevent="previous_page()" class="page-link">
@@ -19,9 +19,7 @@
             <span class="page-link"> {{ page }} / {{ pageCount }} </span>
           </li>
           <li class="page-item">
-            <a href="#" @click.prevent="next_page()" class="page-link">
-              »
-            </a>
+            <a href="#" @click.prevent="next_page()" class="page-link"> » </a>
           </li>
         </ul>
 
@@ -50,15 +48,9 @@
       <table class="table table-condensed table-hover">
         <thead>
           <tr>
-            <th width="60%">
-              Nom
-            </th>
-            <th width="20%">
-              Sigle
-            </th>
-            <th width="20%">
-              Type
-            </th>
+            <th width="60%">Nom</th>
+            <th width="20%">Sigle</th>
+            <th width="20%">Type</th>
           </tr>
         </thead>
 
@@ -99,17 +91,13 @@
     <div class="card-footer clearfix">
       <ul class="pagination float-right">
         <li>
-          <a href="#" @click.prevent="previous_page()" class="page-link">
-            «
-          </a>
+          <a href="#" @click.prevent="previous_page()" class="page-link"> « </a>
         </li>
         <li>
           <span class="page-link"> {{ page }} / {{ pageCount }} </span>
         </li>
         <li>
-          <a href="#" @click.prevent="next_page()" class="page-link">
-            »
-          </a>
+          <a href="#" @click.prevent="next_page()" class="page-link"> » </a>
         </li>
       </ul>
     </div>
@@ -159,7 +147,7 @@ export default {
   },
 
   created() {
-    this.$root.rpc("sg_all_structures", []).then(result => {
+    this.$root.rpc("sg_all_structures", []).then((result) => {
       this.all_entries = result;
       if (localStorage.cache_structures) {
         this.restoreTree();

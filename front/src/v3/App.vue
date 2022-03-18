@@ -32,7 +32,7 @@ export default {
 
   created() {
     function refresh() {
-      rpc("get_user_context", []).then(data => {
+      rpc("get_user_context", []).then((data) => {
         console.log("get_user_context ->", data);
         if (data) {
           Vue.$storage.set("user_context", data);

@@ -40,7 +40,7 @@ export default {
       const value = this.value;
       if (Array.isArray(value)) {
         if (value[0].label) {
-          return fp.map(x => x.label, value).join(", ");
+          return fp.map((x) => x.label, value).join(", ");
         } else {
           return value;
         }

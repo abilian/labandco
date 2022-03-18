@@ -4,15 +4,11 @@
       <div class="modal-wrapper">
         <div class="modal-container">
           <div class="modal-header">
-            <slot name="header">
-              default header
-            </slot>
+            <slot name="header"> default header </slot>
           </div>
 
           <div class="modal-body">
-            <slot name="body">
-              default body
-            </slot>
+            <slot name="body"> default body </slot>
           </div>
 
           <div class="modal-footer">
@@ -37,15 +33,15 @@ export default {
   name: "Modal",
   props: ["columns"],
 
-  data: function() {
+  data: function () {
     return {
       columns2: JSON.parse(localStorage.getItem("columns")),
       showModal: false,
     };
   },
 
-  mounted: function() {
-    document.addEventListener("keydown", event => {
+  mounted: function () {
+    document.addEventListener("keydown", (event) => {
       const keyName = event.key;
       if (keyName === "Escape") {
         this.$emit("columnsChanged", this.columns2);
@@ -55,7 +51,7 @@ export default {
   },
 
   methods: {
-    finish: function() {
+    finish: function () {
       if (typeof Storage !== "undefined") {
         localStorage.setItem("columns", JSON.stringify(this.columns2));
       }

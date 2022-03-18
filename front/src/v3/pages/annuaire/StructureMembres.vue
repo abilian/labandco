@@ -121,9 +121,7 @@
       </div>
 
       <div v-if="editing" class="mt-3">
-        <button class="btn btn-primary mr-3" @click="save">
-          Enregistrer
-        </button>
+        <button class="btn btn-primary mr-3" @click="save">Enregistrer</button>
         <button class="btn btn-danger" @click="cancel">Annuler</button>
       </div>
     </template>
@@ -196,7 +194,7 @@ export default {
       }
 
       const args = [this.ou.id, this.include_ss];
-      this.$root.rpc("get_membres", args).then(result => {
+      this.$root.rpc("get_membres", args).then((result) => {
         this.totalRows = result.length;
         callback(result);
       });
@@ -204,7 +202,7 @@ export default {
 
     myFilter(row, filter) {
       if (filter.q) {
-        const fn = s => s.toLowerCase().startsWith(filter.q.toLowerCase());
+        const fn = (s) => s.toLowerCase().startsWith(filter.q.toLowerCase());
         return fn(row.prenom) || fn(row.nom);
       }
       return true;
@@ -222,7 +220,7 @@ export default {
         return;
       }
       const args = [this.ou.id];
-      this.$root.rpc("get_membres_rattaches_selector", args).then(result => {
+      this.$root.rpc("get_membres_rattaches_selector", args).then((result) => {
         this.selector = result.selector;
         this.editing = true;
       });

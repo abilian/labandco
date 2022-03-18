@@ -2,7 +2,7 @@
   <span>
     <span
       class="far fa-chevron-down"
-      style="cursor: pointer;"
+      style="cursor: pointer"
       aria-hidden="true"
       @click="showModal = true"
     />
@@ -65,9 +65,7 @@
 
           <br />
           <div class="scrollbar">
-            <em style="">
-              Filtrez sur cette colonne.
-            </em>
+            <em style=""> Filtrez sur cette colonne. </em>
 
             <div>
               <label class="checkbox-inline">
@@ -144,7 +142,7 @@ export default {
   },
 
   filters: {
-    truncate: function(value) {
+    truncate: function (value) {
       const max_length = 40;
       if (!value) {
         return "";
@@ -163,7 +161,7 @@ export default {
     "colFilter", // For each column, the list of selected entries.
   ],
 
-  data: function() {
+  data: function () {
     return {
       showModal: false,
       sort_order: undefined, // needed only to bind css classes.
@@ -174,7 +172,7 @@ export default {
   },
 
   computed: {
-    colValues: function() {
+    colValues: function () {
       // Get all the possible values of this column.
       let values;
       // FIXME: make more generic
@@ -191,18 +189,18 @@ export default {
         values = _.map(this.entries, this.colId);
         values = values.sort();
       }
-      values = _.filter(values, it => it !== "");
+      values = _.filter(values, (it) => it !== "");
       values = _.uniq(values);
       return values;
     },
 
-    hasNulls: function() {
+    hasNulls: function () {
       // Hide the "include nulls" button if there is none of them.
       let values = _.map(this.entries, this.colId);
       return values.indexOf("") !== -1;
     },
 
-    filterValues: function() {
+    filterValues: function () {
       // Chosen values for the filter.
       // For each possible entrie, a boolean if the user selected it.
       let values = {};
@@ -243,16 +241,16 @@ export default {
   },
 
   methods: {
-    sortRows: function(order) {
+    sortRows: function (order) {
       this.sort_order = order;
       this.$emit("sortRows", this.colId, order);
     },
 
-    sortDeactivate: function() {
+    sortDeactivate: function () {
       this.$emit("sortDeactivate");
     },
 
-    setSelectAll: function() {
+    setSelectAll: function () {
       // If all checkboxes are checked, including the nulls, we check the selectAll button.
       // Used when re-opening the modale and reading data in colFilter where selectAll can not be present.
       // caution: see same functionnality in filterValues computed property.
@@ -276,7 +274,7 @@ export default {
       }
     },
 
-    toggleInput: function(e) {
+    toggleInput: function (e) {
       let val = e.target.value;
       const checked = e.target.checked;
       this.filterValues[val] = checked;
@@ -294,20 +292,20 @@ export default {
       this.$emit("filterChanged", this.colId, this.filterValues);
     },
 
-    filterDeactivate: function() {
+    filterDeactivate: function () {
       // Deactivate the filter. Re-put null rows.
       this.doSelectAll();
       this.$emit("filterDeactivate", this.colId, this.filterValues);
     },
 
-    filterDeactivateAll: function() {
+    filterDeactivateAll: function () {
       // Deacitate filters of all columns.
       this.doSelectAll();
       this.$emit("filterDeactivateAll");
       this.$emit("close");
     },
 
-    doSelectAll: function() {
+    doSelectAll: function () {
       for (let i = 0; i < this.colValues.length; i++) {
         let val = this.colValues[i];
         this.filterValues[val] = true;
@@ -318,7 +316,7 @@ export default {
       this.selectAll = true;
     },
 
-    selectAllToggle: function(e) {
+    selectAllToggle: function (e) {
       // Toggle the selection.
       let checked = e.target.checked;
       this.selectAll = checked;
@@ -347,7 +345,7 @@ export default {
       this.$emit("filterChanged", this.colId, this.filterValues);
     },
 
-    toggleIncludeNulls: function(e) {
+    toggleIncludeNulls: function (e) {
       this.filterValues.__nulls__ = e.target.checked;
       if (!this.filterValues.__nulls__) {
         this.selectAll = false;

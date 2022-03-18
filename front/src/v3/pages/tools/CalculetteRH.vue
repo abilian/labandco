@@ -43,7 +43,7 @@ const URL = "/calculettes/devis_rh";
 export default {
   components: { FieldSet },
 
-  data: function() {
+  data: function () {
     return {
       form: {},
       model: {},
@@ -53,7 +53,7 @@ export default {
   },
 
   created() {
-    this.$root.rpc("get_new").then(result => {
+    this.$root.rpc("get_new").then((result) => {
       this.form = result.form;
       this.model = result.model;
       this.ready = true;
@@ -77,7 +77,7 @@ export default {
       };
       axios
         .post(URL, data, { responseType: "arraybuffer", headers })
-        .then(response => {
+        .then((response) => {
           const blob = new Blob([response.data], { type: "application/pdf" });
           FileSaver.saveAs(blob, "devis-rh.pdf");
         });

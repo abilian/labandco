@@ -8,7 +8,7 @@
       <div class="card-tools">
         <ul
           class="pagination pagination-sm float-right"
-          style="margin: 0 0 0 4em;"
+          style="margin: 0 0 0 4em"
         >
           <li>
             <a href="#" @click.prevent="previous_page()" class="page-link">
@@ -19,9 +19,7 @@
             <a href="#" class="page-link"> {{ page }} / {{ pageCount }} </a>
           </li>
           <li>
-            <a href="#" @click.prevent="next_page()" class="page-link">
-              »
-            </a>
+            <a href="#" @click.prevent="next_page()" class="page-link"> » </a>
           </li>
         </ul>
 
@@ -66,15 +64,9 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th class="w-25">
-              Nom
-            </th>
-            <th class="w-25">
-              Prénom
-            </th>
-            <th class="w-50">
-              Structure d'appartenance & rôle(s)
-            </th>
+            <th class="w-25">Nom</th>
+            <th class="w-25">Prénom</th>
+            <th class="w-50">Structure d'appartenance & rôle(s)</th>
           </tr>
         </thead>
 
@@ -111,17 +103,13 @@
     <div class="card-footer clearfix">
       <ul class="pagination float-right">
         <li>
-          <a href="#" @click.prevent="previous_page()" class="page-link">
-            «
-          </a>
+          <a href="#" @click.prevent="previous_page()" class="page-link"> « </a>
         </li>
         <li>
           <a href="#" class="page-link"> {{ page }} / {{ pageCount }} </a>
         </li>
         <li>
-          <a href="#" @click.prevent="next_page()" class="page-link">
-            »
-          </a>
+          <a href="#" @click.prevent="next_page()" class="page-link"> » </a>
         </li>
       </ul>
     </div>
@@ -143,7 +131,7 @@ export default {
     admin: Boolean,
   },
 
-  data: function() {
+  data: function () {
     return {
       ready: false,
       data: [],
@@ -158,24 +146,24 @@ export default {
   },
 
   watch: {
-    filterKey: function() {
+    filterKey: function () {
       this.page = 1;
       this.update();
     },
   },
 
-  mounted: function() {
-    this.$nextTick(function() {
+  mounted: function () {
+    this.$nextTick(function () {
       this.update();
     });
   },
 
   methods: {
-    sleep: function(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+    sleep: function (ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
     },
 
-    update: async function() {
+    update: async function () {
       // Why wait ? see table_orgs.vue
       await this.sleep(400);
       this.ready = false;
@@ -185,7 +173,7 @@ export default {
         args.q = this.filterKey;
       }
 
-      this.$root.rpc("get_users", args).then(result => {
+      this.$root.rpc("get_users", args).then((result) => {
         this.data = result["users"];
         this.total = result["total"];
         if (this.data) {

@@ -108,7 +108,7 @@ export default {
   methods: {
     update() {
       const args = { q: this.q, page: 1 };
-      this.$root.rpc("search_api", args).then(result => {
+      this.$root.rpc("search_api", args).then((result) => {
         this.faqs = result.faqs;
         this.demandes = result.demandes;
       });

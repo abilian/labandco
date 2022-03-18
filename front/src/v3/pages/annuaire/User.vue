@@ -41,9 +41,7 @@
               </tr>
 
               <tr>
-                <td class="text-muted text-right">
-                  Structures d'affectaction
-                </td>
+                <td class="text-muted text-right">Structures d'affectaction</td>
                 <td>
                   <router-link
                     v-if="structure_affectation"

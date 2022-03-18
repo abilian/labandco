@@ -52,7 +52,7 @@ Vue.use(Vue2Storage, {
 moment.locale("fr");
 Vue.use(VueMoment, { moment });
 
-Vue.filter("currency", function(val, symbol) {
+Vue.filter("currency", function (val, symbol) {
   return accounting.formatMoney(val, symbol);
 });
 
@@ -79,7 +79,7 @@ if (document.getElementById("app-v3")) {
   new Vue({
     el: "#app-v3",
     router,
-    render: h => h(App),
+    render: (h) => h(App),
     methods: {
       rpc: rpc,
     },
@@ -91,7 +91,7 @@ if (document.getElementById("login")) {
   new Vue({
     el: "#login",
     router,
-    render: h => h(LoginApp),
+    render: (h) => h(LoginApp),
   });
 }
 

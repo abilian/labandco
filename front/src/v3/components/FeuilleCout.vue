@@ -135,9 +135,7 @@
         </tr>
 
         <tr>
-          <td colspan="8">
-            Total
-          </td>
+          <td colspan="8">Total</td>
           <td class="number">
             {{ model.t1.total_duree }}
           </td>
@@ -271,9 +269,7 @@
         </tr>
 
         <tr>
-          <td colspan="7">
-            Total
-          </td>
+          <td colspan="7">Total</td>
           <td class="number">
             {{ model.t2.total_duree }}
           </td>
@@ -405,9 +401,7 @@
         </tr>
 
         <tr>
-          <td colspan="8">
-            Total
-          </td>
+          <td colspan="8">Total</td>
           <td class="number">
             {{ model.t3.total_duree }}
           </td>
@@ -531,9 +525,7 @@
         </tr>
 
         <tr>
-          <td colspan="6">
-            Total
-          </td>
+          <td colspan="6">Total</td>
           <td class="number">
             {{ model.t4.total_duree }}
           </td>
@@ -609,9 +601,7 @@
         </tr>
 
         <tr>
-          <td colspan="2">
-            Total
-          </td>
+          <td colspan="2">Total</td>
           <td class="currency">
             {{ model.t5.cout_total | currency("€") }}
           </td>
@@ -681,9 +671,7 @@
         </tr>
 
         <tr>
-          <td colspan="2">
-            Total
-          </td>
+          <td colspan="2">Total</td>
           <td class="currency">
             {{ model.t6.cout_total | currency("€") }}
           </td>
@@ -749,9 +737,7 @@
         </tr>
 
         <tr>
-          <td colspan="2">
-            Total
-          </td>
+          <td colspan="2">Total</td>
           <td class="currency">
             {{ model.t7.cout_total | currency("€") }}
           </td>
@@ -818,9 +804,7 @@
         </tr>
 
         <tr>
-          <td colspan="2">
-            Total
-          </td>
+          <td colspan="2">Total</td>
           <td class="currency">
             {{ model.t8.cout_total | currency("€") }}
           </td>
@@ -935,9 +919,7 @@
         </tr>
 
         <tr>
-          <td colspan="7">
-            Total
-          </td>
+          <td colspan="7">Total</td>
           <td class="currency">
             {{ model.t9.cout_total | currency("€") }}
           </td>
@@ -964,20 +946,14 @@
         <tr>
           <th />
           <th />
-          <th style="min-width: 240px;" />
-          <th style="min-width: 120px;">
-            Coûts additionnels
-          </th>
-          <th style="min-width: 120px;">
-            Coût total
-          </th>
+          <th style="min-width: 240px" />
+          <th style="min-width: 120px">Coûts additionnels</th>
+          <th style="min-width: 120px">Coût total</th>
         </tr>
       </thead>
 
       <tr>
-        <td rowspan="5">
-          Coûts directs
-        </td>
+        <td rowspan="5">Coûts directs</td>
         <td>
           Total des dépenses de personnels permanents titulaires ou contractuels
           rémunérés par Sorbonne Université ou d'autres partenaires (INSERM,
@@ -1040,9 +1016,7 @@
       </tr>
 
       <tr>
-        <td rowspan="6">
-          Coûts indirects
-        </td>
+        <td rowspan="6">Coûts indirects</td>
         <td>Coût d'environnement associé à la charge de personnel permanent</td>
         <td>
           (= T1 * {{ model.constants.TAUX_ENVIRONNEMENT_PERSONNEL_PERMANENT }}%)
@@ -1098,7 +1072,7 @@
             :readonly="readonly"
             v-model="model.couts_induits"
             type="number"
-            style="width: 40px;"
+            style="width: 40px"
           /><span class="only-print">{{ model.couts_induits }}</span
           >% du coût total)
         </td>
@@ -1118,7 +1092,7 @@
             :readonly="readonly"
             v-model="model.preciput_labo"
             type="number"
-            style="width: 40px;"
+            style="width: 40px"
           /><span class="only-print">{{ model.preciput_labo }}</span
           >% du coût total - part SU)
         </td>
@@ -1171,7 +1145,7 @@
 
     <p>Le coût complet correspond au montant minimum d'une prestation.</p>
 
-    <div v-if="model.id" class="no-print" style="text-align: center;">
+    <div v-if="model.id" class="no-print" style="text-align: center">
       <button
         v-if="model.editable && !saving"
         class="btn btn-primary m-1"
@@ -1199,8 +1173,8 @@ export default {
 
   data() {
     const constants = this.model.constants;
-    const categories = constants.DUREE_AMORTISSEMENT.map(x => x[0]);
-    const statuts = constants.REMUNERATION.map(x => x[0]);
+    const categories = constants.DUREE_AMORTISSEMENT.map((x) => x[0]);
+    const statuts = constants.REMUNERATION.map((x) => x[0]);
 
     return {
       statuts: [""].concat(statuts),
@@ -1235,7 +1209,7 @@ export default {
       const html = document.children[0].innerHTML;
       const args = [this.model, html];
       const msg = "Feuille de coût sauvegardée";
-      this.$root.rpc("update_feuille_de_cout", args, msg).then(result => {
+      this.$root.rpc("update_feuille_de_cout", args, msg).then((result) => {
         window.location = `/#/demandes/${this.model.id}`;
       });
     },

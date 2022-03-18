@@ -114,7 +114,7 @@ export default {
     form: { type: Object, required: true },
   },
 
-  data: function() {
+  data: function () {
     const field = this.form.fields[this.fieldName];
     return {
       field: field,

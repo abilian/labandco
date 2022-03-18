@@ -49,7 +49,7 @@ export default {
     onSubmit() {
       const args = [this.entry];
       const msg = "Question mise à jour";
-      this.$root.rpc("update_faq_entry", args, msg).then(result => {
+      this.$root.rpc("update_faq_entry", args, msg).then((result) => {
         EventBus.$emit("faq-list");
       });
     },
@@ -61,7 +61,7 @@ export default {
     onDelete() {
       const args = [this.entry];
       const msg = "Question supprimée";
-      this.$root.rpc("delete_faq_entry", args, msg).then(result => {
+      this.$root.rpc("delete_faq_entry", args, msg).then((result) => {
         EventBus.$emit("faq-list");
       });
     },

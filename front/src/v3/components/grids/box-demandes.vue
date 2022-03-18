@@ -34,7 +34,7 @@
             <th
               v-for="col in columns"
               :id="col.id"
-              style="overflow: hidden; white-space: nowrap;"
+              style="overflow: hidden; white-space: nowrap"
             >
               <span v-if="col.__show__">
                 {{ col.label }}
@@ -69,7 +69,7 @@
               <SelectColumns
                 class="float-right"
                 :columns="columns"
-                style="font-weight: normal;"
+                style="font-weight: normal"
                 @columnsChanged="onColumnsChanged"
               />
             </th>
@@ -125,23 +125,15 @@
             style="margin-right: 7px"
             @change="pageCountChanged"
           >
-            <option :value="{ number: 5 }">
-              5
-            </option>
-            <option :value="{ number: 10 }">
-              10
-            </option>
-            <option :value="{ number: 15 }">
-              15
-            </option>
-            <option :value="{ number: 20 }">
-              20
-            </option>
+            <option :value="{ number: 5 }">5</option>
+            <option :value="{ number: 10 }">10</option>
+            <option :value="{ number: 15 }">15</option>
+            <option :value="{ number: 20 }">20</option>
           </select>
 
           <ul
             class="pagination pagination-sm float-right"
-            style="text-align: center;"
+            style="text-align: center"
           >
             <li class="page-item">
               <a @click="firstPage()" class="page-link">
@@ -211,7 +203,7 @@ export default {
     },
   },
 
-  data: function() {
+  data: function () {
     return {
       ready: false,
 
@@ -315,7 +307,7 @@ export default {
             });
           }
 
-          columns.forEach(col => {
+          columns.forEach((col) => {
             col.__show__ = true;
           });
         }
@@ -329,7 +321,7 @@ export default {
         // Sort columns in order.
         if (tableStorage.get(this.id, "colOrders")) {
           this.colOrders = tableStorage.get(this.id, "colOrders");
-          this.colOrders.forEach(it => {
+          this.colOrders.forEach((it) => {
             this.sortRows(it.id, this.defaultColumns, it.order);
           });
         }
@@ -337,7 +329,7 @@ export default {
         // Make colFilter[key] reactive for each column.
         if (columns.length > 0) {
           if (typeof this.colFilter === "undefined" || this.colFilter === {}) {
-            columns.forEach(col => {
+            columns.forEach((col) => {
               this.$set(this.colFilter, col.id, "");
             });
           }
@@ -370,7 +362,7 @@ export default {
     },
   },
 
-  mounted: function() {
+  mounted: function () {
     // Don't run the Ajax call when scope is not defined, this
     // makes it easier to test.
     if (!this.scope) {
@@ -384,7 +376,7 @@ export default {
     };
     this.$root
       .rpc("get_demandes", args)
-      .then(result => (this.data = result))
+      .then((result) => (this.data = result))
       .then(this.update)
       .then(() => (this.ready = true));
   },
@@ -433,11 +425,11 @@ export default {
     },
 
     // Called before the quickfilter, before the filter of all columns.
-    preFilter: function(entries) {
+    preFilter: function (entries) {
       // this.old: show only older than 3 months.
       // otherwise: show all.
       if (this.old) {
-        return _.filter(entries, e => (e.age >= 90 ? 1 : 0));
+        return _.filter(entries, (e) => (e.age >= 90 ? 1 : 0));
       } else {
         return entries;
       }
@@ -487,7 +479,7 @@ export default {
         // filterValues: list of the user selection (str).
         let filterValues = filterPairs[i][1];
         if (filterValues !== "") {
-          entries = _.filter(entries, row => {
+          entries = _.filter(entries, (row) => {
             const content = row[filterColId];
             const keys = _.keys(filterValues);
             for (let i = 0; i < keys.length; i++) {
@@ -514,13 +506,13 @@ export default {
       );
     },
 
-    previousPage: function() {
+    previousPage: function () {
       if (this.page > 1) {
         this.page--;
       }
     },
 
-    nextPage: function() {
+    nextPage: function () {
       if (!this.entries()) {
         return 1;
       }
@@ -533,22 +525,22 @@ export default {
       }
     },
 
-    firstPage: function() {
+    firstPage: function () {
       this.page = 1;
     },
 
-    lastPage: function() {
+    lastPage: function () {
       this.page = this.pageMax;
     },
 
-    onColumnsChanged: function(data) {
+    onColumnsChanged: function (data) {
       this.columnSelection = data;
       this.columnsChanged = true;
       tableStorage.set(this.id, "columns", data);
       this.$forceUpdate();
     },
 
-    sortIt: function(a, b, id, columns, order) {
+    sortIt: function (a, b, id, columns, order) {
       if (id === "created_at" || id === "__created_at__") {
         a = a.__created_at__;
         b = b.__created_at__;
@@ -557,7 +549,7 @@ export default {
         b = b.__date_debut__;
       } else {
         // Sort with the id or an optional sort_key.
-        const col = _.find(columns, it => it.id === id);
+        const col = _.find(columns, (it) => it.id === id);
         if (typeof col === "undefined") {
           return 0;
         }
@@ -584,12 +576,12 @@ export default {
       }
     },
 
-    sortRows: function(id, columns, order) {
+    sortRows: function (id, columns, order) {
       this.data.sort((a, b) => this.sortIt(a, b, id, columns, order));
     },
 
-    onSortRows: function(id, order) {
-      _.remove(this.colOrders, it => {
+    onSortRows: function (id, order) {
+      _.remove(this.colOrders, (it) => {
         return it.id === id;
       });
       this.sortRows(id, this.columns, order);
@@ -599,7 +591,7 @@ export default {
       tableStorage.set(this.id, "lastColSorted", id);
     },
 
-    showSorting: function(id) {
+    showSorting: function (id) {
       if (this.lastColSorted === id) {
         let col = _.find(this.colOrders, { id: id });
         if (col) {
@@ -609,7 +601,7 @@ export default {
       return false;
     },
 
-    onSortDeactivate: function(id, order) {
+    onSortDeactivate: function (id, order) {
       const default_order_id = "__created_at__";
       const default_order_order = 0;
       this.colOrders = [];
@@ -617,19 +609,19 @@ export default {
       tableStorage.set(this.id, "colOrders", []);
     },
 
-    onFilterDeactivate: function(id, filterValues) {
+    onFilterDeactivate: function (id, filterValues) {
       delete this.colFilter[id]; // include everything, including rows that have null for this column.
       tableStorage.set(this.id, "colFilter", this.colFilter);
       this.$forceUpdate();
     },
 
-    onFilterDeactivateAll: function() {
+    onFilterDeactivateAll: function () {
       // remove all column filters.
       this.colFilter = {};
       tableStorage.remove(this.id, "colFilter");
     },
 
-    onFilterChanged: function(id, filterValues) {
+    onFilterChanged: function (id, filterValues) {
       let selectedValues = _.pickBy(filterValues, (val, key) => {
         // yep, val first
         return val === true;
@@ -645,11 +637,11 @@ export default {
       this.$forceUpdate();
     },
 
-    pageCountChanged: function(id, filter) {
+    pageCountChanged: function (id, filter) {
       tableStorage.set(this.id, "pageCount", this.pageCount);
     },
 
-    saveOld: function() {
+    saveOld: function () {
       tableStorage.set(this.id, "old", this.old);
       if (!navigator.userAgent.indexOf("Chrome")) {
         // FF needs it to toggle the checkbox, Chrome doesn't.
@@ -658,7 +650,7 @@ export default {
       }
     },
 
-    hasFilter: function(colId) {
+    hasFilter: function (colId) {
       // We have a filter if:
       // - colFilter for this column has no __all__ flag
       // - or no __nulls__ flag

@@ -8,24 +8,20 @@
       <div class="box-tools">
         <ul
           class="pagination pagination-sm float-right"
-          style="margin: 0 0 0 4em;"
+          style="margin: 0 0 0 4em"
         >
           <li>
-            <a href="#" @click.prevent="previous_page()">
-              «
-            </a>
+            <a href="#" @click.prevent="previous_page()"> « </a>
           </li>
           <li>
             <a href="#"> {{ page }} / {{ pageCount }} </a>
           </li>
           <li>
-            <a href="#" @click.prevent="next_page()">
-              »
-            </a>
+            <a href="#" @click.prevent="next_page()"> » </a>
           </li>
         </ul>
 
-        <div class="input-group input-group-sm" style="width: 250px;">
+        <div class="input-group input-group-sm" style="width: 250px">
           <input
             v-model="filterKey"
             type="text"
@@ -47,15 +43,9 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th width="60%">
-              Nom
-            </th>
-            <th width="20%">
-              Sigle
-            </th>
-            <th width="20%">
-              Type
-            </th>
+            <th width="60%">Nom</th>
+            <th width="20%">Sigle</th>
+            <th width="20%">Type</th>
           </tr>
         </thead>
 
@@ -77,17 +67,13 @@
     <div class="box-footer clearfix">
       <ul class="pagination float-right">
         <li>
-          <a href="#" @click.prevent="previous_page()">
-            «
-          </a>
+          <a href="#" @click.prevent="previous_page()"> « </a>
         </li>
         <li>
           <a href="#"> {{ page }} / {{ pageCount }} </a>
         </li>
         <li>
-          <a href="#" @click.prevent="next_page()">
-            »
-          </a>
+          <a href="#" @click.prevent="next_page()"> » </a>
         </li>
       </ul>
     </div>
@@ -138,14 +124,14 @@ export default {
   },
 
   mounted() {
-    this.$nextTick(function() {
+    this.$nextTick(function () {
       this.update();
     });
   },
 
   methods: {
     sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+      return new Promise((resolve) => setTimeout(resolve, ms));
     },
 
     update() {

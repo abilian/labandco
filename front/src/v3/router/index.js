@@ -146,7 +146,7 @@ const router = new Router({
     {
       path: "/search",
       component: Search,
-      props: route => ({ q: route.query.q }),
+      props: (route) => ({ q: route.query.q }),
     },
 
     // BI
@@ -190,7 +190,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (!Vue.$storage.has("user_context")) {
-    rpc("get_user_context", []).then(data => {
+    rpc("get_user_context", []).then((data) => {
       Vue.$storage.set("user_context", data);
       next();
     });

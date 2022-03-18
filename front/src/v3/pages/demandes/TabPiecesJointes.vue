@@ -111,7 +111,7 @@ export default {
             "Content-Type": "multipart/form-data",
           },
         })
-        .then(response => {
+        .then((response) => {
           this.$root.$bvToast.toast("Pièce(s) jointe(s) ajoutées", {
             title: "",
             variant: "success",
@@ -120,7 +120,7 @@ export default {
           this.$parent.$parent.$parent.refresh();
           this.$parent.$parent.$parent.goToTab("Pièces à joindre");
         })
-        .catch(error => {
+        .catch((error) => {
           this.$root.$bvToast.toast(`${error}`, {
             title: "",
             variant: "danger",
@@ -131,7 +131,7 @@ export default {
 
     deletePJ(blobId) {
       const args = [this.demande.id, blobId];
-      this.$root.rpc("delete_pj", args).then(result => {
+      this.$root.rpc("delete_pj", args).then((result) => {
         this.$root.$bvToast.toast("Pièce jointe supprimée", {
           title: "",
           variant: "success",

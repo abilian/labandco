@@ -4,7 +4,7 @@
       <b-table-simple striped hover outlined class="mt-4">
         <tbody v-if="editing">
           <tr v-for="selector in selectors">
-            <td class="w-30 text-muted text-right ">{{ selector.label }}</td>
+            <td class="w-30 text-muted text-right">{{ selector.label }}</td>
 
             <td class="w-70">
               <multiselect
@@ -23,7 +23,7 @@
             <td class="w-30 text-muted text-right">{{ role.label }}</td>
 
             <td class="w-70">
-              <ul class="mb-0 pl-0" style="list-style-type: none;">
+              <ul class="mb-0 pl-0" style="list-style-type: none">
                 <li v-for="user in role.users" class="w-100 ml-0">
                   <router-link :to="{ name: 'user', params: { id: user.id } }"
                     >{{ user.name }}
@@ -86,12 +86,12 @@ export default {
       }
 
       const args = [this.ou.id];
-      this.$root.rpc("get_roles", args).then(result => {
+      this.$root.rpc("get_roles", args).then((result) => {
         this.roles = result;
         this.ready = true;
       });
 
-      this.$root.rpc("get_role_selectors", args).then(result => {
+      this.$root.rpc("get_role_selectors", args).then((result) => {
         this.selectors = result;
       });
     },
@@ -115,7 +115,7 @@ export default {
       }
       const args = [this.ou.id, values];
       const msg = "Rôles mis à jour";
-      this.$root.rpc("update_roles", args, msg).then(result => {
+      this.$root.rpc("update_roles", args, msg).then((result) => {
         this.ready = false;
         this.editing = false;
         EventBus.$emit("refresh-structure");

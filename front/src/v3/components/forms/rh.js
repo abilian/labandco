@@ -3,7 +3,7 @@ import fp from "lodash/fp";
 
 export default function update_rh(form, model) {
   function get_fieldset_by_name(name) {
-    return _.findIndex(form.fieldsets, function(it) {
+    return _.findIndex(form.fieldsets, function (it) {
       return it.name === name;
     });
   }
@@ -67,7 +67,7 @@ export default function update_rh(form, model) {
     model.structures_concernees.length > 0;
   if (model.structures_concernees.length > 0) {
     const l = model.structures_concernees;
-    const choices = fp.map(x => x, l);
+    const choices = fp.map((x) => x, l);
     choices.unshift(model.laboratoire);
     form.fields.structure_financeuse.choices = choices;
   }
@@ -365,7 +365,8 @@ export default function update_rh(form, model) {
   const show_modification_autre_detail =
     modification_contrat_en_cours && model.modification_autre === "oui";
   if (typeof form.fields.modification_autre_detail !== "undefined") {
-    form.fields.modification_autre_detail.visible = show_modification_autre_detail;
+    form.fields.modification_autre_detail.visible =
+      show_modification_autre_detail;
   }
 
   // Pavé "Publicité"

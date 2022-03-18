@@ -66,7 +66,7 @@ export default {
 
   methods: {
     update() {
-      axios.get(URL).then(response => {
+      axios.get(URL).then((response) => {
         const data = response.data;
 
         this.choices = data.choices;
@@ -80,7 +80,7 @@ export default {
         preferences_notifications: this.selected,
         nb_jours_notification: Number(this.nbJours),
       };
-      axios.post(URL, data).then(response => {
+      axios.post(URL, data).then((response) => {
         this.$bvToast.toast("Préférences mises à jour", {
           title: "Préférences mises à jour",
           solid: true,

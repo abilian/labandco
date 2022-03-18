@@ -1,11 +1,9 @@
 <template>
-  <table class="table table-condensed table-bordered" style="width: 100%;">
+  <table class="table table-condensed table-bordered" style="width: 100%">
     <thead>
       <tr class="personnel">
         <th>
-          <a class="btn btn-default" @click.prevent="add_line()">
-            +
-          </a>
+          <a class="btn btn-default" @click.prevent="add_line()"> + </a>
         </th>
         <th>
           Nom de l'entreprise<br />

@@ -113,7 +113,7 @@ export default {
 
     refresh() {
       const args = [this.id];
-      this.$root.rpc("get_demande", args).then(result => {
+      this.$root.rpc("get_demande", args).then((result) => {
         _.assign(this, result);
         this.ready = true;
         this.title = this.demande.name;

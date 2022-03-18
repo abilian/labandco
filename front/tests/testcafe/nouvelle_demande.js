@@ -12,7 +12,7 @@ async function click_and_augment_form(t) {
   await t.click("#lien_contrat[value=oui]");
 }
 
-test("Le formulaire de nouvelle_demande est réactif", async t => {
+test("Le formulaire de nouvelle_demande est réactif", async (t) => {
   await click_and_augment_form(t);
   await t.expect(Selector("input[name=eotp_ou_no_dgrtt]").exists).ok();
 });
@@ -39,6 +39,6 @@ async function fill_form(t) {
     .notEql("/demandes/new");
 }
 
-test("Nouvelle_demande redirige correctement", async t => {
+test("Nouvelle_demande redirige correctement", async (t) => {
   await fill_form(t);
 });

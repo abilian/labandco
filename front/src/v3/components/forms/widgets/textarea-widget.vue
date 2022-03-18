@@ -4,7 +4,7 @@
     :name="field.name"
     :readonly="!field.editable"
     rows="5"
-    class="form-control "
+    class="form-control"
   />
 </template>
 

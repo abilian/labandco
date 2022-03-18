@@ -4,7 +4,7 @@
       <field-set :field-set="field_set" :form="form" :model="model" />
     </div>
 
-    <div v-if="!calculette" style="text-align: center;">
+    <div v-if="!calculette" style="text-align: center">
       <button
         v-if="form.mode === 'create'"
         id="creer-demande"
@@ -35,7 +35,7 @@
       </button>
     </div>
 
-    <div v-else style="text-align: center;">
+    <div v-else style="text-align: center">
       <button id="calculer" type="submit" class="btn btn-primary">
         Lancer le calcul
       </button>
@@ -57,7 +57,7 @@ export default {
 
   components: { FieldSet },
 
-  data: function() {
+  data: function () {
     return {
       salaires_indicatifs: {},
     };
@@ -88,7 +88,7 @@ export default {
 
     onSave(e) {
       const args = [this.model.id, this.model, this.form];
-      this.$root.rpc("update_demande", args).then(result => {
+      this.$root.rpc("update_demande", args).then((result) => {
         const id = result.id;
         const messages = result.messages;
 
@@ -106,7 +106,7 @@ export default {
 
     onCreate(e) {
       const args = [this.model, this.form];
-      this.$root.rpc("create_demande", args).then(result => {
+      this.$root.rpc("create_demande", args).then((result) => {
         const id = result.id;
         const messages = result.messages;
 

@@ -1,6 +1,6 @@
 <template>
   <aside class="main-sidebar sidebar-dark-primary">
-    <div style="background-color: white;" class="p-3">
+    <div style="background-color: white" class="p-3">
       <a href="/">
         <img src="/static/img/logo-su.svg" alt="Home" typeof="foaf:Image" />
       </a>

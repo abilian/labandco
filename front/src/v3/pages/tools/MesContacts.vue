@@ -13,9 +13,7 @@
         <table class="table mt-3 mb-3 table-striped table-bordered">
           <thead>
             <tr>
-              <td>
-                Structure
-              </td>
+              <td>Structure</td>
               <td>Type de contact</td>
             </tr>
           </thead>
@@ -50,9 +48,7 @@
                 </td>
               </tr>
               <tr>
-                <td>
-                  Bureau
-                </td>
+                <td>Bureau</td>
                 <td>Contact</td>
                 <td>Email</td>
                 <td>Telephone</td>
@@ -91,7 +87,7 @@ export default {
   },
 
   created() {
-    this.$root.rpc("get_contacts_for_user").then(result => {
+    this.$root.rpc("get_contacts_for_user").then((result) => {
       this.structures = result.structures;
       this.mes_contacts = result.mes_contacts;
       this.ready = true;

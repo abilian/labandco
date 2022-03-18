@@ -10,7 +10,7 @@
       <b-card-text>
         <div
           class="input-group input-group-sm float-right"
-          style="max-width: 200px;"
+          style="max-width: 200px"
         >
           <input
             v-model="filterKey"
@@ -137,7 +137,7 @@ export default {
   },
 
   mounted() {
-    this.$root.rpc("get_constants").then(result => {
+    this.$root.rpc("get_constants").then((result) => {
       this.constants = result.values;
       this.types = result.types;
     });
@@ -256,7 +256,7 @@ export default {
 
       if (typeof res !== "undefined") {
         const args = { constants: res };
-        this.$root.rpc("update_constants", args).then(result => {
+        this.$root.rpc("update_constants", args).then((result) => {
           const msg = `Constante ${obj.key} mise à jour avec succès`;
           this.$root.$bvToast.toast(msg, {
             title: "",

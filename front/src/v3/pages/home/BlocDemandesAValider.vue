@@ -54,7 +54,7 @@ export default {
   components: { BoxDemandesAValider },
 
   created() {
-    this.$root.rpc("get_nb_demandes_a_valider", []).then(result => {
+    this.$root.rpc("get_nb_demandes_a_valider", []).then((result) => {
       _.assign(this, result);
     });
   },

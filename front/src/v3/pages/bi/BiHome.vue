@@ -117,7 +117,7 @@
                 <td>Montant (€)</td>
                 <td
                   v-for="x in stats.conventions.montant"
-                  style="text-align: right;"
+                  style="text-align: right"
                 >
                   {{ x }}
                 </td>
@@ -127,7 +127,7 @@
                 <td>Recrutements prévus</td>
                 <td
                   v-for="x in stats.conventions.recrutements_prev"
-                  style="text-align: right;"
+                  style="text-align: right"
                 >
                   {{ x }}
                 </td>
@@ -137,7 +137,7 @@
                 <td>Durée prev. (mois)</td>
                 <td
                   v-for="x in stats.conventions.duree"
-                  style="text-align: right;"
+                  style="text-align: right"
                 >
                   {{ x }}
                 </td>
@@ -151,7 +151,7 @@
 
               <tr>
                 <td>Durée (mois)</td>
-                <td v-for="x in stats.rh.duree" style="text-align: right;">
+                <td v-for="x in stats.rh.duree" style="text-align: right">
                   {{ x }}
                 </td>
               </tr>
@@ -160,7 +160,7 @@
                 <td>Salaire brut mensuel (€)</td>
                 <td
                   v-for="x in stats.rh.salaire_brut_mensuel"
-                  style="text-align: right;"
+                  style="text-align: right"
                 >
                   {{ x }}
                 </td>
@@ -170,7 +170,7 @@
                 <td>Coût total mensuel (€)</td>
                 <td
                   v-for="x in stats.rh.cout_total_mensuel"
-                  style="text-align: right;"
+                  style="text-align: right"
                 >
                   {{ x }}
                 </td>
@@ -197,10 +197,7 @@
 
             <tr>
               <td class="bi-subhead">Durée de traitement (jours)</td>
-              <td
-                v-for="x in stats.duree_traitement"
-                style="text-align: right;"
-              >
+              <td v-for="x in stats.duree_traitement" style="text-align: right">
                 {{ x }}
               </td>
             </tr>
@@ -208,9 +205,7 @@
         </table>
       </b-card-text>
 
-      <b-card-text v-else>
-        En cours de chargement...
-      </b-card-text>
+      <b-card-text v-else> En cours de chargement... </b-card-text>
     </b-card>
   </div>
 </template>
@@ -238,7 +233,7 @@ export default {
     whenReady() {},
 
     onSubmit() {
-      this.$root.rpc("get_stats", this.selected).then(result => {
+      this.$root.rpc("get_stats", this.selected).then((result) => {
         this.stats = result.stats;
         this.totals = result.totals;
 

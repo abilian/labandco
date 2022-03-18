@@ -15,7 +15,7 @@ export const ContextFetcher = {
     fetchContext() {
       const route = this.$route;
       const args = { name: route.name, params: route.params };
-      return this.$root.rpc("get_context", args).then(result => {
+      return this.$root.rpc("get_context", args).then((result) => {
         _.assign(this, result);
         this.ready = true;
       });
@@ -23,7 +23,7 @@ export const ContextFetcher = {
   },
 
   beforeRouteEnter(to, from, next) {
-    next(vm => {
+    next((vm) => {
       vm.fetchContext();
     });
   },

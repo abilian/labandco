@@ -8,24 +8,20 @@
       <div class="box-tools">
         <ul
           class="pagination pagination-sm float-right"
-          style="margin: 0 0 0 4em;"
+          style="margin: 0 0 0 4em"
         >
           <li>
-            <a href="#" @click.prevent="previous_page()">
-              «
-            </a>
+            <a href="#" @click.prevent="previous_page()"> « </a>
           </li>
           <li>
             <a href="#"> {{ page }} / {{ pageCount }} </a>
           </li>
           <li>
-            <a href="#" @click.prevent="next_page()">
-              »
-            </a>
+            <a href="#" @click.prevent="next_page()"> » </a>
           </li>
         </ul>
 
-        <div class="input-group input-group-sm" style="width: 250px;">
+        <div class="input-group input-group-sm" style="width: 250px">
           <input
             v-model="filterKey"
             type="text"
@@ -47,15 +43,9 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th width="20%">
-              Nom
-            </th>
-            <th width="20%">
-              Prénom
-            </th>
-            <th width="60%">
-              Roles
-            </th>
+            <th width="20%">Nom</th>
+            <th width="20%">Prénom</th>
+            <th width="60%">Roles</th>
           </tr>
         </thead>
 
@@ -87,17 +77,13 @@
     <div class="box-footer clearfix">
       <ul class="pagination float-right">
         <li>
-          <a href="#" @click.prevent="previous_page()">
-            «
-          </a>
+          <a href="#" @click.prevent="previous_page()"> « </a>
         </li>
         <li>
           <a href="#"> {{ page }} / {{ pageCount }} </a>
         </li>
         <li>
-          <a href="#" @click.prevent="next_page()">
-            »
-          </a>
+          <a href="#" @click.prevent="next_page()"> » </a>
         </li>
       </ul>
     </div>
@@ -121,7 +107,7 @@ export default {
     admin: Boolean,
   },
 
-  data: function() {
+  data: function () {
     return {
       data: [],
       page: 1,
@@ -133,31 +119,31 @@ export default {
   },
 
   watch: {
-    filterKey: function() {
+    filterKey: function () {
       this.page = 1;
       this.update();
     },
   },
 
-  mounted: function() {
-    this.$nextTick(function() {
+  mounted: function () {
+    this.$nextTick(function () {
       this.update();
     });
   },
 
   methods: {
-    sleep: function(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+    sleep: function (ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
     },
 
-    update: async function() {
+    update: async function () {
       // Why wait ? see table_orgs.vue
       await this.sleep(400);
       let url = this.url + "?page=" + (this.page - 1);
       if (this.filterKey) {
         url = url + "&q=" + this.filterKey;
       }
-      axios.get(url).then(result => {
+      axios.get(url).then((result) => {
         const data = result.data;
         this.data = data["users"];
         this.total = data["total"];

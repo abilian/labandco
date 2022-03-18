@@ -5,8 +5,8 @@
     <template
       v-if="
         demande.is_valid &&
-          !demande.acces_restreint &&
-          demande.type === 'Recrutement'
+        !demande.acces_restreint &&
+        demande.type === 'Recrutement'
       "
     >
       <ul>

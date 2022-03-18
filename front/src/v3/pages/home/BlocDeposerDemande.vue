@@ -72,7 +72,7 @@ export default {
       const user = Vue.$storage.get("user_context");
       const types_demandes = user.types_demandes;
 
-      const makeUrl = button => {
+      const makeUrl = (button) => {
         if (button.url) {
           return button.url;
         } else {
@@ -84,8 +84,8 @@ export default {
         }
       };
       return fp.pipe(
-        fp.filter(b => types_demandes.includes(b.type)),
-        fp.map(b => ({ url: makeUrl(b), ...b }))
+        fp.filter((b) => types_demandes.includes(b.type)),
+        fp.map((b) => ({ url: makeUrl(b), ...b }))
       )(BUTTONS);
     },
   },

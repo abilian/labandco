@@ -1,8 +1,6 @@
 <template>
   <div>
-    <el-button type="text" @click="dialogVisible = true">
-      Edit
-    </el-button>
+    <el-button type="text" @click="dialogVisible = true"> Edit </el-button>
 
     <el-dialog
       :title="title"
@@ -64,9 +62,7 @@
       </form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button class="ui button" @click="cancel">
-          Cancel
-        </el-button>
+        <el-button class="ui button" @click="cancel"> Cancel </el-button>
         <el-button class="ui button" type="primary" @click="save">
           Confirm
         </el-button>

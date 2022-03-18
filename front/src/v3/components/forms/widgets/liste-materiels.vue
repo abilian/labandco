@@ -1,11 +1,9 @@
 <template>
-  <table class="table table-condensed table-bordered" style="width: 100%;">
+  <table class="table table-condensed table-bordered" style="width: 100%">
     <thead>
       <tr class="personnel">
         <th width="30">
-          <a class="btn btn-default" @click.prevent="add_line()">
-            +
-          </a>
+          <a class="btn btn-default" @click.prevent="add_line()"> + </a>
         </th>
         <th width="90%">
           Précisez le matériel concerné

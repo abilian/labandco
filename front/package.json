@@ -55,7 +55,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-testcafe": "^0.2.1",
     "eslint-plugin-vue": "^5.0.0-0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^7",
     "sass-loader": "^7.1.0",
     "testcafe": "^0.23.3",
     "vue-cli-plugin-element": "^1.0.1",

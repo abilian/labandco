@@ -12,7 +12,7 @@
           <b-table-simple striped hover outlined class="mt-4">
             <tbody v-if="editing">
               <tr v-for="selector in selectors">
-                <td class="w-30 text-muted text-right ">
+                <td class="w-30 text-muted text-right">
                   {{ selector.label }}
                 </td>
 
@@ -33,7 +33,7 @@
                 <td class="w-30 text-muted text-right">{{ role.label }}</td>
 
                 <td class="w-70">
-                  <ul class="mb-0 pl-0" style="list-style-type: none;">
+                  <ul class="mb-0 pl-0" style="list-style-type: none">
                     <li v-for="user in role.users" class="w-100 ml-0">
                       <router-link
                         :to="{ name: 'user', params: { id: user.id } }"
@@ -81,7 +81,7 @@ export default {
   },
 
   mounted() {
-    this.$root.rpc("get_global_roles").then(result => {
+    this.$root.rpc("get_global_roles").then((result) => {
       this.roles = result.roles;
       this.selectors = result.selectors;
       this.ready = true;
@@ -108,7 +108,7 @@ export default {
       }
       const args = [values];
       const msg = "Rôles mis à jour";
-      this.$root.rpc("update_global_roles", args, msg).then(result => {
+      this.$root.rpc("update_global_roles", args, msg).then((result) => {
         this.ready = false;
         this.editing = false;
         this.$router.go();

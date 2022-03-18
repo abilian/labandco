@@ -38,7 +38,7 @@ export default {
 
   components: { FieldSet },
 
-  data: function() {
+  data: function () {
     return {
       salaires_indicatifs: {},
     };
@@ -64,7 +64,7 @@ export default {
       update_form(this.form, this.model, this.salaires_indicatifs);
     },
 
-    onCancel: function(e) {
+    onCancel: function (e) {
       e.preventDefault();
       this.$parent.$parent.$parent.goToTab(0);
     },
@@ -73,7 +73,7 @@ export default {
       e.preventDefault();
 
       const args = [this.demande.id, this.model, this.form];
-      this.$root.rpc("update_demande", args).then(result => {
+      this.$root.rpc("update_demande", args).then((result) => {
         for (let msg of result) {
           this.$root.$bvToast.toast(msg[0], {
             title: "",

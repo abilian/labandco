@@ -29,7 +29,7 @@
         </tbody>
       </table>
 
-      <p style="margin-top: 1em; margin-left: 8px;">
+      <p style="margin-top: 1em; margin-left: 8px">
         <b-button @click="newEntry()" size="sm" variant="primary">
           <i class="far fa-plus" />
           Edit</b-button

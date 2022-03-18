@@ -21,7 +21,7 @@ export function call(methodName, args, msg = null) {
   };
   return axios
     .post("/rpc/", data)
-    .then(response => {
+    .then((response) => {
       const data = response.data;
       if (DEBUG) {
         if (data.result) {
@@ -32,7 +32,7 @@ export function call(methodName, args, msg = null) {
       }
       return data.result;
     })
-    .then(result => {
+    .then((result) => {
       if (this && msg) {
         this.$root.$bvToast.toast(msg, {
           title: "OK",
@@ -42,7 +42,7 @@ export function call(methodName, args, msg = null) {
       }
       return result;
     })
-    .catch(error => {
+    .catch((error) => {
       console.log(error);
       if (this) {
         const msg = `Désolé, une erreur est survenue: ${error}`;

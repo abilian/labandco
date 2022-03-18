@@ -113,7 +113,7 @@
 export default {
   props: { demande: Object },
 
-  data: function() {
+  data: function () {
     const model = {
       note: "",
     };
@@ -161,7 +161,7 @@ export default {
         action: transition.id,
         data: this.model,
       };
-      this.$root.rpc("wf_transition", args).then(result => {
+      this.$root.rpc("wf_transition", args).then((result) => {
         const msg = result;
         this.$router.go();
         this.$root.$bvToast.toast(msg[0], {
@@ -173,7 +173,7 @@ export default {
     },
 
     duplicate() {
-      this.$root.rpc("dupliquer_demande", [this.demande.id]).then(result => {
+      this.$root.rpc("dupliquer_demande", [this.demande.id]).then((result) => {
         if (!result) {
           const msg = "La duplication de la demande a échoué";
           this.$root.$bvToast.toast(msg, {

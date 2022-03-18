@@ -1,19 +1,15 @@
 <template>
-  <table class="table table-condensed table-bordered" style="width: 100%;">
+  <table class="table table-condensed table-bordered" style="width: 100%">
     <thead>
       <tr class="personnel">
         <th width="30">
-          <a class="btn btn-default" @click.prevent="add_line()">
-            +
-          </a>
+          <a class="btn btn-default" @click.prevent="add_line()"> + </a>
         </th>
-        <th width="30%">
-          Contrat/Partenariat de recherche
-        </th>
-        <th width="30%" style="vertical-align:top;">
+        <th width="30%">Contrat/Partenariat de recherche</th>
+        <th width="30%" style="vertical-align: top">
           Date de signature du contrat
         </th>
-        <th width="30%" style="vertical-align:top;">
+        <th width="30%" style="vertical-align: top">
           Référence du contrat (N° - Nom du partenaire)
         </th>
       </tr>

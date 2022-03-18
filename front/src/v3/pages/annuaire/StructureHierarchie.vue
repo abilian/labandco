@@ -15,7 +15,7 @@
               [{{ parent.type }}]
             </td>
 
-            <td style="text-align: right;">
+            <td style="text-align: right">
               <button
                 v-if="ou.permissions.P2"
                 class="btn btn-danger btn-sm"
@@ -73,7 +73,7 @@
               [{{ child.type }}]
             </td>
 
-            <td style="text-align: right;">
+            <td style="text-align: right">
               <button
                 v-if="ou.permissions.P3"
                 class="btn btn-danger btn-sm"
@@ -96,9 +96,7 @@
           /></b-button>
 
           <b-modal id="add-child" hide-footer>
-            <template v-slot:modal-title>
-              Ajouter une sous-structure
-            </template>
+            <template v-slot:modal-title> Ajouter une sous-structure </template>
 
             <div v-if="childrenOptions.length" class="mb-4">
               <h3>Ajouter une structure fille existante</h3>
@@ -184,17 +182,17 @@ export default {
         return;
       }
 
-      this.$root.rpc("sg_get_parents_options", [this.ou.id]).then(result => {
+      this.$root.rpc("sg_get_parents_options", [this.ou.id]).then((result) => {
         this.parentsOptions = result;
       });
 
-      this.$root.rpc("sg_get_children_options", [this.ou.id]).then(result => {
+      this.$root.rpc("sg_get_children_options", [this.ou.id]).then((result) => {
         this.childrenOptions = result;
       });
 
       this.$root
         .rpc("sg_get_possible_child_types", [this.ou.id])
-        .then(result => {
+        .then((result) => {
           this.typeOptions = result;
         });
     },

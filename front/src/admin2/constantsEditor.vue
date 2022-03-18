@@ -2,7 +2,7 @@
   <div>
     <div
       class="input-group input-group-sm float-right"
-      style="max-width: 200px;"
+      style="max-width: 200px"
     >
       <input
         v-model="filterKey"
@@ -134,7 +134,7 @@ export default {
   mounted() {
     if (this.url) {
       console.log("Getting constants on ", this.url);
-      axios.get(this.url).then(result => {
+      axios.get(this.url).then((result) => {
         const data = result.data;
         this.constants = data;
         // console.log("Got types: ", res.types);
@@ -145,7 +145,7 @@ export default {
 
     // Get types.
     if (this.urltypes) {
-      axios.get(this.urltypes).then(result => {
+      axios.get(this.urltypes).then((result) => {
         const data = result;
         this.types = data;
       });
@@ -262,10 +262,10 @@ export default {
           type: "POST",
           data: JSON.stringify(res),
           contentType: "application/json",
-          success: function(result) {
+          success: function (result) {
             this.notify(obj.key, "Mise à jour effectuée", "success");
           },
-          error: function(result) {
+          error: function (result) {
             console.log("---- api failed: ", result);
             this.notify(
               obj.key,

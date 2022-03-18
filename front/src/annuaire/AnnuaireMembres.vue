@@ -2,27 +2,23 @@
   <div>
     <h3>Annuaire des membres ({{ first }} - {{ last }} sur {{ total }})</h3>
 
-    <div class="box-tools" style="margin-top: 2em;">
+    <div class="box-tools" style="margin-top: 2em">
       <ul
         class="pagination pagination-sm float-right"
-        style="margin: 0 0 0 4em;"
+        style="margin: 0 0 0 4em"
       >
         <li>
-          <a href="#" @click.prevent="previous_page()">
-            «
-          </a>
+          <a href="#" @click.prevent="previous_page()"> « </a>
         </li>
         <li>
           <a href="#"> {{ page }} / {{ pageCount }} </a>
         </li>
         <li>
-          <a href="#" @click.prevent="next_page()">
-            »
-          </a>
+          <a href="#" @click.prevent="next_page()"> » </a>
         </li>
       </ul>
 
-      <div class="input-group input-group-sm float-right" style="width: 250px;">
+      <div class="input-group input-group-sm float-right" style="width: 250px">
         <input
           v-model="filterKey"
           type="text"
@@ -48,19 +44,11 @@
     <table class="table table-hover">
       <thead>
         <tr>
-          <th width="20%">
-            Nom
-          </th>
-          <th width="20%">
-            Prénom
-          </th>
+          <th width="20%">Nom</th>
+          <th width="20%">Prénom</th>
 
-          <th width="30%">
-            Département
-          </th>
-          <th width="30%">
-            Équipe
-          </th>
+          <th width="30%">Département</th>
+          <th width="30%">Équipe</th>
         </tr>
       </thead>
 
@@ -148,14 +136,14 @@ export default {
   },
 
   mounted() {
-    this.$nextTick(function() {
+    this.$nextTick(function () {
       this.update();
     });
   },
 
   methods: {
     sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+      return new Promise((resolve) => setTimeout(resolve, ms));
     },
 
     update() {

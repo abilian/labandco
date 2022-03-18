@@ -127,7 +127,8 @@ export default {
       this.model.dn = this.ou.dn;
       this.model.email = this.ou.email;
       this.model.permettre_reponse_directe = this.ou.permettre_reponse_directe;
-      this.model.permettre_soummission_directe = this.ou.permettre_soummission_directe;
+      this.model.permettre_soummission_directe =
+        this.ou.permettre_soummission_directe;
       this.editing = true;
     },
 
@@ -141,7 +142,7 @@ export default {
         model: this.model,
       };
       const msg = "Structure mise à jour.";
-      this.$root.rpc("sg_update_structure", args, msg).then(result => {
+      this.$root.rpc("sg_update_structure", args, msg).then((result) => {
         EventBus.$emit("refresh-structure");
         this.editing = false;
       });
