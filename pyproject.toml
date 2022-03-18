@@ -136,7 +136,7 @@ flake8-pytest = "*"
 flake8-tidy-imports = "*"
 mypy = "*"
 mastool = "*"
-pylint = "*"
+# pylint = "*"
 bandit = "^1.6"
 
 # dephell = "^0.7.4"

@@ -14,8 +14,6 @@ cf. https://trello.com/c/cRUEKsVv/
 """
 from __future__ import annotations
 
-from typing import Dict
-
 from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 from werkzeug.exceptions import NotFound
@@ -26,12 +24,10 @@ from labster.domain2.model.profile import ProfileRepository
 from labster.domain2.model.structure import Structure, StructureId, \
     StructureRepository
 from labster.domain2.model.type_structure import get_type_structure_by_id
-from labster.domain2.services.roles import Role, RoleService
+from labster.domain2.services.roles import RoleService
 from labster.rbac import check_permission, check_structure_editable
 from labster.rpc.cache import cache
 from labster.types import JSON
-
-from ..util import ensure_role
 
 structure_repo = injector.get(StructureRepository)
 profile_repo = injector.get(ProfileRepository)

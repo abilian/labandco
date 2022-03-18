@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Set
-
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject
 from sqlalchemy.orm import Session

@@ -3,8 +3,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING, Any, Collection, Dict, List, Optional, \
-    Text, Type
+from typing import TYPE_CHECKING, Any, Collection
 
 import dateutil.parser
 import structlog
@@ -684,9 +683,7 @@ _REGISTRY: dict[str, type[Demande]] = {
 }
 
 
-def demande_factory(
-    type: str, demandeur: Profile, data: dict, **args: dict
-) -> Demande:
+def demande_factory(type: str, demandeur: Profile, data: dict, **args: dict) -> Demande:
     demande_cls = _REGISTRY.get(type)
     if not demande_cls:
         raise RuntimeError(f"Type de demande illégal: {type}")

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, FrozenSet
+from typing import TYPE_CHECKING
 
 from attr import attrs
 

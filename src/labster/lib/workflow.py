@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from html import escape
-from typing import TYPE_CHECKING, Dict, List, Optional, Set
+from typing import TYPE_CHECKING
 
 from inflection import humanize, underscore
 

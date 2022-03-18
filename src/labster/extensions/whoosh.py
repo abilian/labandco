@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from functools import singledispatch
 from pathlib import Path
-from typing import List, Optional
 
 from flask import Flask
 from whoosh import index

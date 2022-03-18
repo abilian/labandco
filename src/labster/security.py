@@ -10,8 +10,6 @@ from flask_login import AnonymousUserMixin, UserMixin
 from labster.auth import AuthContext
 from labster.di import injector
 from labster.domain2.model.profile import Profile, ProfileRepository
-from labster.domain2.services.constants import get_constants
-from labster.domain2.services.roles import Role
 
 
 def login_required(func):

@@ -9,9 +9,8 @@ from marshmallow import Schema, fields
 from labster.domain2.model.demande import Demande
 from labster.domain2.model.profile import Profile
 from labster.domain2.model.structure import Structure
-from labster.signals import model_saved
-
 from labster.extensions import db
+from labster.signals import model_saved
 
 COLLECTIONS = ["users", "structures", "demandes"]
 

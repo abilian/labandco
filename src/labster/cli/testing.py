@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import random
-from typing import List
 
 import click
 from flask import current_app

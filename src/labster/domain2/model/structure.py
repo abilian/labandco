@@ -25,7 +25,7 @@ from __future__ import annotations
 import math
 from abc import ABC, ABCMeta
 from pprint import pformat
-from typing import TYPE_CHECKING, Any, Collection, List, Optional, Set
+from typing import TYPE_CHECKING, Any, Collection
 from uuid import uuid4
 
 from abilian.app import db

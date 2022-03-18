@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional, Set
-
 from flask import current_app
 from werkzeug.exceptions import Forbidden, NotFound, abort
 

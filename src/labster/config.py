@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import socket
 from datetime import timedelta
-from typing import Any, Dict
+from typing import Any
 
 from abilian.web.action import Endpoint
 from flask.cli import load_dotenv

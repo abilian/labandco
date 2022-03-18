@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING
-
 from flask import render_template
 from flask_mail import Message
 
-from labster.extensions import db, mail
+from labster.extensions import mail
 
 
 def send_notification(user, body: str, workflow):

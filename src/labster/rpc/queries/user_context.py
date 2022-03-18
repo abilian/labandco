@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import threading
-from typing import Any, List
+from typing import Any
 
 from jsonrpcserver import method
 from marshmallow import Schema, fields

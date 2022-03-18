@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-from typing import List
 
 import structlog
 from flask import Flask, Request, flash, redirect, render_template, url_for

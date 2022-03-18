@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 import warnings
-from typing import Callable, Dict, Optional, Type
+from typing import Callable
 
 import sentry_sdk
 import sqlalchemy.exc
@@ -55,7 +55,6 @@ def create_app(config: type | None = None) -> Flask:
     register_commands(app)
 
     # Temp
-    from labster.domain import models
 
     # don't use abilian-core error handlers
     app.error_handler_spec = {}

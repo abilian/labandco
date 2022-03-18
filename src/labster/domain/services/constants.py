@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from os.path import dirname
-from typing import Any, Dict
+from typing import Any
 
 import structlog
 from dotted.collection import DottedCollection, DottedDict

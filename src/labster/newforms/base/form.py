@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Any, List
+from typing import Any
 
 from flask import json
 from flask_sqlalchemy import SQLAlchemy

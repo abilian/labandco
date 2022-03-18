@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from smtplib import SMTPException
-from typing import TYPE_CHECKING, Set
+from typing import TYPE_CHECKING
 
 import structlog
 from flask import render_template

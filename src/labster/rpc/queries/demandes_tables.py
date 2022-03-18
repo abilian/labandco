@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import traceback
 from datetime import date, timedelta
-from typing import List, Optional
 
 import ramda as r
 from flask_sqlalchemy import SQLAlchemy

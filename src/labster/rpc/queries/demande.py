@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import singledispatch
-from typing import Any, Dict, List
+from typing import Any
 
 import structlog
 from flask_sqlalchemy import SQLAlchemy

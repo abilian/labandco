@@ -4,7 +4,7 @@ Dummy implementation for now.
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING, Any
 
 from labster.extensions import db
 

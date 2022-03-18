@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Collection, Dict, List
+from typing import Any, Collection
 
 from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method

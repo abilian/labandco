@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Container, Dict, List
+from typing import Container, Dict
 
 import structlog
 

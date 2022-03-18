@@ -5,7 +5,7 @@ Note: les méthodes sont préfixées par "sg_" (sg = "structures graph").
 from __future__ import annotations
 
 from collections import Sequence
-from typing import Collection, Dict, List, Tuple
+from typing import Collection
 
 from jsonrpcserver import method
 from marshmallow import Schema, fields

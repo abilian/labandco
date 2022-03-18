@@ -1,8 +1,6 @@
 """Blueprint (and internat service) for logs."""
 from __future__ import annotations
 
-from abilian.app import db
-from flask import render_template
 from flask_smorest import Blueprint
 
 from labster.security import login_required

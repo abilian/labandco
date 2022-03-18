@@ -1,8 +1,6 @@
 """Send daily or weekly notification emails."""
 from __future__ import annotations
 
-from typing import List, Optional
-
 from flask import render_template
 from flask_mail import Message
 from flask_sqlalchemy import SQLAlchemy

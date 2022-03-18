@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, Optional
 
 from labster.domain2.model.profile import Profile
 from labster.domain2.model.structure import Structure

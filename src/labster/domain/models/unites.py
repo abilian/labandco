@@ -1,7 +1,7 @@
 """Modèle un peu simpliste de hiérarchie LDAP + info métiers spécifiques."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Optional, Text, Tuple
+from typing import TYPE_CHECKING
 
 import toolz
 from abilian.core.entities import Entity, EntityQuery

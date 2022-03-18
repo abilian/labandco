@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from jsonrpcserver import method
 
 from labster.types import JSONDict

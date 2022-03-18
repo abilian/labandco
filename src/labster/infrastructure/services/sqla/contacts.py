@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass
-from typing import Dict, Optional
 
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject

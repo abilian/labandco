@@ -3,10 +3,8 @@ from __future__ import annotations
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from abilian.core.models.blob import Blob
-from devtools import debug
 from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method

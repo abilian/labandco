@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Set
+from typing import Any
 
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject

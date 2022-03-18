@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import List
-
 from flask_sqlalchemy import SQLAlchemy
 from jsonrpcserver import method
 
 from labster.di import injector
 from labster.domain2.model.profile import ProfileRepository
-from labster.domain2.model.structure import Structure, StructureRepository
+from labster.domain2.model.structure import StructureRepository
 from labster.domain2.services.roles import Role, RoleService
 from labster.rpc.queries.user import get_roles_dto_for_user
 from labster.types import JSON

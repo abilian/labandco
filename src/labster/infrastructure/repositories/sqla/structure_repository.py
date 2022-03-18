@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Set
-from uuid import uuid4
+from typing import Any
 
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject
 from sqlalchemy.orm import Session
 
-from labster.domain2.model.structure import Structure, StructureId, \
-    StructureRepository
+from labster.domain2.model.structure import Structure, StructureRepository
 from labster.infrastructure.repositories.sqla.mappers import Mapper
 
 

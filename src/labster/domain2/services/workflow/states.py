@@ -1,7 +1,7 @@
 """Modèle de case management adapté au projet Labster."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Set
+from typing import TYPE_CHECKING
 
 import structlog
 

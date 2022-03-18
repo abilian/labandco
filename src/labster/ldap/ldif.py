@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import re
 from io import BytesIO
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import structlog
 from attr import attrs
-from devtools import debug
 from flask_sqlalchemy import SQLAlchemy
 from ldif import LDIFParser
 from tqdm import tqdm

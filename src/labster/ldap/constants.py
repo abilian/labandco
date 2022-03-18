@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import re
-from typing import List
 
 SU_DN = "ou=SU,ou=Affectations,dc=chapeau,dc=fr"
 DRI_DN = "ou=0107,ou=SCUN,ou=SU,ou=Affectations,dc=chapeau,dc=fr"

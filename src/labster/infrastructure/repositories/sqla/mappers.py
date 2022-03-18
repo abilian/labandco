@@ -1,15 +1,7 @@
 from __future__ import annotations
 
-from abilian.core.sqlalchemy import JSON
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject
-from sqlalchemy import JSON, Boolean, Column, DateTime, Enum, ForeignKey, \
-    Integer, String, Table
-from sqlalchemy.orm import backref, mapper, relationship
-
-from labster.domain2.model.demande import _REGISTRY, Demande, DemandeRH
-from labster.domain2.model.profile import Profile
-from labster.domain2.model.structure import Structure
 
 # types_demande = [cls._type.value for cls in _REGISTRY.values()]
 
