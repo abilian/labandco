@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict, List
-
 import dateutil.parser
 import pandas as pd
 import ramda as r
@@ -47,9 +45,9 @@ def get_stats(**args):
     for arg_name, arg_value in args.items():
         if not arg_value:
             continue
-        if isinstance(arg_value, List):
+        if isinstance(arg_value, list):
             value = r.map(lambda x: x["value"], arg_value)
-        elif isinstance(arg_value, Dict):
+        elif isinstance(arg_value, dict):
             value = arg_value["value"]
         else:
             value = arg_value

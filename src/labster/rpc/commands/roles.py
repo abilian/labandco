@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, cast
+from typing import cast
 
 from flask_sqlalchemy import SQLAlchemy
 from glom import glom
@@ -76,7 +76,7 @@ def update_roles(structure_id: str, data: dict[str, JSON]):
             role_service.grant_role(user, role, structure)
 
     # Cf. https://trello.com/c/bGR53cB9/33
-    signataire_dto = cast(Dict[str, str], data.get(Role.SIGNATAIRE.name, {}))
+    signataire_dto = cast(dict[str, str], data.get(Role.SIGNATAIRE.name, {}))
     if signataire_dto:
         signataire_id: str = signataire_dto["id"]
         signataire = profile_repo.get_by_id(ProfileId(signataire_id))
