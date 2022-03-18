@@ -1435,7 +1435,7 @@ tornado = {version = "*", markers = "python_version > \"2.7\""}
 
 [[package]]
 name = "loguru"
-version = "0.4.1"
+version = "0.6.0"
 description = "Python logging made (stupidly) simple"
 category = "main"
 optional = false
@@ -1446,7 +1446,7 @@ colorama = {version = ">=0.3.4", markers = "sys_platform == \"win32\""}
 win32-setctime = {version = ">=1.0.0", markers = "sys_platform == \"win32\""}
 
 [package.extras]
-dev = ["codecov (>=2.0.15)", "colorama (>=0.3.4)", "flake8 (>=3.7.7)", "isort (>=4.3.20)", "tox (>=3.9.0)", "tox-travis (>=0.12)", "pytest (>=4.6.2)", "pytest-cov (>=2.7.1)", "Sphinx (>=2.2.1)", "sphinx-autobuild (>=0.7.1)", "sphinx-rtd-theme (>=0.4.3)", "black (>=19.3b0)"]
+dev = ["colorama (>=0.3.4)", "docutils (==0.16)", "flake8 (>=3.7.7)", "tox (>=3.9.0)", "pytest (>=4.6.2)", "pytest-cov (>=2.7.1)", "black (>=19.10b0)", "isort (>=5.1.1)", "Sphinx (>=4.1.1)", "sphinx-autobuild (>=0.7.1)", "sphinx-rtd-theme (>=0.4.3)"]
 
 [[package]]
 name = "lxml"
@@ -1653,17 +1653,6 @@ description = "Experimental type system extensions for programs checked with the
 category = "dev"
 optional = false
 python-versions = "*"
-
-[[package]]
-name = "newrelic"
-version = "5.24.0.153"
-description = "New Relic Python Agent"
-category = "main"
-optional = false
-python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*"
-
-[package.extras]
-infinite-tracing = ["grpcio (<2)", "protobuf (<4)"]
 
 [[package]]
 name = "nodeenv"
@@ -2542,11 +2531,14 @@ testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", 
 
 [[package]]
 name = "vulture"
-version = "1.6"
+version = "2.3"
 description = "Find dead code"
 category = "dev"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+python-versions = ">=3.6"
+
+[package.dependencies]
+toml = "*"
 
 [[package]]
 name = "watchdog"
@@ -2763,7 +2755,7 @@ test = ["pytest"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "ff214f3d774d1803315f916e92423793f63511b1ce534b461eec979115478abf"
+content-hash = "a885dbdf32503d151c36153ad3a2b3f09755ebf6a3b8a4b637bd25b2e065ce65"
 
 [metadata.files]
 abilian-core = [
@@ -3550,8 +3542,8 @@ livereload = [
     {file = "livereload-2.6.3.tar.gz", hash = "sha256:776f2f865e59fde56490a56bcc6773b6917366bce0c267c60ee8aaf1a0959869"},
 ]
 loguru = [
-    {file = "loguru-0.4.1-py3-none-any.whl", hash = "sha256:074b3caa6748452c1e4f2b302093c94b65d5a4c5a4d7743636b4121e06437b0e"},
-    {file = "loguru-0.4.1.tar.gz", hash = "sha256:a6101fd435ac89ba5205a105a26a6ede9e4ddbb4408a6e167852efca47806d11"},
+    {file = "loguru-0.6.0-py3-none-any.whl", hash = "sha256:4e2414d534a2ab57573365b3e6d0234dfb1d84b68b7f3b948e6fb743860a77c3"},
+    {file = "loguru-0.6.0.tar.gz", hash = "sha256:066bd06758d0a513e9836fd9c6b5a75bfb3fd36841f4b996bc60b547a309d41c"},
 ]
 lxml = [
     {file = "lxml-4.8.0-cp27-cp27m-macosx_10_14_x86_64.whl", hash = "sha256:e1ab2fac607842ac36864e358c42feb0960ae62c34aa4caaf12ada0a1fb5d99b"},
@@ -3761,21 +3753,6 @@ mypy = [
 mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
     {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
-]
-newrelic = [
-    {file = "newrelic-5.24.0.153-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:044084bd7d2ea12239c24e0a04c6d6bc208fb83981feeca46748d1a8e6c2b4c5"},
-    {file = "newrelic-5.24.0.153-cp27-cp27m-manylinux2010_x86_64.whl", hash = "sha256:f8522fe7e1794e8d7a85d81ded8d166ac9e7f1bdcd3fd48295396a4e5d1938aa"},
-    {file = "newrelic-5.24.0.153-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:4c0fc83af3a88d76544d5c2225b480194ffc2193cfea966c3c61a7c4681e892b"},
-    {file = "newrelic-5.24.0.153-cp35-cp35m-manylinux2010_x86_64.whl", hash = "sha256:4daa2f4123cd52f221acc8176630171e6e88a0a8519f6d45ef1e2c95feb66c67"},
-    {file = "newrelic-5.24.0.153-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:677a8646e25b35eaf8dd167d57fc53adc20cf596821c56201afe68423cb75617"},
-    {file = "newrelic-5.24.0.153-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:bf83cb95952f71039e984507330a8a47766e3a744db8b9f199536355b076c1a0"},
-    {file = "newrelic-5.24.0.153-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:6c8be8e7df3f5dd1ec4c9fe321c118c2fd35ed43e0affa037c77af0595a526ba"},
-    {file = "newrelic-5.24.0.153-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:4ed6248863e3276b5f52573fbaaa2c2a1116080157fe7067956d725f969c665b"},
-    {file = "newrelic-5.24.0.153-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:4ed91d820d6ca6ed3bd2adb6ee8b07129eca7eda4a2e6327bcaf5476845fcfc8"},
-    {file = "newrelic-5.24.0.153-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:dd0571f9a2b036b3bb238b99a669f44e393e8f63451d6ce1e113515a1942eb66"},
-    {file = "newrelic-5.24.0.153-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:585f7a303b4ee7cefbcb2bf15d3f0e4b0a3f70878297b7516746036ed3657be8"},
-    {file = "newrelic-5.24.0.153-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:76ca893803d7a738844e5a49f51bde36fa98c8f55c203d2bf9a7f246770689c6"},
-    {file = "newrelic-5.24.0.153.tar.gz", hash = "sha256:a8ef9509258a8f0c952fe36c7d3c774552b65a5ca5e0348694b651170b8472dc"},
 ]
 nodeenv = [
     {file = "nodeenv-1.6.0-py2.py3-none-any.whl", hash = "sha256:621e6b7076565ddcacd2db0294c0381e01fd28945ab36bcf00f41c5daf63bef7"},
@@ -4372,8 +4349,8 @@ virtualenv = [
     {file = "virtualenv-20.13.3.tar.gz", hash = "sha256:e9dd1a1359d70137559034c0f5433b34caf504af2dc756367be86a5a32967134"},
 ]
 vulture = [
-    {file = "vulture-1.6-py2.py3-none-any.whl", hash = "sha256:79ecb77e5d61a2375e2b94dea2fd859cd77a067e55e99b8238b64196adfcdc0f"},
-    {file = "vulture-1.6.tar.gz", hash = "sha256:7b94784ededbf8e2913b5142dc875d8f26de7c903b37cd2d8f478f79275f7ce9"},
+    {file = "vulture-2.3-py2.py3-none-any.whl", hash = "sha256:f39de5e6f1df1f70c3b50da54f1c8d494159e9ca3d01a9b89eac929600591703"},
+    {file = "vulture-2.3.tar.gz", hash = "sha256:03d5a62bcbe9ceb9a9b0575f42d71a2d414070229f2e6f95fa6e7c71aaaed967"},
 ]
 watchdog = [
     {file = "watchdog-2.1.6-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:9693f35162dc6208d10b10ddf0458cc09ad70c30ba689d9206e02cd836ce28a3"},

@@ -17,7 +17,6 @@ include = [
     "tasks.py",
     "jobs.py",
     "annuaire/*",
-    "newrelic.ini",
 ]
 
 
@@ -80,8 +79,8 @@ python-dotenv = "^0.10.1"
 flask-profiler = "^1.8"
 
 # Cython is needed (or not) to install pandas
-cython = "^0.29.22"
-pandas = "^1.2.3"
+cython = "^0.29"
+pandas = "^1.2"
 
 structlog = "*"
 nox = "*"
@@ -93,14 +92,13 @@ apscheduler = "^3.6.3"
 pampy = "^0.3.0"
 
 # Used by jobs.py
-loguru = "^0.4.1"
+# loguru = "^0.6"
 
 # Not used
 # webargs = "^5.5"
 # unidecode = "*"
 # openpyxl = "*"
 # dictdiffer = "^0.8.1"
-newrelic = "^5.22.1"
 # flask-resty = "^0.21.4"
 
 # Normally it's a dev tool, but in case we leave an import
@@ -124,6 +122,7 @@ gunicorn = "<20"
 # It isn't a pb to run the app though.
 # supervisor >= 4
 # git+https://github.com/Supervisor/supervisor
+loguru = "^0.6.0"
 
 
 [tool.poetry.dev-dependencies]
@@ -168,7 +167,7 @@ gitchangelog = "^3.0"
 gitignore_parser = "^0.0.5"
 pyinfra = "^0.11"
 selenium = "^3.141.0"
-vulture = "^1.4"
+vulture = "^2"
 portray = "^1.7.0"
 sqla2uml = "^0.1.0"
 
