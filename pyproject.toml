@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "labandco"
-version = "2.2.31"
+version = "2.2.32"
 description = "solution métier pour fluidifier les relations entre chercheurs et administration dans les universités et les EPST"
 readme = "README.md"
 authors = ["Abilian SAS"]
