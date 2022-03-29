@@ -1,6 +1,6 @@
 [[package]]
 name = "abilian-core"
-version = "0.11.23"
+version = "0.11.24"
 description = "A framework for enterprise applications (CRM, ERP, collaboration...)."
 category = "main"
 optional = false
@@ -16,7 +16,7 @@ closure = "*"
 cssmin = "*"
 deprecated = "*"
 devtools = "*"
-Flask = ">=1.0,<2.0"
+Flask = ">=1.1.4,<1.2.0"
 Flask-Assets = ">=0.12"
 Flask-Babel = ">=0.11,<2"
 Flask-Login = ">=0.4"
@@ -26,12 +26,13 @@ flask-sqlalchemy = "<=2.1"
 Flask-Talisman = ">=0.6"
 Flask-WTF = ">=0.12,<0.13"
 hyperlink = "*"
-jinja2 = "<3"
-jsmin = "*"
+itsdangerous = ">=1,<2"
+jinja2 = ">=2,<3"
+jsmin = ">=3.0,<3.1"
 lxml = "*"
 MarkupSafe = ">=0.21"
+markupsafe = ">=2.0,<2.1"
 pandas = ">=0.17"
-pathlib = "*"
 pillow = "*"
 pygeoip = "*"
 python-dateutil = ">=2.4.0,<3.0.0"
@@ -46,6 +47,7 @@ tqdm = "*"
 webassets = "<2"
 werkzeug = "<1"
 Whoosh = ">=2.5,<3.0"
+wtforms = ">=2.3,<2.4"
 WTForms-Alchemy = ">=0.12"
 wtforms-sqlalchemy = "*"
 
@@ -1720,14 +1722,6 @@ gssapi = ["pyasn1 (>=0.1.7)", "gssapi (>=1.4.1)", "pywin32 (>=2.1.8)"]
 invoke = ["invoke (>=1.3)"]
 
 [[package]]
-name = "pathlib"
-version = "1.0.1"
-description = "Object-oriented filesystem paths"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "pathspec"
 version = "0.9.0"
 description = "Utility library for gitignore style pattern matching of file paths."
@@ -2756,8 +2750,8 @@ content-hash = "b10fa2888b95b0b8c3f908cb244f8d466a81470e47758ad7d63c1eee2b705d66
 
 [metadata.files]
 abilian-core = [
-    {file = "abilian-core-0.11.23.tar.gz", hash = "sha256:5863f42688a6c07983f511d7cbd61016462ac24755e83a16e05ad92a2d22c504"},
-    {file = "abilian_core-0.11.23-py3-none-any.whl", hash = "sha256:084f6343b22ce5eb2d3d7ec459a6b1107068e00f25669c1108868e2f0ed178d8"},
+    {file = "abilian-core-0.11.24.tar.gz", hash = "sha256:fcae19e6f4ac030c69cebcc8e9b04bace058ce1754a738b6b0c34a50dbc9a542"},
+    {file = "abilian_core-0.11.24-py3-none-any.whl", hash = "sha256:cfffda1dd74d0358bf07a928c21c8bffc24c2b8739cea68d8603fd57e463f8f6"},
 ]
 alembic = [
     {file = "alembic-1.7.7-py3-none-any.whl", hash = "sha256:29be0856ec7591c39f4e1cb10f198045d890e6e2274cf8da80cb5e721a09642b"},
@@ -3732,9 +3726,6 @@ pandas = [
 paramiko = [
     {file = "paramiko-2.10.3-py2.py3-none-any.whl", hash = "sha256:ac6593479f2b47a9422eca076b22cff9f795495e6733a64723efc75dd8c92101"},
     {file = "paramiko-2.10.3.tar.gz", hash = "sha256:ddb1977853aef82804b35d72a0e597b244fa326c404c350bd00c5b01dbfee71a"},
-]
-pathlib = [
-    {file = "pathlib-1.0.1.tar.gz", hash = "sha256:6940718dfc3eff4258203ad5021090933e5c04707d5ca8cc9e73c94a7894ea9f"},
 ]
 pathspec = [
     {file = "pathspec-0.9.0-py2.py3-none-any.whl", hash = "sha256:7d15c4ddb0b5c802d161efc417ec1a2558ea2653c2e8ad9c19098201dc1c993a"},
