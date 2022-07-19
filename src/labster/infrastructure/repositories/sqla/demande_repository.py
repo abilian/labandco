@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Collection
+from collections.abc import Collection
 
 from flask_sqlalchemy import SQLAlchemy
 from injector import inject

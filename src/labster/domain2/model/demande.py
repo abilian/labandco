@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import Collection
 from datetime import date, datetime
 from decimal import Decimal
 from enum import Enum, unique
 from functools import singledispatch
-from typing import Any, Collection
+from typing import Any
 
 import dateutil
 import sqlalchemy as sa

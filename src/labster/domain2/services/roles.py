@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Collection
 from enum import Enum, unique
-from typing import Any, Collection
+from typing import Any
 
 from labster.domain2.model.profile import Profile
 from labster.domain2.model.structure import Structure

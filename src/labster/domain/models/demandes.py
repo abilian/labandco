@@ -1,9 +1,10 @@
 """Modèle de case management adapté au projet Labster."""
 from __future__ import annotations
 
+from collections.abc import Collection
 from datetime import date, datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING, Any, Collection
+from typing import TYPE_CHECKING, Any
 
 import dateutil.parser
 import structlog

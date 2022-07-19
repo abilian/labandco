@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import unicodedata
+from collections.abc import Iterable
 from functools import singledispatch
-from typing import Iterable
 
 import flask
 

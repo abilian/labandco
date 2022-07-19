@@ -4,8 +4,7 @@ Note: les méthodes sont préfixées par "sg_" (sg = "structures graph").
 """
 from __future__ import annotations
 
-from collections import Sequence
-from typing import Collection
+from collections.abc import Collection, Sequence
 
 from jsonrpcserver import method
 from marshmallow import Schema, fields

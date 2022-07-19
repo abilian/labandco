@@ -1,8 +1,9 @@
 """Modèle de case management adapté au projet Labster."""
 from __future__ import annotations
 
+from collections.abc import Container
 from datetime import date, datetime
-from typing import Container, Dict
+from typing import Dict
 
 import structlog
 
