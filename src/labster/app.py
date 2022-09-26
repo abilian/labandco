@@ -1,6 +1,13 @@
 # Set up warnings control
 from __future__ import annotations
 
+import collections
+
+# Monkey patching for Python 3.10
+collections.MutableSequence = collections.abc.MutableSequence
+collections.MutableMapping = collections.abc.MutableMapping
+
+
 import logging
 import warnings
 from typing import Callable
