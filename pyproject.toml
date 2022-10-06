@@ -27,7 +27,7 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.9"
 
-abilian-core = ">=0.11.12"
+abilian-core = ">=0.11.24"
 psycopg2 = "*"
 flask-redis = "*"
 markupsafe = ">=2,<2.1"
@@ -39,7 +39,7 @@ flask-babel = "< 2"
 werkzeug = "<1"
 
 # Seems tricky
-cairocffi = "^1.0.2"
+cairocffi = "^1.4.0"
 Flask-WeasyPrint = "*"
 
 # Swagger API
@@ -59,34 +59,34 @@ html2text = "*"
 inflection = "*"
 
 # LDAP parser (no need for python-ldap)
-ldif = "^4"
+ldif = "^4.1.3"
 
 # Used by CAS auth
-requests = { version = "^2.13", extras = [ "security" ] }
+requests = { version = "^2.28.1", extras = [ "security" ] }
 
 # Used for data classes
 attrs = "*"
 
 # Functional libraries (we should standardize on one !).
 toolz = "*"
-ramda = "^0.5.2"
+ramda = "^0.5.9"
 more-itertools = "*"
 
 # Other
 dotted = "*"
 iso8601 = "*"
-python-dotenv = "^0.10.1"
+python-dotenv = "^0.10.5"
 flask-profiler = "^1.8"
 
 # Cython is needed (or not) to install pandas
 # cython = "^0.29"
-pandas = "^1.2"
+pandas = "^1.5.0"
 
 structlog = "*"
 nox = "*"
-invoke = "^1.3"
-diskcache = "^4.1"
-jsonrpcserver = "^4.0"
+invoke = "^1.7.3"
+diskcache = "^4.1.0"
+jsonrpcserver = "^4.2.0"
 email_validator = "*"
 apscheduler = "^3.6.3"
 pampy = "^0.3.0"
@@ -126,10 +126,10 @@ gunicorn = "<20"
 loguru = "^0.6.0"
 
 #types:
-types-python-dateutil = "^2.8.10"
-types-setuptools = "^57.4.11"
-types-pytz = "^2021.3.6"
-types-requests = "^2.27.14"
+types-python-dateutil = "^2.8.19"
+types-setuptools = "^57.4.18"
+types-pytz = "^2021.3.8"
+types-requests = "^2.28.11.1"
 
 
 [tool.poetry.dev-dependencies]
@@ -143,7 +143,7 @@ flake8-pytest = "*"
 flake8-tidy-imports = "*"
 mypy = "*"
 mastool = "*"
-bandit = "^1.6"
+bandit = "^1.7.4"
 
 # dephell = "^0.7.4"
 # Temp (otherwise it resolves to 0.0.1 !)
@@ -159,7 +159,7 @@ pytest-mock = "*"
 # pytest-randomly = "^3.1"
 tox = "*"
 typeguard = "*"
-jsonrpcclient = "^3.3.5"
+jsonrpcclient = "^3.3.6"
 
 honcho = "*"
 
@@ -168,19 +168,22 @@ isort = "*"
 black = { version = "*", allow-prereleases = true }
 
 # Other tools
-tabulate = "^0.8.3"
-gitchangelog = "^3.0"
+tabulate = "^0.8.10"
+gitchangelog = "^3.0.4"
 gitignore_parser = "^0.0.5"
 pyinfra = "^0.11"
 selenium = "^3.141.0"
-vulture = "^2"
+vulture = "^2.6"
 portray = "^1.7.0"
-sqla2uml = "^0.1.0"
+sqla2uml = "^0.1.2"
 
 
 [tool.poetry.scripts]
 labster = "labster.cli:cli"
 
+
+[tool.poetry.group.dev.dependencies]
+poetryup = "^0.12.2"
 
 [tool.dephell.main]
 
