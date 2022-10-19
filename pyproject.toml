@@ -174,8 +174,8 @@ gitignore_parser = "^0.0.5"
 pyinfra = "^0.11"
 selenium = "^3.141.0"
 vulture = "^2.6"
-portray = "^1.7.0"
 sqla2uml = "^0.1.2"
+# portray = "^1.7.0"
 
 
 [tool.poetry.scripts]
