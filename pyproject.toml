@@ -142,7 +142,6 @@ flake8-super-call = "*"
 flake8-pytest = "*"
 flake8-tidy-imports = "*"
 mypy = "*"
-mastool = "*"
 bandit = "^1.7.4"
 
 # dephell = "^0.7.4"
