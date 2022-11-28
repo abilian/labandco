@@ -125,14 +125,9 @@ gunicorn = "<20"
 
 loguru = "^0.6.0"
 
-#types:
-types-python-dateutil = "^2.8.19"
-types-setuptools = "^57.4.18"
-types-pytz = "^2021.3.8"
-types-requests = "^2.28.11.1"
+[tool.poetry.group.dev.dependencies]
+poetryup = "^0.12.2"
 
-
-[tool.poetry.dev-dependencies]
 # Linting
 flake8 = "*"
 flake8-bugbear = "*"
@@ -141,8 +136,18 @@ flake8-mutable = "*"
 flake8-super-call = "*"
 flake8-pytest = "*"
 flake8-tidy-imports = "*"
-mypy = "*"
 bandit = "^1.7.4"
+
+ruff = "*"
+
+mypy = "*"
+
+# types:
+types-python-dateutil = "^2.8.19"
+types-setuptools = "^57.4.18"
+types-pytz = "^2021.3.8"
+types-requests = "^2.28.11.1"
+
 
 # dephell = "^0.7.4"
 # Temp (otherwise it resolves to 0.0.1 !)
@@ -170,25 +175,30 @@ black = { version = "*", allow-prereleases = true }
 tabulate = "^0.8.10"
 gitchangelog = "^3.0.4"
 gitignore_parser = "^0.0.5"
-pyinfra = "^0.11"
 selenium = "^3.141.0"
 vulture = "^2.6"
 sqla2uml = "^0.1.2"
 # portray = "^1.7.0"
+# pyinfra = "^0.11"
 
 
 [tool.poetry.scripts]
 labster = "labster.cli:cli"
 
 
-[tool.poetry.group.dev.dependencies]
-poetryup = "^0.12.2"
-
-[tool.dephell.main]
-
-
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
+[tool.ruff]
+ignore = [
+    "E711",  # comparison to None should be 'if cond is not None:'
+    "E712",  # ...
+    "E501",  # line too long
+    # FIXME:
+    "F401",  # 'module' imported but unused
+    "E402",  # Module level import not at top of file
+    "E741",  # Ambiguous variable name: `l`
+    "E722",  # Do not use bare `except`
+]
 

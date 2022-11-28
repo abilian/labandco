@@ -1,6 +1,10 @@
 import nox
 
 
+nox.options.reuse_existing_virtualenvs = True
+
+
+
 @nox.session
 def tests(session):
     session.run("poetry", "install", external=True)
@@ -10,5 +14,6 @@ def tests(session):
 @nox.session
 def lint(session):
     session.run("poetry", "install", external=True)
-    session.run("flake8", "labster")
-    session.run("mypy", "labster")
+    session.run("flake8", "src")
+    session.run("ruff", "src")
+    # session.run("mypy", "src")
