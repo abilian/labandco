@@ -29,7 +29,7 @@ def send_notification(user: Profile, body: str, workflow: Workflow) -> Notificat
     """
 
     from labster.domain2.model.notification import Notification
-    from labster.domain2.model.profile import FLUX_TENDU
+    from labster.domain2.model.profile import FLUX_TENDU  # noqa: F811
 
     notification = Notification(
         user=user, body=body, demande=workflow.case, actor=workflow.actor

@@ -4,7 +4,6 @@ import nox
 nox.options.reuse_existing_virtualenvs = True
 
 
-
 @nox.session
 def tests(session):
     session.run("poetry", "install", external=True)

@@ -239,7 +239,7 @@ def check():
             contacts = contacts_structure(structure).values()
             assert membre in contacts
 
-    from labster.domain.models.unites import OrgUnit
+    from labster.domain.models.unites import OrgUnit  # noqa: F811
 
     for structure in OrgUnit.query.all():
         contacts = contacts_structure(structure)
