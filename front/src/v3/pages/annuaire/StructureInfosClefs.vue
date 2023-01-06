@@ -127,8 +127,7 @@ export default {
       this.model.dn = this.ou.dn;
       this.model.email = this.ou.email;
       this.model.permettre_reponse_directe = this.ou.permettre_reponse_directe;
-      this.model.permettre_soummission_directe =
-        this.ou.permettre_soummission_directe;
+      this.model.permettre_soummission_directe = this.ou.permettre_soummission_directe;
       this.editing = true;
     },
 
