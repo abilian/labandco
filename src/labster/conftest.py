@@ -13,11 +13,10 @@ from labster.app import create_app
 from labster.domain.services.constants import get_initial_constants
 from labster.extensions import db as _db
 
-
 if "TYPECHECK" in os.environ:
     from typeguard import install_import_hook
 
-    install_import_hook('labster')
+    install_import_hook("labster")
 
     # checker = TypeChecker("labster")
     #
