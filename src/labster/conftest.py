@@ -8,18 +8,22 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from pytest import fixture
 from sqlalchemy.exc import SQLAlchemyError
-from typeguard import TypeChecker
 
 from labster.app import create_app
 from labster.domain.services.constants import get_initial_constants
 from labster.extensions import db as _db
 
-checker = TypeChecker("labster")
 
 if "TYPECHECK" in os.environ:
-    logging.captureWarnings(True)
-    if not checker.active:
-        checker.start()
+    from typeguard import install_import_hook
+
+    install_import_hook('labster')
+
+    # checker = TypeChecker("labster")
+    #
+    # logging.captureWarnings(True)
+    # if not checker.active:
+    #     checker.start()
 
 
 class TestConfig:

@@ -1,17 +1,19 @@
 import nox
+from nox import Session
 
+PYTHON_VERSIONS = ["3.9", "3.10"]
 
 nox.options.reuse_existing_virtualenvs = True
 
 
-@nox.session
-def tests(session):
+@nox.session(python=PYTHON_VERSIONS)
+def tests(session: Session):
     session.run("poetry", "install", external=True)
     session.run("pytest")
 
 
 @nox.session
-def lint(session):
+def lint(session: Session):
     session.run("poetry", "install", external=True)
     session.run("flake8", "src")
     session.run("ruff", "src")

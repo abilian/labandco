@@ -4,9 +4,7 @@ version = "2.2.33"
 description = "solution métier pour fluidifier les relations entre chercheurs et administration dans les universités et les EPST"
 readme = "README.md"
 authors = ["Abilian SAS"]
-
 packages = [{ include = "labster", from = "src" }]
-
 include = [
     "poetry.lock",
     "src/labster/static/**/*",
@@ -19,69 +17,53 @@ include = [
     "annuaire/*",
 ]
 
-
 # [[tool.poetry.source]]
 # name = "fury"
 # url = "https://pypi.fury.io/sfermigier/"
-
 [tool.poetry.dependencies]
-python = "^3.9"
-
+python = "^3.9,<3.11"
 abilian-core = ">=0.11.24"
 psycopg2 = "*"
 flask-redis = "*"
 markupsafe = ">=2,<2.1"
-
 # Pinned for now
 wtforms = "<3"
 flask-assets = "< 2"
 flask-babel = "< 2"
 werkzeug = "<1"
-
 # Seems tricky
 cairocffi = "^1.4.0"
 Flask-WeasyPrint = "*"
-
 # Swagger API
 # apispec = "<0.39"
 # flask-apispec = "==0.4.2"
-
 # Marshmallow & friends
 marshmallow = "<3"
 marshmallow-sqlalchemy = "*"
 marshmallow-annotations = "*"
 flask-smorest = "*"
-
 # Used when sending emails
 html2text = "*"
-
 # Used by workflow
 inflection = "*"
-
 # LDAP parser (no need for python-ldap)
 ldif = "^4.1.3"
-
 # Used by CAS auth
-requests = { version = "^2.28.1", extras = [ "security" ] }
-
+requests = { version = "^2.28.1", extras = ["security"] }
 # Used for data classes
 attrs = "*"
-
 # Functional libraries (we should standardize on one !).
 toolz = "*"
 ramda = "^0.5.9"
 more-itertools = "*"
-
 # Other
 dotted = "*"
 iso8601 = "*"
 python-dotenv = "^0.10.5"
 flask-profiler = "^1.8"
-
 # Cython is needed (or not) to install pandas
 # cython = "^0.29"
 pandas = "^1.5.0"
-
 structlog = "*"
 nox = "*"
 invoke = "^1.7.3"
@@ -90,44 +72,33 @@ jsonrpcserver = "^4.2.0"
 email_validator = "*"
 apscheduler = "^3.6.3"
 pampy = "^0.3.0"
-
 # Used by jobs.py
 # loguru = "^0.6"
-
 # Not used
 # webargs = "^5.5"
 # unidecode = "*"
 # openpyxl = "*"
 # dictdiffer = "^0.8.1"
 # flask-resty = "^0.21.4"
-
 # Normally it's a dev tool, but in case we leave an import
 devtools = "*"
-
 glom = "*"
-
 # xlrd = "^1.2"
-
 # Personal forks
 flask-injector = "*"
 #flask-injector = { git = "https://github.com/abilian/flask_injector.git" }
 #Flask-Injector-Abilian = "*"
-
 # q = "*"
-
 #: Production
 gunicorn = "<20"
-
 # supervisor for py3 isn't released yet.
 # It isn't a pb to run the app though.
 # supervisor >= 4
 # git+https://github.com/Supervisor/supervisor
-
 loguru = "^0.6.0"
 
 [tool.poetry.group.dev.dependencies]
 poetryup = "^0.12.2"
-
 # Linting
 flake8 = "*"
 flake8-bugbear = "*"
@@ -137,25 +108,18 @@ flake8-super-call = "*"
 flake8-pytest = "*"
 flake8-tidy-imports = "*"
 bandit = "^1.7.4"
-
 ruff = "*"
-
 mypy = "*"
-
 # types:
 types-python-dateutil = "^2.8.19"
 types-setuptools = "^57.4.18"
 types-pytz = "^2021.3.8"
 types-requests = "^2.28.11.1"
-
-
 # dephell = "^0.7.4"
 # Temp (otherwise it resolves to 0.0.1 !)
 # bowler = "^0.8.0"
 # fissix = "19.2b1"
-
 pre-commit = "*"
-
 # testing
 pytest = "*"
 pytest-cov = "*"
@@ -164,13 +128,10 @@ pytest-mock = "*"
 tox = "*"
 typeguard = "*"
 jsonrpcclient = "^3.3.6"
-
 honcho = "*"
-
 # Formatters
 isort = "*"
 black = { version = "*", allow-prereleases = true }
-
 # Other tools
 tabulate = "^0.8.10"
 gitchangelog = "^3.0.4"
@@ -178,13 +139,11 @@ gitignore_parser = "^0.0.5"
 selenium = "^3.141.0"
 vulture = "^2.6"
 sqla2uml = "^0.1.2"
+
 # portray = "^1.7.0"
 # pyinfra = "^0.11"
-
-
 [tool.poetry.scripts]
 labster = "labster.cli:cli"
-
 
 [build-system]
 requires = ["poetry>=0.12"]
@@ -192,13 +151,13 @@ build-backend = "poetry.masonry.api"
 
 [tool.ruff]
 ignore = [
-    "E711",  # comparison to None should be 'if cond is not None:'
-    "E712",  # ...
-    "E501",  # line too long
+    "E711", # comparison to None should be 'if cond is not None:'
+    "E712", # ...
+    "E501", # line too long
     # FIXME:
-    "F401",  # 'module' imported but unused
-    "E402",  # Module level import not at top of file
-    "E741",  # Ambiguous variable name: `l`
-    "E722",  # Do not use bare `except`
-]
+    "F401", # 'module' imported but unused
+    "E402", # Module level import not at top of file
+    "E741", # Ambiguous variable name: `l`
+    "E722", # Do not use bare `except`
 
+]
