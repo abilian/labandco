@@ -365,7 +365,8 @@ export default function update_rh(form, model) {
   const show_modification_autre_detail =
     modification_contrat_en_cours && model.modification_autre === "oui";
   if (typeof form.fields.modification_autre_detail !== "undefined") {
-    form.fields.modification_autre_detail.visible = show_modification_autre_detail;
+    form.fields.modification_autre_detail.visible =
+      show_modification_autre_detail;
   }
 
   // Pavé "Publicité"
