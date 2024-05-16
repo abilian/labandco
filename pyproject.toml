@@ -42,6 +42,8 @@ Flask-WeasyPrint = "*"
 # apispec = "<0.39"
 # flask-apispec = "==0.4.2"
 # Marshmallow & friends
+# (Bug with apispec 6.6 and mashmallow < 3)
+apispec = "6.3.0"
 marshmallow = "<3"
 marshmallow-sqlalchemy = "*"
 marshmallow-annotations = "*"
