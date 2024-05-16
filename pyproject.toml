@@ -22,7 +22,7 @@ include = [
 # url = "https://pypi.fury.io/sfermigier/"
 
 [tool.poetry.dependencies]
-python = "^3.9,<3.11"
+python = "^3.10"
 abilian-core = ">=0.11.24"
 psycopg2 = "*"
 flask-redis = "*"
@@ -109,41 +109,45 @@ loguru = "^0.6.0"
 
 [tool.poetry.group.dev.dependencies]
 nox = "*"
+abilian-devtools = "*"
+
 # invoke = "^1.7.3"
 
 # Linting
-flake8 = "*"
-flake8-bugbear = "*"
-flake8-comprehensions = "*"
-flake8-mutable = "*"
-flake8-super-call = "*"
-flake8-pytest = "*"
-flake8-tidy-imports = "*"
-bandit = "^1.7.4"
-ruff = "*"
-mypy = "*"
+#flake8 = "*"
+#flake8-bugbear = "*"
+#flake8-comprehensions = "*"
+#flake8-mutable = "*"
+#flake8-super-call = "*"
+#flake8-pytest = "*"
+#flake8-tidy-imports = "*"
+#bandit = "^1.7.4"
+#mypy = "*"
+
 # types:
 types-python-dateutil = "^2.8.19"
 types-setuptools = "^57.4.18"
 types-pytz = "^2021.3.8"
 types-requests = "^2.28.11.1"
+
 # dephell = "^0.7.4"
 # Temp (otherwise it resolves to 0.0.1 !)
 # bowler = "^0.8.0"
 # fissix = "19.2b1"
+
 pre-commit = "*"
+
 # testing
 pytest = "*"
 pytest-cov = "*"
 pytest-mock = "*"
+
 # pytest-randomly = "^3.1"
 tox = "*"
 typeguard = "*"
 jsonrpcclient = "^3.3.6"
 honcho = "*"
-# Formatters
-isort = "*"
-black = { version = "*", allow-prereleases = true }
+
 # Other tools
 tabulate = "^0.8.10"
 gitchangelog = "^3.0.4"
