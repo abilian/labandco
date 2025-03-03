@@ -11,7 +11,7 @@ packages:
   - make
   - gcc
   - g++
-  - fish
+  # - fish
   # Python
   - python3-dev
   - python3-pip
@@ -21,7 +21,25 @@ packages:
   - libpq-dev
   # Other libraries
   - libffi-dev
-  - libbz2-dev
+  - libldap2-dev
+  - libsasl2-dev
+  - libxml2-dev
+  - libxslt1-dev
+  - libjpeg-dev
+  - libcairo2-dev
+  - libpango1.0-dev
+  - libssl-dev
+  #
+  - poppler-utils
+  # Probably not needed
+  # - redis-server
+  # - supervisor
+  # - postgresql
+  # - nginx
+  # - node-less
+  # - git-core
+  # - nodejs
+  # - default-jdk-headless
 
 tasks:
   - setup: |
