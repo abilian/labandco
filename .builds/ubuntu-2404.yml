@@ -1,0 +1,52 @@
+# Copyright (c) 2023-2024, Abilian SAS
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+image: ubuntu/24.04
+
+packages:
+  # Build tools
+  - software-properties-common
+  - build-essential
+  - make
+  - gcc
+  - g++
+  - fish
+  # Python
+  - python3-dev
+  - python3-pip
+  - python3-wheel
+  # Libraries for databases
+  - libsqlite3-dev
+  - libpq-dev
+  # Other libraries
+  - libffi-dev
+  - libbz2-dev
+
+tasks:
+  - setup: |
+      sudo pip install --break-system-packages -U uv nox
+      cd labandco
+      uv sync --frozen
+
+  - lint: |
+      cd labandco
+      uv run make lint
+
+  - test: |
+      cd labandco
+      uv run make test
+
+  - nox-test: |
+      cd labandco
+      uv run nox -e test-3.12
+      # TODO: postgres
+
+  - nox-lint: |
+      cd labandco
+      uv run nox -e lint
+
+#triggers:
+#  - action: email
+#    condition: failure
+#    to: builds@fermigier.com
